@@ -1,0 +1,20 @@
+{
+  "slug": "php-essentials",
+  "title": "Modern PHP 8 Essentials",
+  "shortTitle": "Learn PHP",
+  "description": "Write and run modern PHP 8 directly in your browser. Master typed functions, associative arrays, match expressions, classes, PDO security habits, and an auto-graded capstone.",
+  "track": "PHP",
+  "difficulty": "Beginner",
+  "estimatedHours": 4,
+  "accentColor": "#4f46e5",
+  "prerequisites": ["Basic HTML and SQL familiarity"],
+  "outcomes": [
+    "Write clean PHP 8 with strict types, string interpolation, and null coalescing",
+    "Use modern match expressions, foreach loops, and array_map/array_filter",
+    "Build typed functions and PHP 8 classes with constructor property promotion",
+    "Prevent SQL injection and XSS using prepared statements and htmlspecialchars",
+    "Pass an auto-graded PHP 8 capstone challenge in the browser"
+  ],
+  "featured": true,
+  "order": 5
+}

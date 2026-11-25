@@ -1,0 +1,84 @@
+---
+title: "Typed Functions & PHP 8 Classes"
+description: "Write self-documenting PHP 8 functions with parameter/return types and concise classes using constructor property promotion."
+course: "php-essentials"
+module: "Functions & Arrays"
+order: 4
+durationMinutes: 9
+objectives:
+  - "Annotate parameter types and return types (int, string, float, array)"
+  - "Define clean PHP 8 classes using constructor property promotion"
+  - "Call methods cleanly using the -> object operator"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import PhpPlayground from '@/components/playground/PhpPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+Modern PHP 8 eliminates boilerplate with **constructor property promotion**: declare visibility (`public`, `private`, `readonly`) directly inside `__construct(...)`!
+
+```php
+class Course {
+    public function __construct(
+        public readonly string $title,
+        public readonly int $lessons,
+    ) {}
+}
+```
+
+<Callout type="tip" title="Readonly Properties">
+  Marking properties <code>readonly</code> guarantees they are set once in the constructor and cannot be accidentally mutated later.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Typed Function & Constructor Promotion"
+  prompt="Declare a typed function returning int and use -> to call a method on $course."
+  template={`function doubleValue(int $n): {{0}} {
+    return $n * 2;
+}
+echo $course{{1}}summary();`}
+  blanks={[
+    { answer: 'int', placeholder: 'type' },
+    { answer: '->', placeholder: 'op' },
+  ]}
+  hint={'Specify : int for the return type and use -> to invoke methods on PHP objects.'}
+/>
+
+## Try It Yourself
+
+<PhpPlayground
+  client:visible
+  title="PHP 8 Class with Constructor Promotion"
+  code={`<?php
+declare(strict_types=1);
+
+class Course {
+    public function __construct(
+        public readonly string $title,
+        public readonly int $lessons,
+    ) {}
+
+    public function summary(): string {
+        return "{$this->title} ({$this->lessons} lessons)";
+    }
+}
+
+$php = new Course(title: 'Modern PHP 8', lessons: 6);
+echo $php->summary() . "\\n";`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which operator accesses a property or method on a PHP object instance?",
+      options: [". (dot)", "-> (arrow)", ":: (double colon)"],
+      answer: 1,
+      explanation: "PHP uses -> for instance properties and methods (and :: for static members)."
+    }
+  ]}
+/>

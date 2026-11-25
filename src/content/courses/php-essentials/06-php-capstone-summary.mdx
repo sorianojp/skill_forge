@@ -1,0 +1,71 @@
+---
+title: "Capstone: Auto-Graded PHP Score Summary"
+description: "Combine typed PHP 8 functions, array_filter, and associative arrays to pass all 4 automated PHP checks in your browser."
+course: "php-essentials"
+module: "Capstone Project"
+order: 6
+durationMinutes: 10
+objectives:
+  - "Implement a typed summarizeScores(array $scores): array function"
+  - "Compute count, passed scores (>= 80), and rounded average safely"
+  - "Pass all 4 automated PHP checks in WebAssembly"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import PhpPlayground from '@/components/playground/PhpPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+Welcome to the **Modern PHP 8 Essentials** capstone! Implement `summarizeScores(array $scores): array` so it returns an associative array with `count`, `passed` (scores `>= 80`), and `average` (rounded to 1 decimal place, or `0.0` for an empty array).
+
+## Auto-Graded PHP Capstone Challenge
+
+Click **Run & Test** below to execute your PHP 8 code and verify all 4 automated checks!
+
+<PhpPlayground
+  client:visible
+  title="PHP Capstone: Score Summary Helper"
+  height={280}
+  code={`<?php
+declare(strict_types=1);
+
+function summarizeScores(array $scores): array {
+    $count = count($scores);
+    $passed = array_values(array_filter($scores, fn($s) => $s >= 80));
+    $average = $count > 0 ? round(array_sum($scores) / $count, 1) : 0.0;
+
+    return [
+        'count' => $count,
+        'passed' => $passed,
+        'average' => $average,
+    ];
+}
+
+echo json_encode(summarizeScores([74, 82, 96, 88])) . "\\n";`}
+  tests={[
+    { label: 'Returns count === 4 for [74, 82, 96, 88]', assertPhp: '$r = summarizeScores([74, 82, 96, 88]); if ($r["count"] !== 4) exit(1);' },
+    { label: 'Filters passing scores >= 80 into [82, 96, 88]', assertPhp: '$r = summarizeScores([74, 82, 96, 88]); if ($r["passed"] !== [82, 96, 88]) exit(1);' },
+    { label: 'Computes average === 85.0', assertPhp: '$r = summarizeScores([74, 82, 96, 88]); if ((float)$r["average"] !== 85.0) exit(1);' },
+    { label: 'Handles empty array [] safely with average 0.0', assertPhp: '$r = summarizeScores([]); if ($r["count"] !== 0 || (float)$r["average"] !== 0.0) exit(1);' },
+  ]}
+/>
+
+<Callout type="tip" title="Ready for Your Free PHP Certificate?">
+  Take the <a href="/courses/php-essentials/exam"><strong>PHP 8 Final Exam</strong></a> (score 80% or higher) to unlock your free downloadable Completion Certificate!
+</Callout>
+
+<Quiz
+  client:visible
+  title="PHP 8 Essentials Final Check"
+  questions={[
+    {
+      question: "Why did we wrap array_filter(...) in array_values(...) in our capstone?",
+      options: [
+        "array_filter preserves original numeric keys, and array_values re-indexes the filtered array cleanly from 0",
+        "array_filter returns a string instead of an array",
+        "array_values sorts the array in descending order"
+      ],
+      answer: 0,
+      explanation: "array_filter() keeps original indexes (e.g. [1 => 82, 2 => 96]); array_values() resets keys to [0, 1, 2] for clean JSON arrays."
+    }
+  ]}
+/>

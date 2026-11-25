@@ -1,0 +1,74 @@
+---
+title: "Variables, Types & String Interpolation"
+description: "Run your first PHP 8 script in the browser, declare $variables cleanly, and interpolate values inside double-quoted strings."
+course: "php-essentials"
+module: "PHP 8 Basics"
+order: 1
+durationMinutes: 7
+objectives:
+  - "Start PHP scripts cleanly with <?php and declare(strict_types=1);"
+  - "Understand $variables, string concatenation (.), and double-quote interpolation"
+  - "Use the null coalescing operator (??) for safe defaults"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import PhpPlayground from '@/components/playground/PhpPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+**PHP 8** powers a massive portion of the modern web (from Laravel and Symfony to WordPress). Every variable starts with `$`, and statements end with `;`.
+
+## String Interpolation vs. Single Quotes
+
+- **Double quotes (`"..."`)** evaluate variables like `"Hello, $name!"`.
+- **Single quotes (`'...'`)** print text literally without parsing variables.
+
+<Callout type="tip" title="Always Enable Strict Types">
+  Adding <code>declare(strict_types=1);</code> at the top of modern PHP 8 files catches accidental type mismatches early.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="PHP Variable & Null Coalescing"
+  prompt="Declare a $track variable and fall back to 'Guest' when $user is null."
+  template={`<?php
+{{0}}track = "PHP 8";
+$label = $user {{1}} "Guest";
+echo "Welcome, $label!";`}
+  blanks={[
+    { answer: '$', placeholder: '$' },
+    { answer: '??', placeholder: 'op' },
+  ]}
+  hint={'PHP variables start with $, and ?? provides a fallback when a value is null.'}
+/>
+
+## Try It Yourself (PHP 8 in Your Browser)
+
+<PhpPlayground
+  client:visible
+  title="Your First PHP 8 Script"
+  code={`<?php
+declare(strict_types=1);
+
+$name = "Builder";
+$completed = 3;
+$total = 6;
+$percent = (int) round(($completed / $total) * 100);
+
+echo "Hello, $name!\\n";
+echo "PHP Progress: {$completed}/{$total} ({$percent}%)\\n";`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which quote style evaluates $name inside a PHP string?",
+      options: ["Single quotes ('Hello $name')", "Double quotes (\"Hello $name\")", "Backticks (`Hello $name`)"],
+      answer: 1,
+      explanation: "Double-quoted strings interpolate variables like $name, while single-quoted strings treat them as literal text."
+    }
+  ]}
+/>

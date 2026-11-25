@@ -1,0 +1,58 @@
+---
+title: "Arrays, array_filter & array_map"
+description: "Work with indexed and associative arrays and transform collections cleanly using PHP 8 arrow functions (fn)."
+course: "php-essentials"
+module: "Functions & Arrays"
+order: 3
+durationMinutes: 8
+objectives:
+  - "Create and read associative arrays with ['key' => 'value']"
+  - "Transform and filter arrays cleanly using array_map() and array_filter()"
+  - "Write concise PHP 8 arrow functions using fn($x) => ..."
+---
+
+import Exercise from '@/components/quiz/Exercise';
+import PhpPlayground from '@/components/playground/PhpPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+PHP arrays work as both ordered lists (`['HTML', 'CSS']`) and key-value maps (`['title' => 'PHP', 'free' => true]`). Combine them with **`array_filter()`**, **`array_map()`**, and short arrow functions (`fn($x) => ...`).
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Filter Passing Scores"
+  prompt="Filter $scores using array_filter and a PHP arrow function."
+  template={`$passing = {{0}}($scores, {{1}}($s) => $s >= 80);`}
+  blanks={[
+    { answer: 'array_filter', placeholder: 'fn' },
+    { answer: 'fn', placeholder: 'kw' },
+  ]}
+  hint={'Use array_filter($array, fn($item) => condition).'}
+/>
+
+## Try It Yourself
+
+<PhpPlayground
+  client:visible
+  title="Associative Arrays & Arrow Functions"
+  code={`<?php
+$scores = [72, 88, 95, 64, 91];
+$passing = array_values(array_filter($scores, fn($s) => $s >= 80));
+$labels = array_map(fn($s) => "{$s}%", $passing);
+
+echo "Passing count: " . count($passing) . "\\n";
+echo "Scores: " . implode(', ', $labels) . "\\n";`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which keyword creates a short single-expression arrow function in PHP?",
+      options: ["lambda", "fn", "arrow"],
+      answer: 1,
+      explanation: "PHP uses fn($x) => $x * 2 for concise arrow functions that automatically capture outer variables by value."
+    }
+  ]}
+/>

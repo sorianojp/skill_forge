@@ -314,6 +314,89 @@ export const COURSE_EXAMS: Record<string, ExamQuestion[]> = {
     },
   ],
 
+  'php-essentials': [
+    {
+      question: 'Which character starts every variable name in PHP?',
+      options: ['@', '$', '#'],
+      answer: 1,
+      explanation: 'All PHP variables start with a dollar sign, such as $course.',
+    },
+    {
+      question: 'Which quote style interpolates variables like $name inside a PHP string?',
+      options: ["Single quotes ('Hello $name')", 'Double quotes ("Hello $name")', 'Both behave identically'],
+      answer: 1,
+      explanation: 'Double-quoted strings evaluate embedded variables, while single-quoted strings stay literal.',
+    },
+    {
+      question: 'What does `declare(strict_types=1);` enable in PHP 8?',
+      options: [
+        'Strict type checking for function arguments and return values',
+        'Automatic SQL escaping',
+        'Case-insensitive variable names',
+      ],
+      answer: 0,
+      explanation: 'Strict types prevent silent coercion when passing the wrong scalar type to a typed function.',
+    },
+    {
+      question: 'How does PHP 8 match() differ from switch?',
+      options: [
+        'match() uses strict === comparisons, returns a value, and never falls through',
+        'match() requires break after every branch',
+        'match() only works on strings',
+      ],
+      answer: 0,
+      explanation: 'match() is a strict expression that returns its matched arm without fall-through bugs.',
+    },
+    {
+      question: 'Which keyword creates a short single-expression arrow function in PHP?',
+      options: ['func', 'fn', 'def'],
+      answer: 1,
+      explanation: 'PHP uses fn($x) => $x * 2 for concise arrow functions.',
+    },
+    {
+      question: 'Why is array_values() often wrapped around array_filter() results?',
+      options: [
+        'To re-index the filtered array cleanly starting from 0',
+        'To convert the array to uppercase',
+        'To remove duplicate strings',
+      ],
+      answer: 0,
+      explanation: 'array_filter() preserves original keys; array_values() resets them to sequential 0-based indexes.',
+    },
+    {
+      question: 'Which operator accesses an instance property or method on a PHP object?',
+      options: ['.', '->', '=>'],
+      answer: 1,
+      explanation: 'PHP uses -> for object instances ($course->summary()).',
+    },
+    {
+      question: 'What is constructor property promotion in PHP 8?',
+      options: [
+        'Declaring class properties directly in __construct() parameters with visibility keywords',
+        'Automatically making all properties global',
+        'Running constructors twice',
+      ],
+      answer: 0,
+      explanation: 'Constructor property promotion reduces boilerplate by declaring and assigning properties directly in __construct().',
+    },
+    {
+      question: 'Which function safely escapes untrusted text before rendering it into HTML?',
+      options: ['strip_slashes()', 'htmlspecialchars($s, ENT_QUOTES, "UTF-8")', 'md5()'],
+      answer: 1,
+      explanation: 'htmlspecialchars() converts special HTML characters into safe entities to prevent XSS.',
+    },
+    {
+      question: 'What is the safest way to pass user input into a SQL query in PHP?',
+      options: [
+        'PDO prepared statements with bound parameters',
+        'String concatenation inside double quotes',
+        'Using base64_encode() on the query',
+      ],
+      answer: 0,
+      explanation: 'PDO prepared statements keep SQL structure separate from user data, preventing SQL injection.',
+    },
+  ],
+
   'python-fundamentals': [
     {
       question: 'How are boolean values written in Python 3?',

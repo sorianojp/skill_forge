@@ -1,0 +1,84 @@
+---
+title: "Control Flow, match() & foreach Loops"
+description: "Branch cleanly with PHP 8 match expressions and iterate over lists and key-value arrays using foreach."
+course: "php-essentials"
+module: "PHP 8 Basics"
+order: 2
+durationMinutes: 8
+objectives:
+  - "Replace verbose switch blocks with PHP 8's strict match() expression"
+  - "Iterate values and key-value pairs cleanly with foreach"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import PhpPlayground from '@/components/playground/PhpPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+PHP 8 introduced **`match`**, a safer, stricter, and shorter upgrade to `switch`. It uses strict `===` comparisons, needs no `break` statements, and returns a value directly!
+
+```php
+$badge = match ($track) {
+    'HTML', 'CSS' => 'Frontend Core',
+    'SQL', 'PHP' => 'Backend Stack',
+    default => 'General Track',
+};
+```
+
+<Callout type="tip" title="Key + Value in foreach">
+  Write <code>foreach ($counts as $track =&gt; $lessons)</code> to access both the key and value in one clean loop.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Modern PHP 8 match() & foreach"
+  prompt="Use match() to map a role and foreach to iterate over $items."
+  template={`$label = {{0}} ($role) {
+    'admin' => 'Administrator',
+    default => 'Learner',
+};
+
+{{1}} ($items as $item) {
+    echo $item;
+}`}
+  blanks={[
+    { answer: 'match', placeholder: 'kw' },
+    { answer: 'foreach', placeholder: 'kw' },
+  ]}
+  hint={'PHP 8 uses match() for expression branching and foreach to iterate arrays.'}
+/>
+
+## Try It Yourself
+
+<PhpPlayground
+  client:visible
+  title="PHP 8 match() & foreach Loop"
+  code={`<?php
+$tracks = [
+    'HTML' => 16,
+    'SQL' => 6,
+    'PHP' => 6,
+];
+
+foreach ($tracks as $name => $count) {
+    $tier = match (true) {
+        $count >= 12 => 'Deep Dive',
+        default => 'Starter Track',
+    };
+    echo "$name: $count lessons ($tier)\\n";
+}`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "How does PHP 8's match expression compare values?",
+      options: ["Loose equality (==)", "Strict equality (===) with no fall-through bugs", "Case-insensitive regex"],
+      answer: 1,
+      explanation: "match() compares strictly with === and never falls through to the next branch."
+    }
+  ]}
+/>

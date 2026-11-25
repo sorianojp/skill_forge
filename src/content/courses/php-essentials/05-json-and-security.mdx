@@ -1,0 +1,82 @@
+---
+title: "JSON APIs & Web Security Basics"
+description: "Encode and decode JSON cleanly, prevent XSS with htmlspecialchars(), and stop SQL injection with PDO prepared statements."
+course: "php-essentials"
+module: "Web & Security"
+order: 5
+durationMinutes: 8
+objectives:
+  - "Serialize and parse API payloads with json_encode() and json_decode()"
+  - "Escape untrusted HTML output with htmlspecialchars(..., ENT_QUOTES, 'UTF-8')"
+  - "Understand why PDO prepared statements with ? or :named placeholders stop SQL injection"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import DoDont from '@/components/mdx/DoDont.astro';
+import Exercise from '@/components/quiz/Exercise';
+import PhpPlayground from '@/components/playground/PhpPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+When PHP renders HTML or queries SQL databases, two habits protect your users from the two most common web vulnerabilities:
+
+1. **Prevent XSS**: Escape user text before printing into HTML using `htmlspecialchars($text, ENT_QUOTES, 'UTF-8')`.
+2. **Prevent SQL Injection**: Always use **PDO prepared statements** (`prepare()` + `execute([$param])`) instead of concatenating variables into SQL strings.
+
+<DoDont
+  doTitle="Safe PDO Prepared Statement"
+  dontTitle="Vulnerable SQL Concatenation"
+  doCode={`$stmt = $pdo->prepare('SELECT * FROM users WHERE email = ?');
+$stmt->execute([$email]);
+$user = $stmt->fetch();`}
+  dontCode={`// NEVER concatenate user input into SQL!
+$pdo->query("SELECT * FROM users WHERE email = '$email'");`}
+/>
+
+<Callout type="tip" title="Throw on Invalid JSON">
+  Pass <code>JSON_THROW_ON_ERROR</code> to <code>json_encode()</code> and <code>json_decode()</code> so malformed JSON fails loudly instead of silently returning <code>null</code>.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Safe Output & JSON Encoding"
+  prompt="Escape untrusted HTML text and encode a PHP array into a JSON string."
+  template={`$safe = {{0}}($input, ENT_QUOTES, 'UTF-8');
+$json = {{1}}(['status' => 'ok'], JSON_THROW_ON_ERROR);`}
+  blanks={[
+    { answer: 'htmlspecialchars', placeholder: 'fn' },
+    { answer: 'json_encode', placeholder: 'fn' },
+  ]}
+  hint={'Use htmlspecialchars() to escape HTML and json_encode() to serialize PHP arrays to JSON.'}
+/>
+
+## Try It Yourself
+
+<PhpPlayground
+  client:visible
+  title="HTML Escaping & JSON API Payload"
+  code={`<?php
+$untrusted = '<script>alert("xss")</script>';
+$safe = htmlspecialchars($untrusted, ENT_QUOTES, 'UTF-8');
+echo "Escaped HTML: $safe\\n";
+
+$response = ['course' => 'PHP 8', 'free' => true, 'lessons' => 6];
+echo "JSON: " . json_encode($response, JSON_THROW_ON_ERROR) . "\\n";`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What is the standard, reliable way to prevent SQL injection in PHP?",
+      options: [
+        "Use PDO prepared statements with bound parameters",
+        "Convert all SQL queries to uppercase",
+        "Strip spaces from user input"
+      ],
+      answer: 0,
+      explanation: "Prepared statements separate SQL code from user data so input can never alter the query structure."
+    }
+  ]}
+/>
