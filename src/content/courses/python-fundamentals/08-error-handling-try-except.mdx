@@ -1,0 +1,71 @@
+---
+title: "Error Handling with try / except"
+description: "Catch specific Python exceptions cleanly with try/except/else/finally and validate inputs by raising ValueError."
+course: "python-fundamentals"
+module: "Pythonic Patterns"
+order: 8
+durationMinutes: 8
+objectives:
+  - "Catch specific exception types like ValueError and ZeroDivisionError"
+  - "Raise clear errors with raise ValueError('...')"
+  - "Avoid bare except: blocks that hide unexpected bugs"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import PythonPlayground from '@/components/playground/PythonPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+<Callout type="warning" title="Catch Specific Exceptions">
+  Always catch the exact error you expect (like <code>except ValueError:</code>) rather than a bare <code>except:</code>, so real typos or bugs still surface clearly.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Raise & Catch ValueError"
+  prompt="Raise a ValueError for negative scores and catch it cleanly."
+  template={`if score < 0:
+    {{0}} ValueError("Score must be >= 0")
+
+try:
+    int("abc")
+{{1}} ValueError as err:
+    print("Invalid number:", err)`}
+  blanks={[
+    { answer: 'raise', placeholder: 'kw' },
+    { answer: 'except', placeholder: 'kw' },
+  ]}
+  hint={'Python uses raise to trigger exceptions and except to catch them.'}
+/>
+
+## Try It Yourself
+
+<PythonPlayground
+  client:visible
+  title="Safe Parsing with try / except"
+  code={`def parse_score(raw):
+    val = int(raw)
+    if not (0 <= val <= 100):
+        raise ValueError("Score must be between 0 and 100")
+    return val
+
+for sample in ["95", "120", "oops"]:
+    try:
+        print(sample, "-> valid:", parse_score(sample))
+    except ValueError as err:
+        print(sample, "-> rejected:", err)`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which keyword triggers a custom exception in Python?",
+      options: ["throw", "raise", "error"],
+      answer: 1,
+      explanation: "Python uses `raise ValueError('message')` to raise exceptions."
+    }
+  ]}
+/>

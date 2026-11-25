@@ -1,0 +1,75 @@
+---
+title: "Transactions & Data Integrity (ACID)"
+description: "Group multiple SQL writes into an all-or-nothing unit using BEGIN TRANSACTION, COMMIT, and ROLLBACK."
+course: "sql-essentials"
+module: "Schema & Performance"
+order: 11
+durationMinutes: 7
+objectives:
+  - "Wrap multi-step writes in BEGIN TRANSACTION ... COMMIT"
+  - "Undo partial changes safely with ROLLBACK if an error occurs"
+  - "Understand Atomicity in ACID databases"
+---
+
+import Exercise from '@/components/quiz/Exercise';
+import SqlPlayground from '@/components/playground/SqlPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+Imagine transferring 50 points from one account to another: two `UPDATE` statements must **both succeed or both fail**. Wrapping them in a **transaction** guarantees **Atomicity** (all-or-nothing).
+
+```sql
+BEGIN TRANSACTION;
+UPDATE wallets SET points = points - 50 WHERE id = 1;
+UPDATE wallets SET points = points + 50 WHERE id = 2;
+COMMIT;
+```
+
+If anything fails before `COMMIT`, running **`ROLLBACK`** cleanly restores the database to its exact state before `BEGIN TRANSACTION`.
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Commit or Rollback a Transaction"
+  prompt="Save a transaction with COMMIT, or undo it with ROLLBACK."
+  template={`BEGIN TRANSACTION;
+UPDATE wallets SET points = points + 10 WHERE id = 1;
+{{0}}; -- save changes (or {{1}} to undo)`}
+  blanks={[
+    { answer: 'COMMIT', placeholder: 'KW' },
+    { answer: 'ROLLBACK', placeholder: 'KW' },
+  ]}
+  hint={'COMMIT permanently applies the transaction; ROLLBACK undoes it.'}
+/>
+
+## Try It Yourself
+
+Notice how the `ROLLBACK` below undoes the accidental `UPDATE`, keeping Maya's points safely at `100`:
+
+<SqlPlayground
+  client:visible
+  title="Testing ROLLBACK Safety"
+  schemaSql={`CREATE TABLE wallets (id INTEGER PRIMARY KEY, owner TEXT, points INTEGER);
+INSERT INTO wallets VALUES (1, 'Maya', 100), (2, 'Liam', 40);`}
+  query={`BEGIN TRANSACTION;
+UPDATE wallets SET points = 0 WHERE id = 1;
+ROLLBACK;
+
+SELECT owner, points FROM wallets ORDER BY id;`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does ROLLBACK do inside an open SQL transaction?",
+      options: [
+        "Saves all pending changes permanently",
+        "Undoes all changes made since BEGIN TRANSACTION",
+        "Deletes the database table"
+      ],
+      answer: 1,
+      explanation: "ROLLBACK reverts every write executed since the start of the current transaction."
+    }
+  ]}
+/>

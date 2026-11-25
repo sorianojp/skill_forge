@@ -1,0 +1,61 @@
+---
+title: "Sorting with key=lambda, zip() & any()/all()"
+description: "Sort lists of dictionaries cleanly with key=lambda, pair sequences with zip(), and express checks clearly with any() and all()."
+course: "python-fundamentals"
+module: "Standard Library"
+order: 11
+durationMinutes: 8
+objectives:
+  - "Sort objects or dictionaries by any field using sorted(..., key=lambda ...)"
+  - "Pair parallel lists safely with zip()"
+  - "Write readable boolean checks with any() and all()"
+---
+
+import Exercise from '@/components/quiz/Exercise';
+import PythonPlayground from '@/components/playground/PythonPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+Combining **`sorted(..., key=lambda ...)`**, **`zip()`**, and **`any()` / `all()`** turns multi-line loops into crisp, self-documenting Python.
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Sort by Score & Check all()"
+  prompt="Sort courses by lessons using a lambda key and check if all scores are >= 80."
+  template={`ranked = sorted(courses, key={{0}} c: c["lessons"], reverse=True)
+everyone_passed = {{1}}(s >= 80 for s in scores)`}
+  blanks={[
+    { answer: 'lambda', placeholder: 'kw' },
+    { answer: 'all', placeholder: 'fn' },
+  ]}
+  hint={'Use key=lambda c: ... for inline sort keys and all(...) to verify every item passes.'}
+/>
+
+## Try It Yourself
+
+<PythonPlayground
+  client:visible
+  title="sorted(), zip(), any() & all()"
+  code={`names = ["Maya", "Liam", "Sofia"]
+scores = [92, 85, 98]
+
+leaderboard = sorted(zip(names, scores), key=lambda pair: pair[1], reverse=True)
+for rank, (name, score) in enumerate(leaderboard, start=1):
+    print(f"#{rank} {name}: {score}%")
+
+print("All passed (>=80):", all(s >= 80 for s in scores))
+print("Any perfect (100):", any(s == 100 for s in scores))`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does `all(x > 0 for x in [2, 5, -1])` return?",
+      options: ["True", "False", "[-1]"],
+      answer: 1,
+      explanation: "all() returns True only if every element satisfies the condition; -1 is not > 0, so it returns False."
+    }
+  ]}
+/>

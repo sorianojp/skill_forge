@@ -5,7 +5,7 @@
   "description": "Write and run modern PHP 8 directly in your browser. Master typed functions, associative arrays, match expressions, classes, PDO security habits, and an auto-graded capstone.",
   "track": "PHP",
   "difficulty": "Beginner",
-  "estimatedHours": 4,
+  "estimatedHours": 6,
   "accentColor": "#4f46e5",
   "prerequisites": ["Basic HTML and SQL familiarity"],
   "outcomes": [

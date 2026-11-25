@@ -1,0 +1,81 @@
+---
+title: "Classes & @dataclass"
+description: "Model structured domain objects cleanly using Python's @dataclass decorator, type annotations, and instance methods."
+course: "python-fundamentals"
+module: "Object-Oriented Python"
+order: 9
+durationMinutes: 8
+objectives:
+  - "Use @dataclass to auto-generate __init__, __repr__, and equality comparisons"
+  - "Add behavior with clean instance methods receiving self"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import PythonPlayground from '@/components/playground/PythonPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+Writing repetitive `__init__` and `__repr__` boilerplate is a thing of the past. Python's standard-library **`@dataclass`** decorator generates them automatically from typed fields!
+
+<Callout type="tip" title="Immutable Dataclasses">
+  Pass <code>@dataclass(frozen=True)</code> when you want a read-only data record that can even be stored inside a <code>set</code> or used as a dictionary key.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Define a Python Dataclass"
+  prompt="Decorate Course with @dataclass and reference self inside its method."
+  template={`from dataclasses import dataclass
+
+@{{0}}
+class Course:
+    title: str
+    lessons: int
+
+    def label({{1}}):
+        return f"{self.title} ({self.lessons})"`}
+  blanks={[
+    { answer: 'dataclass', placeholder: 'dec' },
+    { answer: 'self', placeholder: 'arg' },
+  ]}
+  hint={'Use @dataclass above the class and pass self as the first parameter of instance methods.'}
+/>
+
+## Try It Yourself
+
+<PythonPlayground
+  client:visible
+  title="Clean Python @dataclass"
+  code={`from dataclasses import dataclass
+
+@dataclass
+class Course:
+    title: str
+    lessons: int
+    completed: int = 0
+
+    def percent(self) -> int:
+        return round((self.completed / self.lessons) * 100)
+
+py = Course(title="Python 3 Fundamentals", lessons=12, completed=9)
+print(py)
+print(f"Progress: {py.percent()}%")`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does the @dataclass decorator automatically generate for a Python class?",
+      options: [
+        "__init__, __repr__, and __eq__ methods from typed fields",
+        "A SQL database table",
+        "A REST API server"
+      ],
+      answer: 0,
+      explanation: "@dataclass removes boilerplate by auto-generating initialization, string representation, and equality."
+    }
+  ]}
+/>

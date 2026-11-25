@@ -1,0 +1,78 @@
+---
+title: "Subqueries & Common Table Expressions (CTEs)"
+description: "Break complex multi-step SQL queries into clean, readable building blocks using WITH Common Table Expressions and subqueries."
+course: "sql-essentials"
+module: "Intermediate Queries"
+order: 6
+durationMinutes: 8
+objectives:
+  - "Filter rows against an aggregate threshold using a scalar subquery"
+  - "Structure multi-step SQL cleanly with WITH cte_name AS (...)"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import SqlPlayground from '@/components/playground/SqlPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+When a query needs two logical steps (for example, compute each track's average score, then pick tracks above 90), **`WITH` Common Table Expressions (CTEs)** keep your SQL readable from top to bottom.
+
+```sql
+WITH track_avgs AS (
+  SELECT track, ROUND(AVG(score), 1) AS avg_score
+  FROM enrollments
+  GROUP BY track
+)
+SELECT track, avg_score
+FROM track_avgs
+WHERE avg_score >= 90;
+```
+
+<Callout type="tip" title="CTEs Beat Deeply Nested Subqueries">
+  Named CTEs read like clean variables in code and make debugging complex analytics queries dramatically easier.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Define a SQL CTE"
+  prompt="Create a CTE named high_scores using WITH ... AS and query it."
+  template={`{{0}} high_scores {{1}} (
+  SELECT name, score FROM learners WHERE score >= 90
+)
+SELECT * FROM high_scores;`}
+  blanks={[
+    { answer: 'WITH', placeholder: 'KW' },
+    { answer: 'AS', placeholder: 'KW' },
+  ]}
+  hint={'Common Table Expressions always start with WITH cte_name AS (...).'}
+/>
+
+## Try It Yourself
+
+<SqlPlayground
+  client:visible
+  title="Find Learners Above the Overall Average"
+  schemaSql={`CREATE TABLE learners (id INTEGER PRIMARY KEY, name TEXT, score INTEGER);
+INSERT INTO learners VALUES (1, 'Maya', 94), (2, 'Liam', 78), (3, 'Sofia', 96), (4, 'Noah', 82);`}
+  query={`WITH stats AS (
+  SELECT AVG(score) AS overall_avg FROM learners
+)
+SELECT l.name, l.score, ROUND(s.overall_avg, 1) AS overall_avg
+FROM learners l, stats s
+WHERE l.score > s.overall_avg
+ORDER BY l.score DESC;`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which SQL keyword introduces a Common Table Expression (CTE)?",
+      options: ["TEMP", "WITH", "DEFINE"],
+      answer: 1,
+      explanation: "CTEs are declared at the start of a query using WITH name AS (...)."
+    }
+  ]}
+/>

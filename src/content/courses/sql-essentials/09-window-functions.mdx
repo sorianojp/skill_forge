@@ -1,0 +1,72 @@
+---
+title: "Window Functions (RANK, ROW_NUMBER & OVER)"
+description: "Rank learners per track and calculate running totals without collapsing rows using SQL Window Functions."
+course: "sql-essentials"
+module: "Advanced Analytics"
+order: 9
+durationMinutes: 9
+objectives:
+  - "Understand how OVER (PARTITION BY ... ORDER BY ...) differs from GROUP BY"
+  - "Assign per-category rankings using RANK() and ROW_NUMBER()"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import SqlPlayground from '@/components/playground/SqlPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+`GROUP BY` collapses many rows into one summary row per group. **Window Functions** (`OVER (...)`) compute rankings or running totals while **keeping every individual row intact**!
+
+<Callout type="tip" title="Top-N Per Category">
+  Pairing a CTE with <code>ROW_NUMBER() OVER (PARTITION BY track ORDER BY score DESC)</code> lets you fetch the #1 learner in every track in a single clean query.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Rank Learners Within Each Track"
+  prompt="Rank learners by highest score inside each track partition."
+  template={`SELECT name, track, score,
+  RANK() {{0}} ({{1}} BY track ORDER BY score DESC) AS track_rank
+FROM enrollments;`}
+  blanks={[
+    { answer: 'OVER', placeholder: 'KW' },
+    { answer: 'PARTITION', placeholder: 'KW' },
+  ]}
+  hint={'Window functions use OVER (PARTITION BY group_col ORDER BY sort_col).'}
+/>
+
+## Try It Yourself
+
+<SqlPlayground
+  client:visible
+  title="Per-Track Leaderboard with RANK()"
+  schemaSql={`CREATE TABLE enrollments (name TEXT, track TEXT, score INTEGER);
+INSERT INTO enrollments VALUES
+  ('Maya', 'HTML', 94), ('Liam', 'HTML', 88),
+  ('Sofia', 'SQL', 98), ('Aira', 'SQL', 92), ('Noah', 'SQL', 92);`}
+  query={`SELECT
+  track,
+  name,
+  score,
+  RANK() OVER (PARTITION BY track ORDER BY score DESC) AS track_rank
+FROM enrollments
+ORDER BY track, track_rank;`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "How does a window function (OVER) differ from GROUP BY?",
+      options: [
+        "Window functions keep every original row while adding computed group/rank columns",
+        "Window functions delete duplicate rows automatically",
+        "Window functions cannot use ORDER BY"
+      ],
+      answer: 0,
+      explanation: "Unlike GROUP BY, window functions preserve row-level detail alongside group calculations."
+    }
+  ]}
+/>

@@ -1,0 +1,80 @@
+---
+title: "Namespaces, Composer & PSR-4 Autoloading"
+description: "Organize real PHP applications cleanly with namespaces, use imports, Composer dependencies, and PSR-4 autoloading."
+course: "php-essentials"
+module: "Web & Security"
+order: 11
+durationMinutes: 8
+objectives:
+  - "Avoid class name collisions using namespace and use"
+  - "Understand how Composer PSR-4 maps namespaces directly to directories"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import PhpPlayground from '@/components/playground/PhpPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+In modern PHP projects (like Laravel or Symfony), you never write dozens of manual `require 'file.php';` lines. Instead, **Composer** generates a single `vendor/autoload.php` using **PSR-4**:
+
+```json
+{
+  "autoload": {
+    "psr-4": {
+      "SkillForge\\": "src/"
+    }
+  }
+}
+```
+
+With that mapping, `SkillForge\Courses\Lesson` automatically loads from `src/Courses/Lesson.php`!
+
+<Callout type="tip" title="One Class Per File">
+  Match the filename exactly to the class name (<code>Lesson.php</code> for <code>class Lesson</code>) so PSR-4 autoloading works identically on both macOS and case-sensitive Linux servers.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="PHP Namespace & Import"
+  prompt="Declare the App\\Courses namespace and import App\\Models\\Learner."
+  template={`<?php
+{{0}} App\\Courses;
+
+{{1}} App\\Models\\Learner;`}
+  blanks={[
+    { answer: 'namespace', placeholder: 'kw' },
+    { answer: 'use', placeholder: 'kw' },
+  ]}
+  hint={'Files declare their namespace with namespace and import classes with use.'}
+/>
+
+## Try It Yourself
+
+<PhpPlayground
+  client:visible
+  title="Namespaces in Action"
+  code={`<?php
+namespace SkillForge\\Courses;
+
+class Track {
+    public function __construct(public readonly string $name) {}
+}
+
+$t = new Track('Modern PHP 8');
+echo "Class: " . Track::class . "\\n";
+echo "Track: " . $t->name . "\\n";`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What standard lets Composer automatically load PHP classes based on namespace and folder structure?",
+      options: ["PSR-4", "HTML5", "RFC-80"],
+      answer: 0,
+      explanation: "PSR-4 maps namespace prefixes directly to filesystem directories for automatic class loading."
+    }
+  ]}
+/>

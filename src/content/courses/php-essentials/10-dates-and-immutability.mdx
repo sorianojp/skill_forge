@@ -1,0 +1,68 @@
+---
+title: "Dates & Immutability with DateTimeImmutable"
+description: "Work with dates, timezones, and intervals safely using PHP's DateTimeImmutable instead of mutable DateTime."
+course: "php-essentials"
+module: "Web & Security"
+order: 10
+durationMinutes: 7
+objectives:
+  - "Prefer DateTimeImmutable so calling modify() never mutates shared dates"
+  - "Format dates cleanly using ISO-8601 and readable format strings"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import PhpPlayground from '@/components/playground/PhpPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+Always choose **`DateTimeImmutable`** over the older mutable `DateTime`. Calling `->modify('+7 days')` returns a **brand-new** date object while leaving the original date untouched!
+
+<Callout type="tip" title="Store UTC, Display Local">
+  Store timestamps in UTC (<code>new DateTimeZone('UTC')</code>) in SQL databases, then convert to the user's timezone only when rendering.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Immutable Date Formatting"
+  prompt="Create a DateTimeImmutable and format it as YYYY-MM-DD."
+  template={`$issued = new {{0}}('2026-11-26');
+$expires = $issued->modify('+1 year');
+echo $expires->{{1}}('Y-m-d');`}
+  blanks={[
+    { answer: 'DateTimeImmutable', placeholder: 'Class' },
+    { answer: 'format', placeholder: 'method' },
+  ]}
+  hint={'Use DateTimeImmutable and call ->format("Y-m-d").'}
+/>
+
+## Try It Yourself
+
+<PhpPlayground
+  client:visible
+  title="DateTimeImmutable & Intervals"
+  code={`<?php
+$start = new DateTimeImmutable('2026-11-26', new DateTimeZone('UTC'));
+$nextWeek = $start->modify('+7 days');
+
+echo "Start:     " . $start->format('M j, Y') . "\\n";
+echo "Next Week: " . $nextWeek->format('M j, Y') . "\\n";
+echo "ISO-8601:  " . $start->format(DateTimeInterface::ATOM) . "\\n";`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why is DateTimeImmutable preferred over DateTime in modern PHP?",
+      options: [
+        "Calling modify() returns a new instance without mutating the original date",
+        "DateTime has been removed from PHP 8",
+        "DateTimeImmutable skips timezone handling"
+      ],
+      answer: 0,
+      explanation: "Immutability prevents hard-to-trace bugs when the same date object is passed to multiple functions."
+    }
+  ]}
+/>

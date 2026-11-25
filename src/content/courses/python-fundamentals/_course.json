@@ -5,7 +5,7 @@
   "description": "Write and run real Python 3 directly in your browser using WebAssembly (Pyodide). Master variables, control flow, functions, lists, dictionaries, comprehensions, and an auto-graded capstone.",
   "track": "Python",
   "difficulty": "Beginner",
-  "estimatedHours": 4,
+  "estimatedHours": 6,
   "accentColor": "#059669",
   "prerequisites": ["None, designed for complete beginners"],
   "outcomes": [

@@ -1,0 +1,73 @@
+---
+title: "Tables, Constraints & Indexes"
+description: "Design reliable schemas with CREATE TABLE, PRIMARY KEY, NOT NULL, UNIQUE, CHECK constraints, and speed up lookups with CREATE INDEX."
+course: "sql-essentials"
+module: "Schema & Performance"
+order: 10
+durationMinutes: 9
+objectives:
+  - "Enforce data quality at the database level with NOT NULL, UNIQUE, and CHECK"
+  - "Speed up frequent WHERE and JOIN lookups using CREATE INDEX"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import SqlPlayground from '@/components/playground/SqlPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+Good schemas prevent bad data from ever entering your database:
+- **`PRIMARY KEY`**: Uniquely identifies every row.
+- **`NOT NULL`**: Forbids missing values.
+- **`UNIQUE`**: Prevents duplicate emails or slugs.
+- **`CHECK (...)`**: Enforces domain rules like `CHECK (score BETWEEN 0 AND 100)`.
+- **`CREATE INDEX`**: Builds a fast B-tree lookup structure so `WHERE email = ?` stays instant even on millions of rows.
+
+<Callout type="warning" title="Don't Over-Index Everything">
+  Every index speeds up <code>SELECT</code> reads, but adds small overhead to <code>INSERT</code> and <code>UPDATE</code> writes. Index columns you actually filter or join on.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Enforce Unique Emails & Add Index"
+  prompt="Prevent duplicate emails and index the course_id foreign key."
+  template={`CREATE TABLE users (
+  id INTEGER PRIMARY KEY,
+  email TEXT NOT NULL {{0}}
+);
+CREATE {{1}} idx_enrollments_course ON enrollments(course_id);`}
+  blanks={[
+    { answer: 'UNIQUE', placeholder: 'KW' },
+    { answer: 'INDEX', placeholder: 'KW' },
+  ]}
+  hint={'Use UNIQUE to prevent duplicate values and CREATE INDEX for fast lookups.'}
+/>
+
+## Try It Yourself
+
+<SqlPlayground
+  client:visible
+  title="Schema Constraints & EXPLAIN QUERY PLAN"
+  schemaSql={`CREATE TABLE courses (
+  id INTEGER PRIMARY KEY,
+  slug TEXT NOT NULL UNIQUE,
+  lessons INTEGER NOT NULL CHECK (lessons > 0)
+);
+CREATE INDEX idx_courses_slug ON courses(slug);
+INSERT INTO courses VALUES (1, 'html-fundamentals', 16), (2, 'sql-essentials', 12);`}
+  query={`EXPLAIN QUERY PLAN
+SELECT * FROM courses WHERE slug = 'sql-essentials';`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which constraint ensures a numeric score column stays between 0 and 100?",
+      options: ["UNIQUE (score)", "CHECK (score BETWEEN 0 AND 100)", "DEFAULT 100"],
+      answer: 1,
+      explanation: "A CHECK constraint validates a boolean condition on every inserted or updated row."
+    }
+  ]}
+/>

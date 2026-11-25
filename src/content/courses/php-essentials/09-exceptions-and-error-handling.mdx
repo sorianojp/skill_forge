@@ -1,0 +1,73 @@
+---
+title: "Exceptions & Resilient Error Handling"
+description: "Catch specific exception types with try/catch/finally, throw descriptive InvalidArgumentException errors, and keep apps crash-proof."
+course: "php-essentials"
+module: "Object-Oriented PHP"
+order: 9
+durationMinutes: 8
+objectives:
+  - "Throw descriptive built-in or custom Exception classes"
+  - "Handle failures cleanly with try / catch / finally"
+---
+
+import Exercise from '@/components/quiz/Exercise';
+import PhpPlayground from '@/components/playground/PhpPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+Throwing typed exceptions (`InvalidArgumentException`, `RuntimeException`) lets callers catch and handle specific failures cleanly while `finally` guarantees cleanup always runs.
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Throw & Catch a PHP Exception"
+  prompt="Throw an InvalidArgumentException and catch it."
+  template={`if ($score < 0) {
+    {{0}} new InvalidArgumentException('Score cannot be negative');
+}
+try {
+    validate(-5);
+} {{1}} (InvalidArgumentException $e) {
+    echo $e->getMessage();
+}`}
+  blanks={[
+    { answer: 'throw', placeholder: 'kw' },
+    { answer: 'catch', placeholder: 'kw' },
+  ]}
+  hint={'Use throw new ... to raise an exception and catch (...) to handle it.'}
+/>
+
+## Try It Yourself
+
+<PhpPlayground
+  client:visible
+  title="Typed Exception Handling in PHP 8"
+  code={`<?php
+function divide(float $a, float $b): float {
+    if ($b === 0.0) {
+        throw new InvalidArgumentException('Cannot divide by zero');
+    }
+    return $a / $b;
+}
+
+try {
+    echo divide(10, 2) . "\\n";
+    echo divide(10, 0) . "\\n";
+} catch (InvalidArgumentException $e) {
+    echo "Caught error: " . $e->getMessage() . "\\n";
+} finally {
+    echo "Cleanup complete.\\n";
+}`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which method on a PHP Exception returns the human-readable error string?",
+      options: ["$e->message", "$e->getMessage()", "$e->text()"],
+      answer: 1,
+      explanation: "PHP Exception objects expose the message through $e->getMessage()."
+    }
+  ]}
+/>

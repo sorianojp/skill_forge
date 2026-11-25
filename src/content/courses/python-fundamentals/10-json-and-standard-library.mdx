@@ -1,0 +1,64 @@
+---
+title: "JSON & the Python Standard Library"
+description: "Work with JSON APIs using json.dumps/loads, count frequencies effortlessly with collections.Counter, and format dates with datetime."
+course: "python-fundamentals"
+module: "Standard Library"
+order: 10
+durationMinutes: 8
+objectives:
+  - "Serialize and parse JSON cleanly using json.dumps() and json.loads()"
+  - "Count occurrences in one line with collections.Counter"
+---
+
+import Exercise from '@/components/quiz/Exercise';
+import PythonPlayground from '@/components/playground/PythonPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+Python ships "batteries included". Three standard-library modules you will reach for constantly are **`json`**, **`collections.Counter`**, and **`datetime`**.
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="JSON Serialization & Counter"
+  prompt="Serialize a dictionary to JSON text and count track frequencies with Counter."
+  template={`import json
+from collections import Counter
+
+text = json.{{0}}({"track": "Python", "free": True})
+counts = {{1}}(["HTML", "SQL", "HTML", "Python"])`}
+  blanks={[
+    { answer: 'dumps', placeholder: 'fn' },
+    { answer: 'Counter', placeholder: 'Class' },
+  ]}
+  hint={'json.dumps() dumps to a string (json.loads() loads from a string), and Counter tallies items.'}
+/>
+
+## Try It Yourself
+
+<PythonPlayground
+  client:visible
+  title="json + Counter + date"
+  code={`import json
+from collections import Counter
+from datetime import date
+
+payload = {"platform": "SkillForge", "issued": str(date(2026, 11, 26))}
+encoded = json.dumps(payload, indent=2)
+print(encoded)
+
+tracks = ["HTML", "CSS", "SQL", "SQL", "Python", "SQL"]
+print("Top tracks:", Counter(tracks).most_common(2))`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which function parses a JSON string into a Python dictionary or list?",
+      options: ["json.parse()", "json.loads()", "json.decode()"],
+      answer: 1,
+      explanation: "json.loads(str) parses a JSON string into native Python data structures."
+    }
+  ]}
+/>

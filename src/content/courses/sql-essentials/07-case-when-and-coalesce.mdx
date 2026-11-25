@@ -1,0 +1,74 @@
+---
+title: "CASE WHEN & Handling NULL with COALESCE"
+description: "Create computed categories with CASE WHEN ... THEN ... ELSE ... END and replace missing NULL values safely using COALESCE()."
+course: "sql-essentials"
+module: "Intermediate Queries"
+order: 7
+durationMinutes: 8
+objectives:
+  - "Bucket numeric values into readable labels using CASE WHEN"
+  - "Replace NULL values cleanly with COALESCE(col, fallback)"
+  - "Test for NULL properly using IS NULL / IS NOT NULL (never = NULL)"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import SqlPlayground from '@/components/playground/SqlPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+In SQL, `NULL` represents an **unknown or missing value**. Because unknown never equals unknown, `col = NULL` is never true. Always write `col IS NULL` or wrap nullable columns in **`COALESCE(col, 'Fallback')`**.
+
+<Callout type="tip" title="CASE Expressions Inside Aggregates">
+  Combine <code>SUM(CASE WHEN score &gt;= 80 THEN 1 ELSE 0 END)</code> to count passing learners in one clean pass!
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Handle NULL & Classify Scores"
+  prompt="Replace NULL bios with 'No bio yet' and finish the CASE expression."
+  template={`SELECT
+  {{0}}(bio, 'No bio yet') AS bio,
+  CASE WHEN score >= 80 THEN 'Pass' ELSE 'Retry' {{1}} AS status
+FROM learners;`}
+  blanks={[
+    { answer: 'COALESCE', placeholder: 'FN' },
+    { answer: 'END', placeholder: 'KW' },
+  ]}
+  hint={'COALESCE() returns the first non-NULL argument, and every CASE block closes with END.'}
+/>
+
+## Try It Yourself
+
+<SqlPlayground
+  client:visible
+  title="CASE WHEN Buckets + COALESCE"
+  schemaSql={`CREATE TABLE learners (id INTEGER PRIMARY KEY, name TEXT, nickname TEXT, score INTEGER);
+INSERT INTO learners VALUES
+  (1, 'Maya', 'May', 95),
+  (2, 'Liam', NULL, 82),
+  (3, 'Noah', NULL, 71);`}
+  query={`SELECT
+  COALESCE(nickname, name) AS display_name,
+  score,
+  CASE
+    WHEN score >= 90 THEN 'Honors'
+    WHEN score >= 80 THEN 'Passed'
+    ELSE 'Needs Review'
+  END AS result
+FROM learners
+ORDER BY score DESC;`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "How should you check if a column named deleted_at is NULL in SQL?",
+      options: ["WHERE deleted_at = NULL", "WHERE deleted_at IS NULL", "WHERE deleted_at == NULL"],
+      answer: 1,
+      explanation: "Standard SQL requires IS NULL (or IS NOT NULL) to test for NULL values."
+    }
+  ]}
+/>

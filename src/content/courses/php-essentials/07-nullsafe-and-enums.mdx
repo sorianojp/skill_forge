@@ -1,0 +1,83 @@
+---
+title: "Nullsafe Operator (?->) & Backed Enums"
+description: "Eliminate nested null checks with ?-> and model fixed sets of values safely using PHP 8.1 Backed Enums."
+course: "php-essentials"
+module: "Modern PHP 8 Features"
+order: 7
+durationMinutes: 8
+objectives:
+  - "Chain method calls safely on nullable objects using ?->"
+  - "Define type-safe Backed Enums (enum Track: string) with methods"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import PhpPlayground from '@/components/playground/PhpPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+## Backed Enums
+
+Instead of passing magic strings like `'beginner'` or `'pro'` everywhere (where a typo silently breaks logic), PHP 8.1 **Enums** let the type system enforce valid values:
+
+```php
+enum Level: string {
+    case Beginner = 'beginner';
+    case Intermediate = 'intermediate';
+}
+```
+
+<Callout type="tip" title="Combine ?-> with ??">
+  Write <code>$city = $user?-&gt;profile?-&gt;city ?? 'Unknown';</code> to safely read nested properties in one clean line.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Nullsafe Chaining & Enums"
+  prompt="Declare a string-backed enum and safely call getName() on a nullable $user."
+  template={`{{0}} Status: string {
+    case Active = 'active';
+}
+$name = $user{{1}}getName() ?? 'Guest';`}
+  blanks={[
+    { answer: 'enum', placeholder: 'kw' },
+    { answer: '?->', placeholder: 'op' },
+  ]}
+  hint={'Use enum Name: string for backed enums and ?-> for the nullsafe operator.'}
+/>
+
+## Try It Yourself
+
+<PhpPlayground
+  client:visible
+  title="PHP 8 Backed Enum + Nullsafe ?->"
+  code={`<?php
+enum Track: string {
+    case Html = 'HTML';
+    case Sql = 'SQL';
+    case Php = 'PHP';
+
+    public function badge(): string {
+        return "[{$this->value}]";
+    }
+}
+
+$track = Track::Php;
+echo $track->badge() . " -> " . $track->value . "\\n";
+
+$user = null;
+echo "User: " . ($user?->name ?? 'Guest') . "\\n";`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does `$user?->profile?->city` evaluate to when `$user` is null?",
+      options: ["Throws a fatal error", "Returns null safely", "Returns an empty string"],
+      answer: 1,
+      explanation: "The nullsafe operator (?->) short-circuits and returns null without throwing."
+    }
+  ]}
+/>

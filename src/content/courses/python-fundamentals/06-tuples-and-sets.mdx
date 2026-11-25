@@ -1,0 +1,66 @@
+---
+title: "Tuples, Unpacking & Sets"
+description: "Return multiple values cleanly with tuples and unpacking, and compute unique items, intersections, and differences using sets."
+course: "python-fundamentals"
+module: "Data Structures"
+order: 6
+durationMinutes: 8
+objectives:
+  - "Unpack tuple values cleanly into named variables"
+  - "Deduplicate collections and compare memberships using set operations (&, |, -)"
+---
+
+import Exercise from '@/components/quiz/Exercise';
+import PythonPlayground from '@/components/playground/PythonPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+**Tuples** (`(10, 20)`) are lightweight, immutable sequences ideal for fixed records and returning multiple values from a function. **Sets** (`{"HTML", "CSS"}`) store unique items with fast `in` membership checks and math-style operations:
+- `a | b` (union: items in either set)
+- `a & b` (intersection: items in both sets)
+- `a - b` (difference: items in `a` but not `b`)
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Tuple Unpacking & Set Intersection"
+  prompt="Unpack the coordinate tuple and find tracks present in both sets."
+  template={`x, y = (10, 20)
+common = frontend {{0}} fullstack
+unique = {{1}}(["html", "css", "html"])`}
+  blanks={[
+    { answer: '&', placeholder: 'op' },
+    { answer: 'set', placeholder: 'fn' },
+  ]}
+  hint={'Use & for set intersection and set(...) to create a unique set.'}
+/>
+
+## Try It Yourself
+
+<PythonPlayground
+  client:visible
+  title="Unpacking & Set Operations"
+  code={`def min_max(nums):
+    return (min(nums), max(nums))
+
+low, high = min_max([72, 95, 84, 91])
+print(f"Lowest: {low}, Highest: {high}")
+
+frontend = {"HTML", "CSS", "JavaScript"}
+backend = {"JavaScript", "SQL", "PHP", "Python"}
+
+print("Shared:", frontend & backend)
+print("Backend only:", sorted(backend - frontend))`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does `{1, 2, 3} & {2, 3, 4}` return in Python?",
+      options: ["{1, 2, 3, 4}", "{2, 3}", "{1, 4}"],
+      answer: 1,
+      explanation: "The & operator computes the intersection (elements shared by both sets)."
+    }
+  ]}
+/>

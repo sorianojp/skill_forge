@@ -1,0 +1,74 @@
+---
+title: "Interfaces & Traits"
+description: "Define clean contracts with PHP interfaces and share reusable behavior across unrelated classes using traits."
+course: "php-essentials"
+module: "Object-Oriented PHP"
+order: 8
+durationMinutes: 8
+objectives:
+  - "Enforce shared method contracts with interface and implements"
+  - "Reuse focused helper methods cleanly with trait and use"
+---
+
+import Exercise from '@/components/quiz/Exercise';
+import PhpPlayground from '@/components/playground/PhpPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+In object-oriented PHP, **interfaces** define *what* a class can do (a contract), while **traits** let multiple classes share reusable method implementations without deep inheritance trees.
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Implement an Interface & Use a Trait"
+  prompt="Make LessonCard implement Renderable and include the HasSlug trait."
+  template={`class LessonCard {{0}} Renderable {
+    {{1}} HasSlug;
+    public function render(): string { return 'ok'; }
+}`}
+  blanks={[
+    { answer: 'implements', placeholder: 'kw' },
+    { answer: 'use', placeholder: 'kw' },
+  ]}
+  hint={'Classes implements interfaces and use traits inside the class body.'}
+/>
+
+## Try It Yourself
+
+<PhpPlayground
+  client:visible
+  title="Interface Contract + Reusable Trait"
+  code={`<?php
+interface Scorable {
+    public function percent(): int;
+}
+
+trait Passable {
+    public function passed(): bool {
+        return $this->percent() >= 80;
+    }
+}
+
+class ExamAttempt implements Scorable {
+    use Passable;
+    public function __construct(private int $correct, private int $total) {}
+    public function percent(): int {
+        return (int) round(($this->correct / $this->total) * 100);
+    }
+}
+
+$attempt = new ExamAttempt(9, 10);
+echo "Score: {$attempt->percent()}% | Passed: " . ($attempt->passed() ? 'Yes' : 'No') . "\\n";`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "How does a PHP class include methods from a trait?",
+      options: ["extends TraitName", "use TraitName; inside the class body", "import TraitName;"],
+      answer: 1,
+      explanation: "Traits are mixed into a class using `use TraitName;` inside the class definition."
+    }
+  ]}
+/>

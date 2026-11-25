@@ -4,6 +4,7 @@ import ContinueBanner from '@/components/progress/ContinueBanner';
 import CourseCardFooter from '@/components/progress/CourseCardFooter';
 import Playground from '@/components/playground/Playground';
 import TrackIcon from '@/components/ui/TrackIcon.astro';
+import { CAREER_PATHS } from '@/data/paths';
 import { getAllCoursesSorted, getCourseLessons, getLessonKey, getLessonSlug } from '@/lib/courses';
 import { getCollection } from 'astro:content';
 
@@ -126,6 +127,46 @@ const references = await getCollection('references');
               secondaryLabel="Syllabus"
             />
           </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- Career Paths Strip -->
+    <section class="mt-20" aria-labelledby="paths-heading">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h2 id="paths-heading" class="text-2xl font-extrabold tracking-tight text-[var(--text)] sm:text-3xl">
+            Curated Career Paths
+          </h2>
+          <p class="mt-1.5 text-sm text-[var(--text-muted)]">
+            Not sure what order to learn in? Follow a step-by-step roadmap.
+          </p>
+        </div>
+        <a href="/paths" class="text-sm font-semibold text-[var(--accent)] hover:underline">
+          Explore all paths →
+        </a>
+      </div>
+
+      <div class="mt-6 grid grid-cols-1 gap-5 md:grid-cols-3">
+        {CAREER_PATHS.map((path) => (
+          <a
+            href="/paths"
+            class="flex flex-col justify-between rounded-3xl bg-[var(--bg-elevated)] p-6 transition hover:-translate-y-0.5"
+          >
+            <div>
+              <span
+                class="inline-block rounded-full px-3 py-0.5 text-[11px] font-bold text-white"
+                style={`background-color: ${path.accentColor}`}
+              >
+                {path.tagline}
+              </span>
+              <h3 class="mt-3 text-lg font-bold text-[var(--text)]">{path.title}</h3>
+              <p class="mt-1.5 text-sm leading-relaxed text-[var(--text-muted)]">{path.description}</p>
+            </div>
+            <span class="mt-5 inline-flex items-center gap-1 text-xs font-semibold text-[var(--accent)]">
+              View roadmap →
+            </span>
+          </a>
         ))}
       </div>
     </section>

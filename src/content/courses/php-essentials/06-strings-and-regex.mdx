@@ -1,0 +1,60 @@
+---
+title: "Modern String Helpers & Regular Expressions"
+description: "Search and transform text cleanly using PHP 8's str_contains(), str_starts_with(), explode(), implode(), and preg_match()."
+course: "php-essentials"
+module: "Core Standard Library"
+order: 6
+durationMinutes: 7
+objectives:
+  - "Check substrings readably with str_contains(), str_starts_with(), and str_ends_with()"
+  - "Split and join strings with explode() and implode()"
+  - "Validate simple patterns using preg_match()"
+---
+
+import Exercise from '@/components/quiz/Exercise';
+import PhpPlayground from '@/components/playground/PhpPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+PHP 8 added crystal-clear boolean string helpers (`str_contains`, `str_starts_with`, `str_ends_with`) so you no longer need clunky `strpos($s, 'x') !== false` checks!
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="PHP 8 String Helpers"
+  prompt="Check if $slug starts with 'php-' and split a comma-separated string into an array."
+  template={`$isPhp = {{0}}($slug, 'php-');
+$tags = {{1}}(',', 'html,css,php');`}
+  blanks={[
+    { answer: 'str_starts_with', placeholder: 'fn' },
+    { answer: 'explode', placeholder: 'fn' },
+  ]}
+  hint={'Use str_starts_with($haystack, $needle) and explode($delimiter, $string).'}
+/>
+
+## Try It Yourself
+
+<PhpPlayground
+  client:visible
+  title="PHP 8 String Helpers & Regex"
+  code={`<?php
+$slug = 'php-essentials';
+var_dump(str_starts_with($slug, 'php-'));
+var_dump(str_contains($slug, 'essential'));
+
+$parts = explode('-', $slug);
+echo "Joined: " . implode(' / ', $parts) . "\\n";
+echo "Valid slug: " . (preg_match('/^[a-z0-9-]+$/', $slug) ? 'yes' : 'no') . "\\n";`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which PHP 8 function returns true if a string contains a given substring?",
+      options: ["str_has()", "str_contains()", "in_string()"],
+      answer: 1,
+      explanation: "str_contains($haystack, $needle) returns a clean boolean in PHP 8+."
+    }
+  ]}
+/>

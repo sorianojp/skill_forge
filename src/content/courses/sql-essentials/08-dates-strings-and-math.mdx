@@ -1,0 +1,62 @@
+---
+title: "String, Math & Date Functions"
+description: "Clean text with LOWER(), TRIM(), and LENGTH(), round metrics with ROUND(), and format timestamps using SQLite date functions."
+course: "sql-essentials"
+module: "Intermediate Queries"
+order: 8
+durationMinutes: 7
+objectives:
+  - "Normalize and combine text using LOWER(), UPPER(), TRIM(), and ||"
+  - "Extract year or month parts from ISO dates using strftime()"
+---
+
+import Exercise from '@/components/quiz/Exercise';
+import SqlPlayground from '@/components/playground/SqlPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+Real-world datasets are messy: inconsistent casing, trailing spaces, and raw ISO timestamps. Built-in SQL scalar functions let you normalize data right inside your query.
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Normalize Email & Round Average"
+  prompt="Trim whitespace, lowercase the email, and round the average to 1 decimal."
+  template={`SELECT {{0}}(TRIM(email)) AS clean_email,
+       {{1}}(AVG(score), 1) AS avg_score
+FROM users;`}
+  blanks={[
+    { answer: 'LOWER', placeholder: 'FN' },
+    { answer: 'ROUND', placeholder: 'FN' },
+  ]}
+  hint={'Use LOWER() for lowercase text and ROUND(value, decimals) for numbers.'}
+/>
+
+## Try It Yourself
+
+<SqlPlayground
+  client:visible
+  title="Text Cleanup & Monthly Grouping"
+  schemaSql={`CREATE TABLE signups (id INTEGER PRIMARY KEY, email TEXT, created_at TEXT);
+INSERT INTO signups VALUES
+  (1, '  Ada@Example.COM ', '2026-10-05'),
+  (2, 'Maya@Example.com', '2026-11-12'),
+  (3, 'Liam@Example.com', '2026-11-24');`}
+  query={`SELECT
+  LOWER(TRIM(email)) AS clean_email,
+  strftime('%Y-%m', created_at) AS signup_month
+FROM signups
+ORDER BY created_at;`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which function removes leading and trailing spaces from a SQL text column?",
+      options: ["CLEAN()", "TRIM()", "STRIP()"],
+      answer: 1,
+      explanation: "TRIM(text) strips leading and trailing whitespace characters."
+    }
+  ]}
+/>

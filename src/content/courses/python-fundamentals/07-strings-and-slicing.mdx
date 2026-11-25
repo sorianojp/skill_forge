@@ -1,0 +1,59 @@
+---
+title: "Strings, Methods & Slicing"
+description: "Clean, split, join, and slice text effortlessly with .strip(), .split(), .join(), .replace(), and slice steps."
+course: "python-fundamentals"
+module: "Data Structures"
+order: 7
+durationMinutes: 7
+objectives:
+  - "Clean messy user input with .strip(), .lower(), and .replace()"
+  - "Convert between strings and lists using .split() and .join()"
+  - "Slice substrings and reverse sequences cleanly with [start:stop:step]"
+---
+
+import Exercise from '@/components/quiz/Exercise';
+import PythonPlayground from '@/components/playground/PythonPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+Python strings are immutable, so methods like `.strip()`, `.lower()`, and `.replace()` always return a **new** cleaned string and chain together cleanly.
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Split & Join Strings"
+  prompt="Split the CSV string on commas and join the items with ' | '."
+  template={`tags = "html,css,python".{{0}}(",")
+display = " | ".{{1}}(tags)`}
+  blanks={[
+    { answer: 'split', placeholder: 'method' },
+    { answer: 'join', placeholder: 'method' },
+  ]}
+  hint={'str.split(sep) breaks text into a list; sep.join(list) combines a list into one string.'}
+/>
+
+## Try It Yourself
+
+<PythonPlayground
+  client:visible
+  title="String Cleanup & Slicing"
+  code={`raw = "  SkillForge Python Track  "
+clean = raw.strip().lower().replace(" ", "-")
+print("Slug:", clean)
+
+words = ["HTML", "CSS", "SQL", "Python"]
+print("Path:", " -> ".join(words))
+print("Reversed:", "Python"[::-1])`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does `'-'.join(['a', 'b', 'c'])` return?",
+      options: ["['a-b-c']", "'a-b-c'", "'abc-'"],
+      answer: 1,
+      explanation: "The separator string calls .join(iterable) to concatenate all strings with '-' between them."
+    }
+  ]}
+/>
