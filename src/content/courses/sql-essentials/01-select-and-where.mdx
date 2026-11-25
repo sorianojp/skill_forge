@@ -1,0 +1,85 @@
+---
+title: "SELECT & Filtering with WHERE"
+description: "Query specific columns from relational tables and filter rows with WHERE, AND, OR, and LIKE."
+course: "sql-essentials"
+module: "Querying Data"
+order: 1
+durationMinutes: 7
+objectives:
+  - "Select specific columns instead of SELECT * for cleaner queries"
+  - "Filter rows using WHERE with comparison operators (=, >=, <>)"
+  - "Match text patterns using LIKE with the % wildcard"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import SqlPlayground from '@/components/playground/SqlPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+**SQL (Structured Query Language)** is the universal language for working with relational databases like PostgreSQL, MySQL, and SQLite.
+
+## Anatomy of a Basic Query
+
+```sql
+SELECT title, track, lessons
+FROM courses
+WHERE lessons >= 10;
+```
+
+<Callout type="tip" title="Name Your Columns Explicitly">
+  In production apps, prefer listing exact columns (<code>SELECT id, title</code>) instead of <code>SELECT *</code> so queries stay fast and predictable as tables grow.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Filter Free Courses"
+  prompt="Select the title and track from courses where lessons is at least 10."
+  template={`{{0}} title, track
+{{1}} courses
+{{2}} lessons >= 10;`}
+  blanks={[
+    { answer: 'SELECT', placeholder: 'KW' },
+    { answer: 'FROM', placeholder: 'KW' },
+    { answer: 'WHERE', placeholder: 'KW' },
+  ]}
+  hint={'Every basic query follows SELECT ... FROM ... WHERE ...'}
+/>
+
+## Try It Yourself (Live In-Browser SQLite)
+
+Click **Run SQL** to query a live SQLite database right inside your browser! Try changing `>= 10` to `< 10` or filtering by `track = 'SQL'`.
+
+<SqlPlayground
+  client:visible
+  title="Query the Courses Table"
+  schemaSql={`CREATE TABLE courses (
+  id INTEGER PRIMARY KEY,
+  title TEXT,
+  track TEXT,
+  lessons INTEGER,
+  level TEXT
+);
+INSERT INTO courses VALUES
+  (1, 'Modern HTML Fundamentals', 'HTML', 16, 'Beginner'),
+  (2, 'Modern CSS & Layout', 'CSS', 16, 'Beginner'),
+  (3, 'Modern JavaScript & the DOM', 'JavaScript', 16, 'Beginner'),
+  (4, 'SQL & Relational Databases', 'SQL', 6, 'Beginner'),
+  (5, 'Python 3 Fundamentals', 'Python', 6, 'Beginner');`}
+  query={`SELECT title, track, lessons
+FROM courses
+WHERE lessons >= 10;`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which SQL clause filters which rows are returned by a SELECT query?",
+      options: ["FILTER BY", "WHERE", "MATCH"],
+      answer: 1,
+      explanation: "The WHERE clause specifies the condition each row must satisfy to be included in the result."
+    }
+  ]}
+/>

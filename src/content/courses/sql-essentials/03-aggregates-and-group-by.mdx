@@ -1,0 +1,80 @@
+---
+title: "Aggregates, GROUP BY & HAVING"
+description: "Compute totals, counts, and averages across categories with COUNT(), SUM(), AVG(), GROUP BY, and HAVING."
+course: "sql-essentials"
+module: "Analytics & Joins"
+order: 3
+durationMinutes: 8
+objectives:
+  - "Summarize rows with COUNT(*), SUM(), AVG(), MIN(), and MAX()"
+  - "Group rows by category using GROUP BY"
+  - "Understand the difference between WHERE (before grouping) and HAVING (after grouping)"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import SqlPlayground from '@/components/playground/SqlPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+Aggregate functions turn hundreds of raw rows into clean executive metrics.
+
+<Callout type="note" title="WHERE vs. HAVING">
+  <code>WHERE</code> filters individual rows <strong>before</strong> grouping. <code>HAVING</code> filters aggregated groups <strong>after</strong> <code>GROUP BY</code> (for example, <code>HAVING COUNT(*) &gt;= 2</code>).
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Group & Filter Aggregates"
+  prompt="Count learners per track and keep only tracks with at least 2 learners."
+  template={`SELECT track, {{0}}(*) AS learners
+FROM enrollments
+{{1}} BY track
+{{2}} COUNT(*) >= 2;`}
+  blanks={[
+    { answer: 'COUNT', placeholder: 'FN' },
+    { answer: 'GROUP', placeholder: 'KW' },
+    { answer: 'HAVING', placeholder: 'KW' },
+  ]}
+  hint={'Use COUNT(*) to count rows, GROUP BY to bucket them, and HAVING to filter groups.'}
+/>
+
+## Try It Yourself
+
+<SqlPlayground
+  client:visible
+  title="Average Score by Track"
+  schemaSql={`CREATE TABLE enrollments (
+  id INTEGER PRIMARY KEY,
+  learner TEXT,
+  track TEXT,
+  score INTEGER
+);
+INSERT INTO enrollments VALUES
+  (1, 'Maya', 'HTML', 90),
+  (2, 'Liam', 'HTML', 96),
+  (3, 'Sofia', 'SQL', 98),
+  (4, 'Aira', 'SQL', 92),
+  (5, 'Noah', 'CSS', 84);`}
+  query={`SELECT
+  track,
+  COUNT(*) AS total_learners,
+  ROUND(AVG(score), 1) AS avg_score
+FROM enrollments
+GROUP BY track
+HAVING COUNT(*) >= 2
+ORDER BY avg_score DESC;`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which clause filters grouped results after GROUP BY has been computed?",
+      options: ["WHERE", "HAVING", "ORDER BY"],
+      answer: 1,
+      explanation: "HAVING filters groups based on aggregate expressions like COUNT(*) or AVG(score)."
+    }
+  ]}
+/>

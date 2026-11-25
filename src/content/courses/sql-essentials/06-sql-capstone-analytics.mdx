@@ -1,0 +1,66 @@
+---
+title: "Capstone: Auto-Graded SQL Analytics Challenge"
+description: "Combine JOIN, GROUP BY, AVG(), and ORDER BY to build a course analytics query and pass all 4 automated SQL checks."
+course: "sql-essentials"
+module: "Capstone Project"
+order: 6
+durationMinutes: 10
+objectives:
+  - "Join enrollments with courses to report course titles and average scores"
+  - "Sort courses from highest average score to lowest"
+  - "Pass all 4 automated SQLite checks in the browser"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import SqlPlayground from '@/components/playground/SqlPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+Welcome to the **SQL & Relational Databases** capstone! Write a query that joins `courses` (`c`) and `enrollments` (`e`), computes the `learner_count` and rounded `avg_score` per course, and orders by `avg_score DESC`.
+
+## Auto-Graded SQL Capstone Challenge
+
+Click **Run & Test** to verify your query against all 4 automated SQLite checks!
+
+<SqlPlayground
+  client:visible
+  title="SQL Capstone: Course Performance Report"
+  height={240}
+  schemaSql={`CREATE TABLE courses (id INTEGER PRIMARY KEY, title TEXT);
+CREATE TABLE enrollments (id INTEGER PRIMARY KEY, course_id INTEGER, score INTEGER);
+INSERT INTO courses VALUES (1, 'HTML'), (2, 'CSS'), (3, 'SQL');
+INSERT INTO enrollments VALUES
+  (1, 1, 88), (2, 1, 92),
+  (3, 2, 80), (4, 2, 86),
+  (5, 3, 94), (6, 3, 98);`}
+  query={`SELECT
+  c.title,
+  COUNT(e.id) AS learner_count,
+  ROUND(AVG(e.score), 1) AS avg_score
+FROM courses c
+INNER JOIN enrollments e ON e.course_id = c.id
+GROUP BY c.id, c.title
+ORDER BY avg_score DESC;`}
+  tests={[
+    { label: 'Returns 3 course summary rows', check: 'return values.length === 3;' },
+    { label: 'Includes columns title, learner_count, and avg_score', check: "return columns.includes('title') && columns.includes('learner_count') && columns.includes('avg_score');" },
+    { label: 'Ranks SQL first with avg_score of 96', check: "return values[0] && values[0][0] === 'SQL' && Number(values[0][2]) === 96;" },
+    { label: 'Counts 2 learners for every course', check: 'return values.every((r) => Number(r[1]) === 2);' },
+  ]}
+/>
+
+<Callout type="tip" title="Ready for Your Free SQL Certificate?">
+  Take the <a href="/courses/sql-essentials/exam"><strong>SQL Final Exam</strong></a> (score 80% or higher) to unlock your free downloadable Completion Certificate!
+</Callout>
+
+<Quiz
+  client:visible
+  title="SQL Essentials Final Check"
+  questions={[
+    {
+      question: "In a SQL query with SELECT, FROM, JOIN, WHERE, GROUP BY, and ORDER BY, which clause is written last?",
+      options: ["GROUP BY", "WHERE", "ORDER BY"],
+      answer: 2,
+      explanation: "ORDER BY (followed optionally by LIMIT) goes at the end of a SELECT statement to sort the final result set."
+    }
+  ]}
+/>

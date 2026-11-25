@@ -1,0 +1,71 @@
+---
+title: "Sorting, LIMIT & DISTINCT"
+description: "Sort query results with ORDER BY ASC/DESC, cap rows with LIMIT for top-N queries, and remove duplicates with DISTINCT."
+course: "sql-essentials"
+module: "Querying Data"
+order: 2
+durationMinutes: 7
+objectives:
+  - "Sort rows in ascending (ASC) or descending (DESC) order"
+  - "Return top-N results cleanly with ORDER BY ... LIMIT"
+  - "Remove duplicate values from output using SELECT DISTINCT"
+---
+
+import Exercise from '@/components/quiz/Exercise';
+import SqlPlayground from '@/components/playground/SqlPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+Database tables have no guaranteed row order unless you explicitly add **`ORDER BY`**. Pair it with **`LIMIT`** to build leaderboards, recent activity feeds, and pagination.
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Top 3 Highest Scores"
+  prompt="Return the top 3 learners ordered from highest score to lowest."
+  template={`SELECT name, score
+FROM learners
+{{0}} BY score {{1}}
+{{2}} 3;`}
+  blanks={[
+    { answer: 'ORDER', placeholder: 'KW' },
+    { answer: 'DESC', placeholder: 'DIR' },
+    { answer: 'LIMIT', placeholder: 'KW' },
+  ]}
+  hint={'Use ORDER BY score DESC to sort highest first, then LIMIT 3.'}
+/>
+
+## Try It Yourself
+
+<SqlPlayground
+  client:visible
+  title="Leaderboard Query (ORDER BY + LIMIT)"
+  schemaSql={`CREATE TABLE learners (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  track TEXT,
+  score INTEGER
+);
+INSERT INTO learners VALUES
+  (1, 'Maya', 'HTML', 92),
+  (2, 'Liam', 'CSS', 88),
+  (3, 'Sofia', 'SQL', 98),
+  (4, 'Noah', 'JavaScript', 85),
+  (5, 'Aira', 'SQL', 95);`}
+  query={`SELECT name, track, score
+FROM learners
+ORDER BY score DESC
+LIMIT 3;`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which keyword removes duplicate values from a SELECT result?",
+      options: ["UNIQUE", "DISTINCT", "DEDUP"],
+      answer: 1,
+      explanation: "SELECT DISTINCT column_name returns each unique value only once."
+    }
+  ]}
+/>

@@ -1,0 +1,20 @@
+{
+  "slug": "sql-essentials",
+  "title": "SQL & Relational Databases",
+  "shortTitle": "Learn SQL",
+  "description": "Query real relational tables directly in your browser using SQLite WebAssembly. Master SELECT, WHERE, GROUP BY, JOINs, data updates, and an auto-graded analytics capstone.",
+  "track": "SQL",
+  "difficulty": "Beginner",
+  "estimatedHours": 4,
+  "accentColor": "#7c3aed",
+  "prerequisites": ["None, designed for complete beginners"],
+  "outcomes": [
+    "Query and filter relational tables cleanly with SELECT, WHERE, and LIKE",
+    "Sort, deduplicate, and paginate results using ORDER BY, DISTINCT, and LIMIT",
+    "Summarize metrics with COUNT, SUM, AVG, GROUP BY, and HAVING",
+    "Combine related tables safely using INNER JOIN and LEFT JOIN",
+    "Insert, update, and delete records safely with WHERE clauses"
+  ],
+  "featured": true,
+  "order": 4
+}

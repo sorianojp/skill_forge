@@ -1,0 +1,71 @@
+---
+title: "INSERT, UPDATE & DELETE Safely"
+description: "Add new rows with INSERT INTO, modify existing records with UPDATE ... SET ... WHERE, and remove rows safely with DELETE FROM."
+course: "sql-essentials"
+module: "Modifying Data"
+order: 5
+durationMinutes: 8
+objectives:
+  - "Insert new records with explicit column lists"
+  - "Update specific rows cleanly using UPDATE ... SET ... WHERE"
+  - "Always test a WHERE clause with SELECT before running UPDATE or DELETE"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import SqlPlayground from '@/components/playground/SqlPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+Modifying data is where SQL mistakes can be costly. One golden rule prevents disasters: **never run `UPDATE` or `DELETE` without a `WHERE` clause** unless you truly intend to overwrite or wipe the entire table!
+
+<Callout type="warning" title="Golden Safety Habit">
+  Before running <code>DELETE FROM users WHERE ...</code> on a real database, run <code>SELECT * FROM users WHERE ...</code> first to verify you matched the exact rows you intended.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Safe UPDATE Statement"
+  prompt="Update the score to 100 specifically for the learner with id = 2."
+  template={`{{0}} learners
+{{1}} score = 100
+{{2}} id = 2;`}
+  blanks={[
+    { answer: 'UPDATE', placeholder: 'KW' },
+    { answer: 'SET', placeholder: 'KW' },
+    { answer: 'WHERE', placeholder: 'KW' },
+  ]}
+  hint={'Every targeted update follows UPDATE table SET col = val WHERE condition.'}
+/>
+
+## Try It Yourself
+
+Notice how we insert a new row, update one row, and then `SELECT` the final table state:
+
+<SqlPlayground
+  client:visible
+  title="INSERT, UPDATE & Inspect Results"
+  schemaSql={`CREATE TABLE tasks (id INTEGER PRIMARY KEY, title TEXT, done INTEGER);
+INSERT INTO tasks VALUES (1, 'Learn SELECT', 1), (2, 'Practice JOINs', 0);`}
+  query={`INSERT INTO tasks (id, title, done) VALUES (3, 'Pass SQL Exam', 0);
+UPDATE tasks SET done = 1 WHERE id = 2;
+
+SELECT id, title, done FROM tasks ORDER BY id;`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What happens if you run `DELETE FROM tasks;` without a WHERE clause?",
+      options: [
+        "SQLite rejects the query",
+        "Every single row in the tasks table is deleted",
+        "Only the last row is deleted"
+      ],
+      answer: 1,
+      explanation: "Without a WHERE filter, DELETE FROM removes all rows in the table."
+    }
+  ]}
+/>

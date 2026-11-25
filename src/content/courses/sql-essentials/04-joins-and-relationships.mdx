@@ -1,0 +1,71 @@
+---
+title: "JOINs & Table Relationships"
+description: "Connect normalized tables using primary keys, foreign keys, INNER JOIN, and LEFT JOIN."
+course: "sql-essentials"
+module: "Analytics & Joins"
+order: 4
+durationMinutes: 9
+objectives:
+  - "Combine matching rows from two tables with INNER JOIN ... ON"
+  - "Keep unmatched rows from the left table using LEFT JOIN"
+  - "Use concise table aliases (c, e) to keep JOIN queries readable"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import SqlPlayground from '@/components/playground/SqlPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+Relational databases avoid repeating data by splitting entities into separate tables (like `learners` and `courses`) linked by **IDs**.
+
+- **`INNER JOIN`**: Returns only rows that have a match in **both** tables.
+- **`LEFT JOIN`**: Returns **all** rows from the left table, with `NULL` for columns when the right table has no match.
+
+<Callout type="tip" title="Spotting Unmatched Records">
+  A <code>LEFT JOIN</code> followed by <code>WHERE right_table.id IS NULL</code> is the classic SQL pattern to find learners who have not enrolled in any course yet!
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Join Enrollments to Courses"
+  prompt="Join enrollments (e) with courses (c) where e.course_id matches c.id."
+  template={`SELECT e.learner, c.title
+FROM enrollments e
+{{0}} JOIN courses c {{1}} e.course_id = c.id;`}
+  blanks={[
+    { answer: 'INNER', accepted: ['LEFT'], placeholder: 'JOIN' },
+    { answer: 'ON', placeholder: 'KW' },
+  ]}
+  hint={'Use INNER JOIN (or LEFT JOIN) and specify the matching keys after ON.'}
+/>
+
+## Try It Yourself
+
+Try changing `LEFT JOIN` to `INNER JOIN` below and watch what happens to **Noah** (who has no certificate yet)!
+
+<SqlPlayground
+  client:visible
+  title="LEFT JOIN vs. INNER JOIN"
+  schemaSql={`CREATE TABLE learners (id INTEGER PRIMARY KEY, name TEXT);
+CREATE TABLE certificates (id INTEGER PRIMARY KEY, learner_id INTEGER, course TEXT);
+INSERT INTO learners VALUES (1, 'Maya'), (2, 'Sofia'), (3, 'Noah');
+INSERT INTO certificates VALUES (1, 1, 'HTML'), (2, 2, 'SQL');`}
+  query={`SELECT l.name, c.course AS certificate
+FROM learners l
+LEFT JOIN certificates c ON c.learner_id = l.id
+ORDER BY l.id;`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which JOIN keeps every row from the left table even when there is no matching row in the right table?",
+      options: ["INNER JOIN", "LEFT JOIN", "CROSS JOIN"],
+      answer: 1,
+      explanation: "LEFT JOIN preserves all rows from the left table and fills unmatched right-table columns with NULL."
+    }
+  ]}
+/>

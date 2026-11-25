@@ -1,0 +1,25 @@
+---
+title: "SQL Quick Reference"
+category: "SQL"
+syntax: "SELECT cols FROM t1 JOIN t2 ON ... WHERE ... GROUP BY ... ORDER BY ... LIMIT n;"
+summary: "Essential SQL clauses for querying, filtering, aggregating, joining, and safely updating relational tables."
+browserSupport: "SQLite / PostgreSQL / MySQL"
+---
+
+## Querying & Filtering
+
+| Clause | Purpose | Example |
+| :--- | :--- | :--- |
+| `SELECT` / `DISTINCT` | Choose columns / deduplicate values | `SELECT DISTINCT track FROM courses;` |
+| `WHERE` | Filter rows before grouping | `WHERE lessons >= 10 AND level = 'Beginner'` |
+| `LIKE` | Pattern matching (`%` = any chars) | `WHERE title LIKE '%CSS%'` |
+| `ORDER BY` / `LIMIT` | Sort results and cap row count | `ORDER BY score DESC LIMIT 5` |
+
+## Aggregation, Joins & Writes
+
+| Clause | Purpose | Example |
+| :--- | :--- | :--- |
+| `COUNT / SUM / AVG` | Summarize numeric or row counts | `SELECT track, ROUND(AVG(score), 1) FROM ...` |
+| `GROUP BY` / `HAVING` | Group rows and filter groups | `GROUP BY track HAVING COUNT(*) >= 2` |
+| `INNER JOIN` / `LEFT JOIN` | Combine related tables by key | `LEFT JOIN certs c ON c.learner_id = l.id` |
+| `INSERT / UPDATE / DELETE` | Add, edit, or remove rows safely | `UPDATE tasks SET done = 1 WHERE id = 2;` |

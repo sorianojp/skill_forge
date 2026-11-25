@@ -243,6 +243,77 @@ export const COURSE_EXAMS: Record<string, ExamQuestion[]> = {
     },
   ],
 
+  'sql-essentials': [
+    {
+      question: 'Which SQL clause filters which rows are returned by a SELECT query?',
+      options: ['FILTER BY', 'WHERE', 'HAVING'],
+      answer: 1,
+      explanation: 'WHERE filters individual rows before any grouping or sorting occurs.',
+    },
+    {
+      question: 'Which keyword removes duplicate values from a SELECT output?',
+      options: ['UNIQUE', 'DISTINCT', 'ONLY'],
+      answer: 1,
+      explanation: 'SELECT DISTINCT returns each unique value once.',
+    },
+    {
+      question: 'How do you sort rows from highest score to lowest score?',
+      options: ['SORT BY score HIGH', 'ORDER BY score DESC', 'ORDER BY score ASC'],
+      answer: 1,
+      explanation: 'ORDER BY column DESC sorts in descending order (highest first).',
+    },
+    {
+      question: 'Which wildcard matches zero or more characters inside a SQL LIKE pattern?',
+      options: ['*', '%', '?'],
+      answer: 1,
+      explanation: 'In standard SQL, % matches any sequence of zero or more characters.',
+    },
+    {
+      question: 'What is the difference between WHERE and HAVING?',
+      options: [
+        'WHERE filters individual rows before GROUP BY; HAVING filters grouped aggregates after GROUP BY',
+        'HAVING is faster than WHERE for all queries',
+        'They are identical aliases',
+      ],
+      answer: 0,
+      explanation: 'WHERE runs before aggregation, while HAVING filters groups using aggregate functions like COUNT(*) or AVG().',
+    },
+    {
+      question: 'Which aggregate function returns the total number of rows in a group?',
+      options: ['TOTAL(*)', 'COUNT(*)', 'SUM(*)'],
+      answer: 1,
+      explanation: 'COUNT(*) counts all rows in each group.',
+    },
+    {
+      question: 'Which JOIN preserves all rows from the left table even when no matching row exists in the right table?',
+      options: ['INNER JOIN', 'LEFT JOIN', 'CROSS JOIN'],
+      answer: 1,
+      explanation: 'LEFT JOIN keeps every row from the left table and fills unmatched right columns with NULL.',
+    },
+    {
+      question: 'Which clause specifies how two joined tables match each other?',
+      options: ['USING KEY', 'ON', 'MATCH'],
+      answer: 1,
+      explanation: 'JOIN table2 ON table1.id = table2.foreign_id defines the join condition.',
+    },
+    {
+      question: 'What happens if you run `DELETE FROM tasks;` without a WHERE clause?',
+      options: [
+        'Only the first row is deleted',
+        'Every row in the tasks table is deleted',
+        'Nothing happens without WHERE',
+      ],
+      answer: 1,
+      explanation: 'Omitting WHERE on DELETE or UPDATE applies the change to every row in the table.',
+    },
+    {
+      question: 'Which clause caps the maximum number of rows returned by a query?',
+      options: ['MAX', 'LIMIT', 'STOP'],
+      answer: 1,
+      explanation: 'LIMIT n restricts the result set to at most n rows.',
+    },
+  ],
+
   'python-fundamentals': [
     {
       question: 'How are boolean values written in Python 3?',
