@@ -1,0 +1,80 @@
+---
+title: "Images, Containers & docker run"
+description: "Understand how Docker isolates apps using Linux namespaces, and run your first containerized web server."
+course: "docker-essentials"
+module: "Container Foundations"
+order: 1
+durationMinutes: 8
+objectives:
+  - "Distinguish a read-only image (blueprint) from a running container (instance)"
+  - "Publish container ports to the host using -p host:container"
+  - "Run containers detached (-d), view logs, and clean up with --rm"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+**Docker** packages your code, runtime, and system libraries into a portable **image** so "it works on my machine" becomes "it works identically on every laptop and cloud server."
+
+- **Image:** Immutable read-only template (like a class).
+- **Container:** A lightweight running process created from an image (like an object instance).
+
+<Callout type="tip" title="Remember Port Mapping Direction (-p HOST:CONTAINER)">
+  <code>docker run -d -p 8080:80 nginx</code> maps port <code>8080</code> on your machine to port <code>80</code> inside the Nginx container.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Run Detached Nginx Container"
+  prompt="Run nginx in detached mode (-d) mapping host port 8080 to container port 80."
+  template={`docker {{0}} -d {{1}} 8080:80 --name web nginx:alpine`}
+  blanks={[
+    { answer: 'run', placeholder: 'cmd' },
+    { answer: '-p', placeholder: 'flag' },
+  ]}
+  hint={'Use docker run with -p host:container to publish ports.'}
+/>
+
+## Live Command Reference Lab
+
+<CodeLab
+  client:visible
+  title="docker_basics.sh"
+  language="bash"
+  code={`cat << 'EOF'
+# Start container in background on localhost:8080
+docker run -d -p 8080:80 --name web nginx:alpine
+
+# Inspect running containers & logs
+docker ps
+docker logs -f web
+
+# Stop and remove cleanly
+docker rm -f web
+EOF`}
+  expectedOutput={`# Start container in background on localhost:8080
+docker run -d -p 8080:80 --name web nginx:alpine
+
+# Inspect running containers & logs
+docker ps
+docker logs -f web
+
+# Stop and remove cleanly
+docker rm -f web`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "In docker run -p 3000:8080 myapp, which port do you open in your browser on the host machine?",
+      options: ["3000 (the host port on the left)", "8080 (the container port on the right)", "Both 3000 and 8080 simultaneously"],
+      answer: 0,
+      explanation: "The -p flag always uses HOST_PORT:CONTAINER_PORT order."
+    }
+  ]}
+/>

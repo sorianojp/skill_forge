@@ -1,0 +1,17 @@
+---
+title: "Node.js 20 Quick Reference"
+category: "Node.js"
+syntax: "const raw = await fs.readFile('data.json', 'utf8');"
+summary: "Essential Node.js 20 built-in modules: node:fs/promises, node:path, node:http, node:crypto, and process.env."
+browserSupport: "Node.js 20 LTS+"
+---
+
+## Core Built-In Modules
+
+| Module | Purpose | Example |
+| :--- | :--- | :--- |
+| `node:fs/promises` | Async file I/O | `await fs.readFile("a.txt", "utf8")` |
+| `node:path` | Cross-platform paths | `path.join(__dirname, "dist")` |
+| `node:http` | Native HTTP server | `http.createServer((req, res) => ...)` |
+| `node:crypto` | Hashing & secure tokens | `crypto.randomUUID()` / `createHash("sha256")` |
+| `process.env` | Runtime env configuration | `Number(process.env.PORT ?? 3000)` |

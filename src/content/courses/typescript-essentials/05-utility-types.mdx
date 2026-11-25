@@ -1,0 +1,77 @@
+---
+title: "Built-in Utility Types"
+description: "Derive new types cleanly without duplication using Partial, Required, Pick, Omit, and Record."
+course: "typescript-essentials"
+module: "Advanced TypeScript"
+order: 5
+durationMinutes: 8
+objectives:
+  - "Accept patch updates cleanly with Partial<T>"
+  - "Shape API payloads with Pick<T, K> and Omit<T, K>"
+  - "Type key-value dictionaries cleanly with Record<K, V>"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+TypeScript ships with built-in **utility types** so you never have to copy-paste interfaces:
+
+- `Partial<User>`: makes every field optional (perfect for `updateUser(id, patch)`).
+- `Pick<User, "id" | "name">`: keeps only selected properties.
+- `Omit<User, "passwordHash">`: strips sensitive fields before returning an API response.
+- `Record<string, number>`: maps string keys to number values.
+
+<Callout type="tip" title="Single Source of Truth">
+  Deriving DTO types with <code>Pick</code> and <code>Omit</code> guarantees that when your core domain model changes, every derived type updates automatically.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Strip Sensitive Fields with Omit"
+  prompt="Create PublicUser by omitting passwordHash from User."
+  template={`type PublicUser = {{0}}<User, "passwordHash">;
+type ScoreMap = {{1}}<string, number>;`}
+  blanks={[
+    { answer: 'Omit', placeholder: 'util' },
+    { answer: 'Record', placeholder: 'util' },
+  ]}
+  hint={'Use Omit<T, Keys> to exclude fields and Record<K, V> for typed dictionaries.'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="utilities.ts"
+  language="ts"
+  code={`interface Learner {
+  id: string;
+  name: string;
+  score: number;
+}
+
+function patchLearner(base: Learner, patch: Partial<Learner>): Learner {
+  return { ...base, ...patch };
+}
+
+const u1: Learner = { id: "u1", name: "Maya", score: 82 };
+const u2 = patchLearner(u1, { score: 96 });
+console.log(u2.name + ": " + u2.score);`}
+  expectedOutput={`Maya: 96`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which TypeScript utility type makes all properties of an interface optional for PATCH updates?",
+      options: ["Partial<T>", "Readonly<T>", "Record<T>"],
+      answer: 0,
+      explanation: "Partial<T> turns every property in T into an optional property."
+    }
+  ]}
+/>

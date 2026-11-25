@@ -1,0 +1,65 @@
+---
+title: "Tags & Semantic Versioning"
+description: "Mark production releases with annotated Git tags (v1.2.0) and follow SemVer (MAJOR.MINOR.PATCH)."
+course: "git-essentials"
+module: "Intermediate Git"
+order: 7
+durationMinutes: 7
+objectives:
+  - "Understand Semantic Versioning (MAJOR.MINOR.PATCH)"
+  - "Create annotated release tags with git tag -a"
+  - "Push tags to GitHub using git push origin v1.0.0"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import GitSandbox from '@/components/playground/GitSandbox';
+import Quiz from '@/components/quiz/Quiz';
+
+**Git tags** pin human-readable release names like `v1.0.0` or `v2.3.1` to specific commits. Unlike branches, tags do not move as new commits are added.
+
+## Semantic Versioning (SemVer)
+
+- **MAJOR (`2.0.0`)**: Breaking API changes.
+- **MINOR (`1.3.0`)**: Backward-compatible new features.
+- **PATCH (`1.2.1`)**: Backward-compatible bug fixes.
+
+<Callout type="tip" title="Prefer Annotated Tags for Releases">
+  <code>git tag -a v1.0.0 -m "Initial release"</code> stores the tagger, date, and release message, making it ideal for GitHub Releases and CI deploys.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Create & Push an Annotated Tag"
+  prompt="Create an annotated tag v1.0.0 and push it to origin."
+  template={`git {{0}} -a v1.0.0 -m "Release v1.0.0"
+git push origin {{1}}`}
+  blanks={[
+    { answer: 'tag', placeholder: 'cmd' },
+    { answer: 'v1.0.0', placeholder: 'version' },
+  ]}
+  hint={'Use git tag -a for annotated tags, then push the tag name to origin.'}
+/>
+
+## Interactive Git Sandbox
+
+<GitSandbox
+  client:visible
+  title="Prepare a Tagged Release"
+  starterHint={'Commit your release changes and inspect git log --oneline.'}
+  suggestedCommands={['git status', 'git add .', 'git commit -m "Prepare v1.0.0 release"', 'git log --oneline']}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Under Semantic Versioning, which version number increments when you add a backward-compatible new feature?",
+      options: ["MAJOR", "MINOR", "PATCH"],
+      answer: 1,
+      explanation: "MINOR increments for backward-compatible new features (e.g., 1.2.0 -> 1.3.0)."
+    }
+  ]}
+/>

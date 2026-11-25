@@ -1,0 +1,78 @@
+---
+title: "Multi-Stage Builds & Security"
+description: "Shrink production Docker images by 80% with multi-stage builds and run processes as a non-root USER."
+course: "docker-essentials"
+module: "Container Foundations"
+order: 3
+durationMinutes: 8
+objectives:
+  - "Use FROM ... AS builder and COPY --from=builder to ship only compiled output"
+  - "Drop root privileges with USER node or a dedicated non-root user"
+  - "Pin major/minor image tags (node:20-alpine) instead of floating :latest"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+A **multi-stage Dockerfile** compiles your app in a full SDK stage (`AS builder`) and copies *only* the final binary or `dist/` folder into a tiny runtime stage (`nginx:alpine` or `distroless`), stripping out build tools, compilers, and source code from production.
+
+<Callout type="tip" title="Run Containers as Non-Root">
+  Adding <code>USER node</code> (or creating a non-root app user) reduces blast radius if an application vulnerability is ever exploited.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Multi-Stage Copy"
+  prompt="Name the first stage builder and copy /app/dist from it into Nginx."
+  template={`FROM node:20-alpine {{0}} builder
+WORKDIR /app
+RUN npm run build
+
+FROM nginx:alpine
+COPY --{{1}}=builder /app/dist /usr/share/nginx/html`}
+  blanks={[
+    { answer: 'AS', placeholder: 'kw' },
+    { answer: 'from', placeholder: 'flag' },
+  ]}
+  hint={'Name stages with AS builder and copy artifacts using COPY --from=builder.'}
+/>
+
+## Live Multi-Stage Inspection Lab
+
+<CodeLab
+  client:visible
+  title="multistage.sh"
+  language="bash"
+  code={`cat << 'EOF' | grep -n "FROM\|--from"
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY . .
+RUN npm ci && npm run build
+
+FROM nginx:1.27-alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+EOF`}
+  expectedOutput={`1:FROM node:20-alpine AS builder
+6:FROM nginx:1.27-alpine
+7:COPY --from=builder /app/dist /usr/share/nginx/html`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What is the main advantage of a multi-stage Docker build?",
+      options: [
+        "Production images stay tiny and secure because build tools and dev dependencies are left behind in the builder stage",
+        "It runs two containers at the same time",
+        "It removes the need for a Dockerfile"
+      ],
+      answer: 0,
+      explanation: "Only the final runtime stage is shipped, dramatically cutting image size and attack surface."
+    }
+  ]}
+/>

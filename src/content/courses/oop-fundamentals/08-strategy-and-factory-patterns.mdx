@@ -1,0 +1,83 @@
+---
+title: "Strategy & Factory Patterns"
+description: "Swap algorithms dynamically at runtime with the Strategy pattern and centralize object creation with Factories."
+course: "oop-fundamentals"
+module: "Design Patterns"
+order: 7
+durationMinutes: 9
+objectives:
+  - "Encapsulate interchangeable algorithms using the Strategy pattern"
+  - "Decouple object instantiation from business logic using a Factory"
+  - "Combine both patterns cleanly without giant switch blocks"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+The **Strategy pattern** lets you swap an algorithm (shipping rate, sorting rule, compression codec) at runtime by injecting an object that conforms to a shared contract. A **Factory** maps a configuration key (`"express"`, `"standard"`) to the right concrete strategy.
+
+<Callout type="info" title="Patterns Follow SOLID Naturally">
+  Strategy + Factory is the Open/Closed Principle in action: add a new shipping class and register it in the factory without touching checkout code.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Strategy Registry Lookup"
+  prompt="Look up the matching shipping strategy from a map by key."
+  template={`const strategies = { standard: StandardShip, express: ExpressShip };
+function createShipper(type) {
+  const Cls = {{0}}[type] || StandardShip;
+  return {{1}} Cls();
+}`}
+  blanks={[
+    { answer: 'strategies', placeholder: 'map' },
+    { answer: 'new', placeholder: 'kw' },
+  ]}
+  hint={'Look up the constructor in strategies[type] and instantiate with new.'}
+/>
+
+## Live OOP Playground
+
+<Playground
+  client:visible
+  title="Shipping Strategy + Factory"
+  defaultTab="js"
+  showConsole={true}
+  html={`<p>Run to see Strategy and Factory work together.</p>`}
+  js={`class StandardShipping {
+  cost(weightKg) { return 4 + weightKg * 1.5; }
+}
+class ExpressShipping {
+  cost(weightKg) { return 12 + weightKg * 3.0; }
+}
+
+const ShippingFactory = {
+  create(mode) {
+    return mode === "express" ? new ExpressShipping() : new StandardShipping();
+  }
+};
+
+const orderWeight = 2;
+console.log("Standard:", "$" + ShippingFactory.create("standard").cost(orderWeight));
+console.log("Express: ", "$" + ShippingFactory.create("express").cost(orderWeight));`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What problem does the Strategy pattern solve?",
+      options: [
+        "Making interchangeable algorithms swappable at runtime without editing the host class",
+        "Ensuring only one instance of a class exists globally",
+        "Converting JSON files into SQL schemas"
+      ],
+      answer: 0,
+      explanation: "Strategy encapsulates each algorithm in its own class behind a shared interface."
+    }
+  ]}
+/>

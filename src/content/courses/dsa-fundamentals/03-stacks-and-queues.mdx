@@ -1,0 +1,76 @@
+---
+title: "Stacks & Queues"
+description: "Solve balanced parentheses, undo history, and level-order processing using LIFO Stacks and FIFO Queues."
+course: "dsa-fundamentals"
+module: "Core Data Structures"
+order: 3
+durationMinutes: 8
+objectives:
+  - "Distinguish LIFO (Stack: push/pop) from FIFO (Queue: enqueue/dequeue)"
+  - "Validate nested brackets ({[]}) in O(n) time using a Stack"
+  - "Recognize real-world uses: call stacks, undo buffers, and task queues"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+- **Stack (LIFO - Last In, First Out):** Like a stack of plates. Both `push` and `pop` happen at the top in $O(1)$. Used for function call stacks, undo/redo, and bracket matching.
+- **Queue (FIFO - First In, First Out):** Like a checkout line. Used for job scheduling, print queues, and Breadth-First Search (BFS).
+
+<Callout type="info" title="Array.shift() Is O(n)">
+  In JavaScript, calling <code>queue.shift()</code> shifts every remaining item left (<code>O(n)</code>). For large BFS queues, track a <code>head</code> index pointer instead so dequeue stays <code>O(1)</code>!
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Stack Push & Pop"
+  prompt="Push opening brackets onto the stack and pop when verifying a closing bracket."
+  template={`stack.{{0}}(ch);
+const top = stack.{{1}}();`}
+  blanks={[
+    { answer: 'push', placeholder: 'method' },
+    { answer: 'pop', placeholder: 'method' },
+  ]}
+  hint={'Stacks add to the top with push() and remove from the top with pop().'}
+/>
+
+## Live DSA Playground
+
+<Playground
+  client:visible
+  title="Balanced Brackets Validator (Stack)"
+  defaultTab="js"
+  showConsole={true}
+  html={`<p>Run to test balanced vs. mismatched bracket strings.</p>`}
+  js={`function isValidBrackets(s) {
+  const stack = [];
+  const pairs = { ")": "(", "]": "[", "}": "{" };
+  for (const ch of s) {
+    if ("([{".includes(ch)) {
+      stack.push(ch);
+    } else if (pairs[ch]) {
+      if (stack.pop() !== pairs[ch]) return false;
+    }
+  }
+  return stack.length === 0;
+}
+
+console.log("({[]}) ->", isValidBrackets("({[]})"));
+console.log("([)]   ->", isValidBrackets("([)]"));`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which data structure naturally validates nested parentheses and HTML tags?",
+      options: ["A LIFO Stack", "A FIFO Queue", "An unsorted Set"],
+      answer: 0,
+      explanation: "The most recently opened bracket must be closed first, which matches LIFO stack order."
+    }
+  ]}
+/>

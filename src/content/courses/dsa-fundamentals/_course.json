@@ -1,0 +1,20 @@
+{
+  "slug": "dsa-fundamentals",
+  "title": "Data Structures & Algorithms",
+  "shortTitle": "Learn DSA",
+  "description": "Ace coding interviews and write fast production code. Master Big-O complexity, Hash Maps, Two Pointers, Stacks & Queues, Binary Search, Trees/BFS, and Dynamic Programming.",
+  "track": "DSA",
+  "difficulty": "Intermediate",
+  "estimatedHours": 6,
+  "accentColor": "#e11d48",
+  "prerequisites": ["Comfort with loops, functions, and arrays in any language"],
+  "outcomes": [
+    "Analyze time and space complexity using Big-O notation",
+    "Turn O(n^2) nested loops into O(n) solutions using Hash Maps and Two Pointers",
+    "Model LIFO and FIFO workflows cleanly with Stacks and Queues",
+    "Search sorted spaces in O(log n) with Binary Search",
+    "Traverse trees and graphs with BFS/DFS and optimize overlapping subproblems with DP"
+  ],
+  "featured": true,
+  "order": 18
+}

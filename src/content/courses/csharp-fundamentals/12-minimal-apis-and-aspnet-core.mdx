@@ -1,0 +1,76 @@
+---
+title: "ASP.NET Core Minimal APIs & Routing"
+description: "Understand how modern .NET 8 Minimal APIs map HTTP routes, validate inputs, and return typed JSON responses."
+course: "csharp-fundamentals"
+module: "Production .NET 8"
+order: 11
+durationMinutes: 8
+objectives:
+  - "Understand Minimal API route handlers (app.MapGet, app.MapPost)"
+  - "Return clean HTTP status codes (200 OK, 201 Created, 404 Not Found)"
+  - "Model request/response DTOs with C# records"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+**ASP.NET Core Minimal APIs** let you stand up production-grade HTTP endpoints in a few lines of C# without controller ceremony. Route parameters (`"/courses/{slug}"`), JSON bodies, and DI services are bound automatically as lambda parameters.
+
+<Callout type="tip" title="Return TypedResults in Production">
+  Using <code>Results.Ok(data)</code> or <code>Results.NotFound()</code> makes HTTP status codes explicit and automatically generates OpenAPI/Swagger documentation.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Minimal API Route Mapping"
+  prompt="Map a GET endpoint for /api/health returning a JSON object."
+  template={`app.{{0}}("/api/health", () => new { ok = {{1}} });`}
+  blanks={[
+    { answer: 'MapGet', placeholder: 'method' },
+    { answer: 'true', placeholder: 'bool' },
+  ]}
+  hint={'Minimal APIs register GET routes with app.MapGet(path, handler).'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="MinimalRouterSim.cs"
+  language="csharp"
+  code={`using System.Text.Json;
+
+public record ApiResponse(int Status, object Body);
+
+var routes = new Dictionary<string, Func<ApiResponse>>
+{
+    ["/api/health"] = () => new(200, new { ok = true, runtime = ".NET 8" }),
+    ["/api/tracks"] = () => new(200, new { count = 12 })
+};
+
+foreach (var path in new[] { "/api/health", "/api/missing" })
+{
+    var res = routes.TryGetValue(path, out var handler)
+        ? handler()
+        : new ApiResponse(404, new { error = "Not found" });
+    Console.WriteLine($"{path} -> {res.Status} {JsonSerializer.Serialize(res.Body)}");
+}`}
+  expectedOutput={`/api/health -> 200 {"ok":true,"runtime":".NET 8"}
+/api/missing -> 404 {"error":"Not found"}`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which ASP.NET Core Minimal API method registers an HTTP POST route?",
+      options: ["app.MapPost(\"/items\", handler)", "app.RoutePost(\"/items\")", "app.HttpAdd(\"/items\")"],
+      answer: 0,
+      explanation: "Minimal APIs expose MapGet, MapPost, MapPut, and MapDelete directly on WebApplication."
+    }
+  ]}
+/>

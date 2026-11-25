@@ -1,0 +1,79 @@
+---
+title: "Dictionaries, HashSets & TryGetValue"
+description: "Avoid KeyNotFoundException with TryGetValue() and deduplicate collections fast with HashSet<T>."
+course: "csharp-fundamentals"
+module: "Modern .NET APIs"
+order: 9
+durationMinutes: 8
+objectives:
+  - "Perform safe O(1) lookups with Dictionary.TryGetValue(key, out var val)"
+  - "Use HashSet<T> for fast membership checks and deduplication"
+  - "Initialize collections concisely with C# 12 collection expressions ([...])"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+Accessing `dict["missing"]` in C# throws a `KeyNotFoundException`. The idiomatic, single-lookup pattern is **`if (dict.TryGetValue(key, out var value))`**, which checks existence and extracts the value in one hash lookup.
+
+<Callout type="tip" title="TryGetValue Does One Hash Lookup Instead of Two">
+  Writing <code>ContainsKey(k)</code> followed by <code>dict[k]</code> hashes the key twice. <code>TryGetValue(k, out var val)</code> does it in one step.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Safe Dictionary Lookup"
+  prompt="Look up 'csharp' safely using TryGetValue and an out variable."
+  template={`if (scores.{{0}}("csharp", {{1}} int val))
+{
+    Console.WriteLine(val);
+}`}
+  blanks={[
+    { answer: 'TryGetValue', placeholder: 'method' },
+    { answer: 'out', placeholder: 'kw' },
+  ]}
+  hint={'Use TryGetValue(key, out var val) for safe single-lookup dictionary reads.'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="DictionariesDemo.cs"
+  language="csharp"
+  code={`var scores = new Dictionary<string, int>
+{
+    ["git"] = 95,
+    ["csharp"] = 92
+};
+
+if (scores.TryGetValue("csharp", out var score))
+{
+    Console.WriteLine($"C# score: {score}");
+}
+
+HashSet<string> unique = ["csharp", "linq", "csharp", "async"];
+Console.WriteLine($"Unique tags: {unique.Count}");`}
+  expectedOutput={`C# score: 92
+Unique tags: 3`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why is TryGetValue(key, out var val) preferred over ContainsKey(key) + dict[key]?",
+      options: [
+        "It safely handles missing keys in a single hash lookup without throwing exceptions",
+        "It sorts the dictionary alphabetically",
+        "It deletes the key after reading"
+      ],
+      answer: 0,
+      explanation: "TryGetValue avoids both KeyNotFoundException and redundant hashing."
+    }
+  ]}
+/>

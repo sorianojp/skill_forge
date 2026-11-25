@@ -1,0 +1,75 @@
+---
+title: "Concurrency & Java 21 Virtual Threads"
+description: "Run parallel tasks cleanly with CompletableFuture and Java 21's ultra-lightweight Virtual Threads."
+course: "java-fundamentals"
+module: "Production Java 21"
+order: 10
+durationMinutes: 9
+objectives:
+  - "Run asynchronous tasks with CompletableFuture.supplyAsync()"
+  - "Understand how Java 21 Virtual Threads scale blocking I/O to thousands of concurrent tasks"
+  - "Use Executors.newVirtualThreadPerTaskExecutor() inside try-with-resources"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+**Java 21 Virtual Threads** (Project Loom) are lightweight threads managed by the JVM rather than the OS. You can spawn tens of thousands of virtual threads with straightforward blocking code, and the JVM automatically unmounts them during I/O waits.
+
+<Callout type="tip" title="Try-With-Resources Waits for All Tasks">
+  In Java 19+, <code>ExecutorService</code> implements <code>AutoCloseable</code>, so closing a <code>try (var exec = Executors.newVirtualThreadPerTaskExecutor())</code> block automatically waits for every submitted task to finish.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Virtual Thread Executor"
+  prompt="Create a virtual thread executor and submit a runnable task."
+  template={`try (var exec = Executors.{{0}}()) {
+    exec.{{1}}(() -> System.out.println("Running on virtual thread"));
+}`}
+  blanks={[
+    { answer: 'newVirtualThreadPerTaskExecutor', placeholder: 'factory' },
+    { answer: 'submit', placeholder: 'method' },
+  ]}
+  hint={'Use Executors.newVirtualThreadPerTaskExecutor() and exec.submit(...).'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="VirtualThreadsDemo.java"
+  language="java"
+  code={`import java.util.concurrent.*;
+
+public class VirtualThreadsDemo {
+    public static void main(String[] args) throws Exception {
+        try (var exec = Executors.newVirtualThreadPerTaskExecutor()) {
+            Future<Integer> a = exec.submit(() -> 12 * 10);
+            Future<Integer> b = exec.submit(() -> 36);
+            System.out.println("Combined result: " + (a.get() + b.get()));
+        }
+    }
+}`}
+  expectedOutput={`Combined result: 156`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why are Java 21 Virtual Threads ideal for high-concurrency I/O workloads?",
+      options: [
+        "They are lightweight JVM-managed threads that do not pin OS threads while waiting on I/O",
+        "They disable garbage collection",
+        "They only run on single-threaded browsers"
+      ],
+      answer: 0,
+      explanation: "Virtual threads let thousands of concurrent I/O tasks share a small pool of OS carrier threads."
+    }
+  ]}
+/>

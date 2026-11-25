@@ -1,0 +1,68 @@
+---
+title: "Rebase & Clean Commit History"
+description: "Replay feature branch commits onto the latest main with git rebase and clean up WIP commits with interactive rebase."
+course: "git-essentials"
+module: "Intermediate Git"
+order: 6
+durationMinutes: 8
+objectives:
+  - "Compare git merge vs. git rebase on feature branches"
+  - "Replay local commits onto updated main cleanly"
+  - "Follow the Golden Rule of Rebasing: never rebase shared public branches"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import GitSandbox from '@/components/playground/GitSandbox';
+import Quiz from '@/components/quiz/Quiz';
+
+**`git rebase`** moves or replays your local feature branch commits on top of the latest `main`, creating a linear history without extra merge commits.
+
+## Merge vs. Rebase
+
+- **Merge** preserves exact branching chronology and never rewrites commit hashes.
+- **Rebase** replays your commits onto a new base commit (producing new hashes) for a crisp, linear log.
+
+<Callout type="warning" title="The Golden Rule of Rebasing">
+  Never run <code>git rebase</code> on a branch that teammates already pulled (like <code>main</code>). Only rebase your own local or private feature branch.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Rebase Feature Onto Main"
+  prompt="Replay your current feature branch commits on top of main and inspect the linear log."
+  template={`git {{0}} main
+git log --{{1}}`}
+  blanks={[
+    { answer: 'rebase', placeholder: 'cmd' },
+    { answer: 'oneline', placeholder: 'flag' },
+  ]}
+  hint={'Use git rebase main while checked out on your feature branch, then git log --oneline.'}
+/>
+
+## Interactive Git Sandbox
+
+<GitSandbox
+  client:visible
+  title="Practice Clean Commit History"
+  starterHint={'Create a branch, commit clean changes, and inspect git log --oneline.'}
+  suggestedCommands={['git checkout -b feat/clean-log', 'git add .', 'git commit -m "Refactor header"', 'git log --oneline']}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "When is it safe to use git rebase?",
+      options: [
+        "On your own local or unshared feature branch",
+        "Directly on a shared main branch with active teammates",
+        "Only after deleting .git"
+      ],
+      answer: 0,
+      explanation: "Rebasing rewrites commit hashes, so it should only be done on private branches."
+    }
+  ]}
+/>

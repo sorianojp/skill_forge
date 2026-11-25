@@ -1,0 +1,84 @@
+---
+title: "File I/O & Safe Error Handling"
+description: "Open, write, read, and close files with fopen/fprintf/fgets/fclose, and handle errors cleanly with errno and return codes."
+course: "c-fundamentals"
+module: "Systems Programming"
+order: 8
+durationMinutes: 8
+objectives:
+  - "Check FILE * pointers for NULL immediately after fopen()"
+  - "Read lines safely using bounded fgets() instead of unsafe gets()"
+  - "Report errors cleanly to stderr and return non-zero exit codes"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+C does not have exceptions (`try/catch`). Instead, standard library functions signal failure via return values (`NULL`, `-1`, or non-zero error codes) and set `errno`. Always check `FILE *f = fopen(...)` before reading or writing, and always call `fclose(f)`.
+
+<Callout type="warning" title="Never Use gets()">
+  <code>gets()</code> has no buffer size limit and was removed from the C11 standard because it causes buffer overflows. Always use <code>fgets(buf, sizeof(buf), file)</code>.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Safe File Open & Close"
+  prompt="Open a file for writing, check for NULL, and close it cleanly."
+  template={`FILE *fp = {{0}}("notes.txt", "w");
+if (fp == NULL) return 1;
+fprintf(fp, "Saved!\\n");
+{{1}}(fp);`}
+  blanks={[
+    { answer: 'fopen', placeholder: 'fn' },
+    { answer: 'fclose', placeholder: 'fn' },
+  ]}
+  hint={'Use fopen() to open a FILE* stream and fclose() to flush and close it.'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="file_io.c"
+  language="c"
+  code={`#include <stdio.h>
+
+int main(void) {
+    FILE *out = fopen("/tmp/sf_demo.txt", "w");
+    if (!out) {
+        fprintf(stderr, "Failed to open file\\n");
+        return 1;
+    }
+    fprintf(out, "SkillForge C11 File I/O\\n");
+    fclose(out);
+
+    FILE *in = fopen("/tmp/sf_demo.txt", "r");
+    char line[64];
+    if (in && fgets(line, sizeof(line), in)) {
+        printf("Read: %s", line);
+        fclose(in);
+    }
+    return 0;
+}`}
+  expectedOutput={`Read: SkillForge C11 File I/O`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why should C programs use fgets(buf, sizeof(buf), fp) instead of gets(buf)?",
+      options: [
+        "fgets enforces the buffer size limit to prevent buffer overflows",
+        "fgets automatically compresses text files",
+        "gets only works on integers"
+      ],
+      answer: 0,
+      explanation: "fgets never writes past sizeof(buf) bytes and always null-terminates the string."
+    }
+  ]}
+/>

@@ -1,0 +1,76 @@
+---
+title: "Exceptions & IDisposable (using)"
+description: "Handle failures cleanly with try/catch/finally and automatically release resources with C#'s using declaration."
+course: "csharp-fundamentals"
+module: "Modern .NET APIs"
+order: 8
+durationMinutes: 8
+objectives:
+  - "Use using var resource = ... to guarantee Dispose() runs at scope exit"
+  - "Catch specific exceptions and preserve stack traces with bare throw;"
+  - "Implement IDisposable on custom resource wrappers"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+In C#, any type that holds unmanaged resources (files, DB connections, HTTP clients) implements **`IDisposable`**. Prefixing the variable with **`using var`** guarantees `Dispose()` is called automatically at the end of the enclosing scope, even if an exception occurs.
+
+<Callout type="warning" title="Rethrow with bare throw;">
+  When rethrowing an exception inside a <code>catch</code> block, write <code>throw;</code> (not <code>throw ex;</code>) so .NET preserves the original stack trace.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Auto-Disposing Resource"
+  prompt="Ensure reader.Dispose() runs automatically when the scope ends."
+  template={`{{0}} var reader = new StringReader("C# 12");
+Console.WriteLine(reader.ReadLine());`}
+  blanks={[
+    { answer: 'using', placeholder: 'kw' },
+  ]}
+  hint={'Prefix IDisposable variables with using var.'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="UsingDemo.cs"
+  language="csharp"
+  code={`using System.IO;
+
+using var reader = new StringReader("Line 1\nLine 2");
+Console.WriteLine("Read: " + reader.ReadLine());
+
+try
+{
+    int.Parse("not-a-number");
+}
+catch (FormatException ex)
+{
+    Console.WriteLine("Caught FormatException: " + ex.Message.Split('.')[0]);
+}`}
+  expectedOutput={`Read: Line 1
+Caught FormatException: The input string 'not-a-number' was not in a correct format`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does using var conn = new SqlConnection(...); guarantee in C#?",
+      options: [
+        "conn.Dispose() is called automatically when leaving the current scope",
+        "conn stays open forever in memory",
+        "All exceptions inside the scope are ignored"
+      ],
+      answer: 0,
+      explanation: "using declarations compile to a try/finally block that always calls Dispose()."
+    }
+  ]}
+/>

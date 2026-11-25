@@ -1,0 +1,74 @@
+---
+title: "Interfaces, Type Aliases & Optional Fields"
+description: "Define clean object shapes with interface and type, mark optional properties with ?, and protect fields with readonly."
+course: "typescript-essentials"
+module: "TypeScript Foundations"
+order: 2
+durationMinutes: 8
+objectives:
+  - "Define reusable object contracts using interface and type"
+  - "Use optional (?) and readonly modifiers cleanly"
+  - "Understand structural typing (duck typing) in TypeScript"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+TypeScript uses **structural typing**: any object that has the required properties with matching types satisfies an `interface`, even without explicitly naming it.
+
+<Callout type="tip" title="readonly Prevents Accidental Mutation">
+  Marking IDs or config fields <code>readonly id: string</code> makes the compiler catch accidental reassignments immediately.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Interface with Readonly & Optional Field"
+  prompt="Make id readonly and bio optional on UserProfile."
+  template={`interface UserProfile {
+  {{0}} id: string;
+  name: string;
+  bio{{1}}: string;
+}`}
+  blanks={[
+    { answer: 'readonly', placeholder: 'mod' },
+    { answer: '?', placeholder: 'sym' },
+  ]}
+  hint={'Prefix immutable properties with readonly and add ? after optional property names.'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="interfaces.ts"
+  language="ts"
+  code={`interface Course {
+  readonly slug: string;
+  title: string;
+  hours?: number;
+}
+
+const tsCourse: Course = { slug: "ts-101", title: "TypeScript Essentials", hours: 5 };
+console.log(tsCourse.slug, "-", tsCourse.title, "(" + (tsCourse.hours ?? 0) + "h)");`}
+  expectedOutput={`ts-101 - TypeScript Essentials (5h)`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does adding ? after a property name in a TypeScript interface mean?",
+      options: [
+        "The property is optional and may be omitted or undefined",
+        "The property must be a boolean",
+        "The property is deleted at runtime"
+      ],
+      answer: 0,
+      explanation: "Optional properties (hours?: number) do not have to be provided when constructing the object."
+    }
+  ]}
+/>

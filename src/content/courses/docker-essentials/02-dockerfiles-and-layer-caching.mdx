@@ -1,0 +1,81 @@
+---
+title: "Writing Clean Dockerfiles & Layer Caching"
+description: "Build fast, small Docker images using FROM, WORKDIR, COPY, RUN, CMD, and smart dependency layer ordering."
+course: "docker-essentials"
+module: "Container Foundations"
+order: 2
+durationMinutes: 8
+objectives:
+  - "Order Dockerfile instructions so dependency installs are cached across code edits"
+  - "Exclude node_modules, .git, and .env using .dockerignore"
+  - "Prefer exec-form CMD [\"node\", \"server.js\"] for clean signal handling"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+Every `RUN`, `COPY`, and `ADD` instruction creates a **cached layer**. If you copy `package.json` and run `npm ci` *before* copying `src/`, Docker reuses the cached dependency layer whenever you edit source code, turning 60-second builds into 2-second builds.
+
+<Callout type="warning" title="Always Include a .dockerignore">
+  Without a <code>.dockerignore</code> excluding <code>node_modules</code>, <code>.git</code>, and <code>.env</code>, Docker sends hundreds of megabytes of build context and risks baking secrets into your image!
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Cache-Friendly Dockerfile"
+  prompt="Set the working directory to /app and copy package files before installing."
+  template={`FROM node:20-alpine
+{{0}} /app
+{{1}} package*.json ./
+RUN npm ci
+COPY . .
+CMD ["node", "server.js"]`}
+  blanks={[
+    { answer: 'WORKDIR', placeholder: 'inst' },
+    { answer: 'COPY', placeholder: 'inst' },
+  ]}
+  hint={'Use WORKDIR to set the active folder and COPY to copy package manifests first.'}
+/>
+
+## Live Dockerfile Validation Lab
+
+<CodeLab
+  client:visible
+  title="dockerfile_check.sh"
+  language="bash"
+  code={`cat << 'EOF' | grep -E "^(FROM|WORKDIR|COPY|RUN|CMD)"
+FROM node:20-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=dev
+COPY . .
+USER node
+CMD ["node", "server.js"]
+EOF`}
+  expectedOutput={`FROM node:20-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=dev
+COPY . .
+CMD ["node", "server.js"]`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why should COPY package*.json ./ and RUN npm ci appear BEFORE COPY . . in a Dockerfile?",
+      options: [
+        "So Docker caches the slow npm ci layer and only re-runs it when package files change",
+        "Because COPY . . deletes package.json",
+        "Docker fails to build otherwise"
+      ],
+      answer: 0,
+      explanation: "Putting rarely changing dependency manifests first maximizes Docker build cache hits."
+    }
+  ]}
+/>

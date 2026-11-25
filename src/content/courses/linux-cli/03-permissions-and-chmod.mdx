@@ -1,0 +1,70 @@
+---
+title: "Permissions, chmod & Ownership"
+description: "Decode rwx permission bits (755, 644, 600), make scripts executable with chmod +x, and protect SSH keys."
+course: "linux-cli"
+module: "Server Administration"
+order: 3
+durationMinutes: 8
+objectives:
+  - "Calculate octal permissions: read=4, write=2, execute=1"
+  - "Know the three everyday modes: 755 (scripts/dirs), 644 (files), 600 (private keys)"
+  - "Make a shell script executable with chmod +x"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+Linux permissions split into three groups: **Owner**, **Group**, and **Others**. Each group sums three bits: **Read (`4`)**, **Write (`2`)**, and **Execute (`1`)**:
+
+- **`755` (`rwxr-xr-x`)**: Owner can read/write/execute; everyone else can read/execute (standard for scripts and folders).
+- **`644` (`rw-r--r--`)**: Owner can read/write; others read-only (standard for web files).
+- **`600` (`rw-------`)**: Owner only (required by SSH for private keys like `~/.ssh/id_ed25519`).
+
+<Callout type="warning" title="Never Use chmod 777 in Production">
+  <code>chmod 777</code> lets any user on the server overwrite or execute your files. Use <code>755</code> for directories/executables and <code>644</code> or <code>600</code> for files.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Lock Down Private Key & Mark Script Executable"
+  prompt="Set mode 600 on an SSH key and mark deploy.sh executable."
+  template={`{{0}} 600 ~/.ssh/deploy_key
+chmod {{1}} deploy.sh`}
+  blanks={[
+    { answer: 'chmod', placeholder: 'cmd' },
+    { answer: '+x', placeholder: 'mode' },
+  ]}
+  hint={'Use chmod 600 for private keys and chmod +x to add execute permission.'}
+/>
+
+## Live Bash Lab
+
+<CodeLab
+  client:visible
+  title="perms.sh"
+  language="bash"
+  code={`printf '#!/usr/bin/env bash\necho "Executable script works!"\n' > /tmp/run_me.sh
+chmod +x /tmp/run_me.sh
+/tmp/run_me.sh`}
+  expectedOutput={`Executable script works!`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What permissions does chmod 600 grant on a file?",
+      options: [
+        "Read and write for the owner only; no access for group or others",
+        "Full read, write, and execute for everyone",
+        "Read-only for everyone"
+      ],
+      answer: 0,
+      explanation: "6 = 4 (read) + 2 (write) for the owner, and 0 for group and others."
+    }
+  ]}
+/>

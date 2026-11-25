@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { Award, CheckCircle2, Download, Printer, RotateCcw, XCircle } from 'lucide-react';
+import { Award, CheckCircle2, Download, Printer, RotateCcw, ShieldCheck, XCircle } from 'lucide-react';
 import type { ExamQuestion } from '@/data/exams';
+import { registerPublicCertificate } from '@/lib/cloudSync';
 import { getExamResult, saveExamResult, type ExamResultRecord } from '@/lib/progress';
 
 interface Props {
@@ -107,8 +108,20 @@ export default function CourseExam({ courseSlug, courseTitle, accentColor, quest
 
   const handleSubmit = () => {
     setSubmitted(true);
-    const saved = saveExamResult(courseSlug, currentPercent, currentPercent >= PASSING_PERCENT, learnerName || undefined);
+    const passed = currentPercent >= PASSING_PERCENT;
+    const saved = saveExamResult(courseSlug, currentPercent, passed, learnerName || undefined);
     setRecord(saved);
+    if (saved.passed && saved.certificateId) {
+      void registerPublicCertificate({
+        certId: saved.certificateId,
+        learnerName: (learnerName || saved.learnerName || 'SkillForge Scholar').trim(),
+        courseSlug,
+        courseTitle,
+        score: saved.bestScore,
+        total: questions.length,
+        issuedAt: (saved.passedAt ?? new Date().toISOString()).slice(0, 10),
+      });
+    }
   };
 
   const handleRetake = () => {
@@ -122,6 +135,17 @@ export default function CourseExam({ courseSlug, courseTitle, accentColor, quest
     if (record?.passed) {
       const updated = saveExamResult(courseSlug, record.bestScore, true, val);
       setRecord(updated);
+      if (updated.certificateId && val.trim().length >= 2) {
+        void registerPublicCertificate({
+          certId: updated.certificateId,
+          learnerName: val.trim(),
+          courseSlug,
+          courseTitle,
+          score: updated.bestScore,
+          total: questions.length,
+          issuedAt: (updated.passedAt ?? new Date().toISOString()).slice(0, 10),
+        });
+      }
     }
   };
 
@@ -250,6 +274,14 @@ export default function CourseExam({ courseSlug, courseTitle, accentColor, quest
               <Printer className="h-4 w-4" />
               Print / PDF
             </button>
+
+            <a
+              href={`/verify?id=${encodeURIComponent(certId)}`}
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-2xl bg-[var(--bg-elevated)] px-5 py-3 text-sm font-semibold text-[var(--success)] transition hover:opacity-85"
+            >
+              <ShieldCheck className="h-4 w-4" />
+              Public Verify Link
+            </a>
           </div>
 
           <div

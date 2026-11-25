@@ -1,0 +1,76 @@
+---
+title: "Safe Bash Scripting"
+description: "Write reliable Bash scripts with set -euo pipefail, quoted variables, functions, and for loops."
+course: "linux-cli"
+module: "Automation"
+order: 5
+durationMinutes: 8
+objectives:
+  - "Start production scripts with #!/usr/bin/env bash and set -euo pipefail"
+  - "Always quote variables (\"$var\") to prevent word-splitting bugs"
+  - "Loop cleanly over lists and files in Bash"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+By default, Bash continues executing even if a command fails or a variable is misspelled! Starting every script with **`set -euo pipefail`** turns Bash into a strict, fail-fast automation language:
+- `-e`: exit immediately on any non-zero command.
+- `-u`: treat unset variables as errors.
+- `-o pipefail`: fail a pipeline if *any* stage fails.
+
+<Callout type="tip" title="Always Double-Quote Variables">
+  Write <code>cp "$src" "$dst"</code> instead of <code>cp $src $dst</code> so file names containing spaces never break your script.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Strict Bash Header"
+  prompt="Enable strict error handling and echo a quoted variable."
+  template={`set -{{0}} pipefail
+name="SkillForge"
+echo "Deploying {{1}}"`}
+  blanks={[
+    { answer: 'euo', placeholder: 'flags' },
+    { answer: '$name', placeholder: 'var' },
+  ]}
+  hint={'Use set -euo pipefail and reference variables with $name inside double quotes.'}
+/>
+
+## Live Bash Lab
+
+<CodeLab
+  client:visible
+  title="deploy_sim.sh"
+  language="bash"
+  code={`#!/usr/bin/env bash
+set -euo pipefail
+
+tracks=("Git" "Linux" "Docker")
+for t in "\${tracks[@]}"; do
+  echo "Verified track: $t"
+done`}
+  expectedOutput={`Verified track: Git
+Verified track: Linux
+Verified track: Docker`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does set -e do at the top of a Bash script?",
+      options: [
+        "Stops the script immediately if any command exits with a non-zero error status",
+        "Echoes every command to stderr",
+        "Encrypts environment variables"
+      ],
+      answer: 0,
+      explanation: "set -e prevents a broken deployment script from continuing blindly after an earlier step failed."
+    }
+  ]}
+/>

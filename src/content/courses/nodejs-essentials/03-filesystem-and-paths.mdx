@@ -1,0 +1,71 @@
+---
+title: "File System (node:fs/promises) & Paths"
+description: "Read, write, and parse JSON files asynchronously using node:fs/promises and cross-platform path.join()."
+course: "nodejs-essentials"
+module: "Node.js Core"
+order: 3
+durationMinutes: 8
+objectives:
+  - "Use node:fs/promises with async/await instead of nested callbacks"
+  - "Build cross-platform file paths with path.join()"
+  - "Specify 'utf8' encoding when reading text files"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+The **`node:fs/promises`** module provides modern Promise-based file operations (`readFile`, `writeFile`, `mkdir`, `readdir`) that pair cleanly with `async` / `await`.
+
+<Callout type="warning" title="Always Sanitize User-Supplied File Paths">
+  Never pass raw request parameters like <code>req.query.file</code> directly to <code>readFile()</code> without validating against path traversal (<code>../../etc/passwd</code>).
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Async File Read"
+  prompt="Read config.json as UTF-8 text using fs/promises."
+  template={`const fs = require("node:fs/promises");
+const text = {{0}} fs.{{1}}("config.json", "utf8");`}
+  blanks={[
+    { answer: 'await', placeholder: 'kw' },
+    { answer: 'readFile', placeholder: 'fn' },
+  ]}
+  hint={'Await fs.readFile(path, "utf8") to get the file content as a string.'}
+/>
+
+## Live Code Lab (Node.js 20)
+
+<CodeLab
+  client:visible
+  title="fs_demo.js"
+  language="node"
+  code={`const fs = require("node:fs/promises");
+
+async function main() {
+  const payload = { app: "SkillForge", tracks: 18 };
+  await fs.writeFile("/tmp/sf_node.json", JSON.stringify(payload), "utf8");
+
+  const raw = await fs.readFile("/tmp/sf_node.json", "utf8");
+  const parsed = JSON.parse(raw);
+  console.log("Loaded:", parsed.app, "| Tracks:", parsed.tracks);
+}
+
+main();`}
+  expectedOutput={`Loaded: SkillForge | Tracks: 18`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does fs.readFile('notes.txt') return if you omit the 'utf8' encoding argument?",
+      options: ["A raw binary Buffer object", "A parsed JSON object", "undefined"],
+      answer: 0,
+      explanation: "Without an encoding string, readFile resolves to a raw Buffer of bytes."
+    }
+  ]}
+/>

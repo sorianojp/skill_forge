@@ -1,0 +1,85 @@
+---
+title: "Observer Pattern & Event-Driven OOP"
+description: "Decouple publishers from subscribers using the Observer pattern so components react to state changes cleanly."
+course: "oop-fundamentals"
+module: "Design Patterns"
+order: 8
+durationMinutes: 8
+objectives:
+  - "Implement a clean subscribe / emit Observer (EventBus) class"
+  - "Decouple side effects (analytics, email, UI updates) from core domain actions"
+  - "Prevent memory leaks by returning an unsubscribe function"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+The **Observer pattern** defines a one-to-many notification channel: when a subject emits an event (`lessonCompleted`), every registered listener reacts independently without the emitter knowing who is listening.
+
+<Callout type="tip" title="Always Support Unsubscribe">
+  Returning a cleanup function from <code>subscribe()</code> lets UI components detach listeners when unmounted, preventing memory leaks.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Notify All Subscribers"
+  prompt="Add a listener to the set and notify every listener on emit."
+  template={`class EventChannel {
+  listeners = new Set();
+  subscribe(fn) { this.listeners.{{0}}(fn); }
+  emit(data) { this.listeners.{{1}}(fn => fn(data)); }
+}`}
+  blanks={[
+    { answer: 'add', placeholder: 'method' },
+    { answer: 'forEach', placeholder: 'method' },
+  ]}
+  hint={'Use Set.add() to register a listener and Set.forEach() to invoke each one.'}
+/>
+
+## Live OOP Playground
+
+<Playground
+  client:visible
+  title="Observer Event Channel"
+  defaultTab="js"
+  showConsole={true}
+  html={`<p>Watch multiple subscribers react to a single domain event.</p>`}
+  js={`class EventChannel {
+  #listeners = new Set();
+  subscribe(fn) {
+    this.#listeners.add(fn);
+    return () => this.#listeners.delete(fn);
+  }
+  emit(payload) {
+    this.#listeners.forEach((fn) => fn(payload));
+  }
+}
+
+const bus = new EventChannel();
+bus.subscribe((e) => console.log("[Badge] Unlocked:", e.lesson));
+const off = bus.subscribe((e) => console.log("[Analytics] Tracked:", e.lesson));
+
+bus.emit({ lesson: "Observer Pattern" });
+off();
+bus.emit({ lesson: "Decorator Pattern" });`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "How does the Observer pattern reduce coupling between modules?",
+      options: [
+        "The publisher emits events without needing direct imports or references to subscribers",
+        "It merges all subscribers into the publisher constructor",
+        "It replaces classes with global arrays"
+      ],
+      answer: 0,
+      explanation: "Publishers only know about the listener callback contract, not concrete subscriber classes."
+    }
+  ]}
+/>

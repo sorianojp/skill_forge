@@ -1,0 +1,68 @@
+---
+title: "Reflog & Emergency Rescue"
+description: "Recover 'lost' commits and accidentally deleted branches using Git's local safety net, git reflog."
+course: "git-essentials"
+module: "Safety & Recovery"
+order: 10
+durationMinutes: 7
+objectives:
+  - "Inspect every recent HEAD movement with git reflog"
+  - "Restore an accidentally reset commit or deleted branch from its reflog hash"
+  - "Understand why committed work in Git is almost never truly lost"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import GitSandbox from '@/components/playground/GitSandbox';
+import Quiz from '@/components/quiz/Quiz';
+
+Accidentally ran `git reset --hard` or deleted a branch before merging? As long as the work was **committed**, Git keeps a local journal of every position `HEAD` pointed to for ~30 days in the **reflog**.
+
+## The 2-Command Rescue
+
+1. Run `git reflog` to find the hash right before the mistake (e.g., `HEAD@{2}`).
+2. Create a rescue branch at that commit: `git checkout -b rescue-branch <hash>`.
+
+<Callout type="info" title="Reflog Only Protects Committed Work">
+  Uncommitted working-directory edits that were wiped with <code>git reset --hard</code> are not in the reflog. Commit early and often on feature branches.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Rescue a Commit via Reflog"
+  prompt="View recent HEAD history and create a recovery branch at commit f4e3d2c."
+  template={`git {{0}}
+git checkout -b rescue {{1}}`}
+  blanks={[
+    { answer: 'reflog', placeholder: 'cmd' },
+    { answer: 'f4e3d2c', placeholder: 'hash' },
+  ]}
+  hint={'git reflog lists recent HEAD positions, and git checkout -b rescue <hash> restores that state.'}
+/>
+
+## Interactive Git Sandbox
+
+<GitSandbox
+  client:visible
+  title="Verify Branch Safety"
+  starterHint={'Practice committing before switching branches so every snapshot is recoverable.'}
+  suggestedCommands={['git status', 'git add .', 'git commit -m "Checkpoint before refactor"', 'git checkout -b refactor']}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does git reflog record?",
+      options: [
+        "A local history of every commit HEAD pointed to, including resets and checkouts",
+        "Every file ever saved in your code editor",
+        "Only commits pushed to GitHub"
+      ],
+      answer: 0,
+      explanation: "The reflog tracks local HEAD movements, letting you recover commits even after hard resets."
+    }
+  ]}
+/>

@@ -1,0 +1,75 @@
+---
+title: "HashMap, HashSet & Frequency Maps"
+description: "Use Map.getOrDefault(), Map.merge(), and Set deduplication for fast O(1) lookups in Java."
+course: "java-fundamentals"
+module: "Modern Java APIs"
+order: 8
+durationMinutes: 8
+objectives:
+  - "Read Map values safely with getOrDefault()"
+  - "Count occurrences cleanly in one line using map.merge(key, 1, Integer::sum)"
+  - "Deduplicate collections with Set.copyOf() or HashSet"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+**`HashMap<K, V>`** and **`HashSet<T>`** provide average $O(1)$ lookups. Modern Java adds convenience methods like `getOrDefault(key, 0)` and `merge(key, 1, Integer::sum)` that replace verbose `if (map.containsKey(...))` blocks.
+
+<Callout type="tip" title="Always Pair equals() and hashCode()">
+  If you use a custom class as a <code>HashMap</code> key, make sure it overrides both <code>equals()</code> and <code>hashCode()</code> (Java <code>record</code> types do this automatically!).
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Count Words with Map.merge"
+  prompt="Increment the frequency count for each word cleanly with merge()."
+  template={`var counts = new HashMap<String, Integer>();
+for (var w : words) {
+    counts.{{0}}(w, 1, Integer::{{1}});
+}`}
+  blanks={[
+    { answer: 'merge', placeholder: 'method' },
+    { answer: 'sum', placeholder: 'method' },
+  ]}
+  hint={'counts.merge(key, 1, Integer::sum) inserts 1 if absent or adds 1 to the existing value.'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="MapDemo.java"
+  language="java"
+  code={`import java.util.*;
+
+public class MapDemo {
+    public static void main(String[] args) {
+        var tags = List.of("java", "oop", "java", "streams", "java");
+        var counts = new HashMap<String, Integer>();
+        for (var t : tags) {
+            counts.merge(t, 1, Integer::sum);
+        }
+        System.out.println("java count: " + counts.getOrDefault("java", 0));
+        System.out.println("unique tags: " + new TreeSet<>(tags));
+    }
+}`}
+  expectedOutput={`java count: 3
+unique tags: [java, oop, streams]`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does counts.getOrDefault(\"rust\", 0) return if \"rust\" is not in the map?",
+      options: ["0 (without inserting anything into the map)", "null", "Throws NullPointerException"],
+      answer: 0,
+      explanation: "getOrDefault returns the fallback value safely without mutating the map."
+    }
+  ]}
+/>

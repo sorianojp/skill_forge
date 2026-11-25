@@ -1,0 +1,81 @@
+---
+title: "Static Members & Factory Methods"
+description: "Use static helper methods and named factory constructors to create validated objects with expressive intent."
+course: "oop-fundamentals"
+module: "Design Patterns"
+order: 6
+durationMinutes: 8
+objectives:
+  - "Distinguish instance members from class-level static members"
+  - "Replace confusing multi-argument constructors with named static factory methods"
+  - "Share read-only constants cleanly at the class level"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+A **static method** belongs to the class itself rather than a specific instance (`Money.fromCents(1999)` instead of `new Money(19.99)`). Static factory methods give object creation clear, self-documenting names.
+
+<Callout type="tip" title="Named Factories Beat Ambiguous Constructors">
+  <code>Duration.fromMinutes(30)</code> and <code>Duration.fromSeconds(1800)</code> are immediately clear, whereas <code>new Duration(30)</code> forces readers to guess the unit.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Static Factory Method"
+  prompt="Create a static factory fromCents() that converts cents into a Money instance."
+  template={`class Money {
+  constructor(dollars) { this.dollars = dollars; }
+  {{0}} fromCents(cents) {
+    return {{1}} Money(cents / 100);
+  }
+}`}
+  blanks={[
+    { answer: 'static', placeholder: 'kw' },
+    { answer: 'new', placeholder: 'kw' },
+  ]}
+  hint={'Use the static keyword on the factory method and return new Money(...).'}
+/>
+
+## Live OOP Playground
+
+<Playground
+  client:visible
+  title="Named Static Factories"
+  defaultTab="js"
+  showConsole={true}
+  html={`<p>Inspect how static factories clarify units when creating Duration objects.</p>`}
+  js={`class Duration {
+  constructor(seconds) {
+    this.seconds = seconds;
+  }
+  static fromMinutes(mins) {
+    return new Duration(mins * 60);
+  }
+  static fromHours(hours) {
+    return new Duration(hours * 3600);
+  }
+  label() {
+    return this.seconds + "s";
+  }
+}
+
+console.log("15m =", Duration.fromMinutes(15).label());
+console.log("2h  =", Duration.fromHours(2).label());`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "How is a static method called on a class named Duration?",
+      options: ["Duration.fromMinutes(10)", "new Duration().fromMinutes(10)", "static.fromMinutes(10)"],
+      answer: 0,
+      explanation: "Static methods are invoked directly on the class name, not on an instance."
+    }
+  ]}
+/>

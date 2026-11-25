@@ -1,0 +1,17 @@
+---
+title: "Docker & Compose Quick Reference"
+category: "Docker"
+syntax: "docker compose up -d --build"
+summary: "Essential Docker CLI commands, multi-stage Dockerfile instructions, named volumes, and Docker Compose workflows."
+browserSupport: "Docker Engine 24+ / Compose v2"
+---
+
+## Everyday Docker CLI
+
+| Command | Purpose | Example |
+| :--- | :--- | :--- |
+| `docker build -t` | Build image from Dockerfile | `docker build -t app:1.0 .` |
+| `docker run -d -p` | Run detached container with port map | `docker run -d -p 8080:80 nginx` |
+| `docker logs -f` | Stream container stdout/stderr | `docker logs -f web` |
+| `docker exec -it` | Open shell inside running container | `docker exec -it web sh` |
+| `docker compose up -d` | Start multi-container stack | `docker compose up -d --build` |

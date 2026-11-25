@@ -1,0 +1,72 @@
+---
+title: "Navigation, Files & Directories"
+description: "Move confidently across the Linux filesystem using pwd, ls -la, mkdir -p, cp, mv, and rm."
+course: "linux-cli"
+module: "Shell Basics"
+order: 1
+durationMinutes: 7
+objectives:
+  - "Understand absolute paths (/var/www) vs. relative paths (./dist)"
+  - "Create nested directories safely with mkdir -p"
+  - "Inspect hidden dotfiles and file sizes with ls -lah"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+Every production web server, cloud VM, and Docker container runs **Linux**. Mastering the command line lets you deploy, debug logs, and automate workflows in seconds.
+
+- `pwd` prints your current working directory.
+- `ls -lah` lists all files (including dotfiles like `.env`) with human-readable sizes.
+- `mkdir -p a/b/c` creates parent folders automatically without failing if they already exist.
+
+<Callout type="warning" title="Double-Check Before Running rm -rf">
+  Linux has no Recycle Bin on the command line: <code>rm -rf</code> permanently deletes files immediately. Always run <code>ls</code> on the target path first.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Create Nested Folders & List All"
+  prompt="Create app/src/utils in one command and list all files including hidden ones."
+  template={`mkdir {{0}} app/src/utils
+ls -{{1}}`}
+  blanks={[
+    { answer: '-p', placeholder: 'flag' },
+    { answer: 'la', placeholder: 'flags' },
+  ]}
+  hint={'mkdir -p creates parent directories, and ls -la shows long details including hidden files.'}
+/>
+
+## Live Bash Lab
+
+<CodeLab
+  client:visible
+  title="files.sh"
+  language="bash"
+  code={`mkdir -p /tmp/sf_lab/docs
+echo "Hello Linux" > /tmp/sf_lab/docs/readme.txt
+ls -1 /tmp/sf_lab/docs
+cat /tmp/sf_lab/docs/readme.txt`}
+  expectedOutput={`readme.txt
+Hello Linux`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does the -p flag do in mkdir -p /var/www/app/dist?",
+      options: [
+        "Creates missing parent directories and succeeds without error if the path already exists",
+        "Makes the directory password-protected",
+        "Prints the directory contents"
+      ],
+      answer: 0,
+      explanation: "mkdir -p is idempotent and creates the entire directory tree in one call."
+    }
+  ]}
+/>

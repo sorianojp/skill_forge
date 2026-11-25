@@ -1,0 +1,80 @@
+---
+title: "Enums, Unions & Bitwise Flags"
+description: "Represent finite states cleanly with enums and pack multiple boolean options into one integer using bitwise masks."
+course: "c-fundamentals"
+module: "Systems Programming"
+order: 7
+durationMinutes: 8
+objectives:
+  - "Define readable named constants with enum"
+  - "Combine and test bit flags using |, &, and ~"
+  - "Understand how unions share memory across alternative fields"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+Systems code in C relies heavily on **enums** for state machines and **bitwise flags** (`1 << 0`, `1 << 1`, `1 << 2`) to pack permissions or configuration options into a single byte or integer.
+
+- **Set flag:** `perms |= FLAG_WRITE;`
+- **Check flag:** `if (perms & FLAG_WRITE)`
+- **Clear flag:** `perms &= ~FLAG_WRITE;`
+
+<Callout type="tip" title="Bitwise vs. Logical Operators">
+  Use single <code>&amp;</code> and <code>|</code> for bitwise flag operations, and double <code>&amp;&amp;</code> and <code>||</code> for boolean conditions.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Combine & Test Bit Flags"
+  prompt="Combine READ and WRITE flags with |, and test WRITE with &."
+  template={`unsigned int perms = FLAG_READ {{0}} FLAG_WRITE;
+if (perms {{1}} FLAG_WRITE) {
+    printf("Writable\\n");
+}`}
+  blanks={[
+    { answer: '|', placeholder: 'op' },
+    { answer: '&', placeholder: 'op' },
+  ]}
+  hint={'Bitwise OR (|) combines flags; bitwise AND (&) tests whether a flag bit is set.'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="bitflags.c"
+  language="c"
+  code={`#include <stdio.h>
+
+enum {
+    FLAG_READ  = 1 << 0,
+    FLAG_WRITE = 1 << 1,
+    FLAG_EXEC  = 1 << 2
+};
+
+int main(void) {
+    unsigned int perms = FLAG_READ | FLAG_WRITE;
+    printf("Can write? %s\\n", (perms & FLAG_WRITE) ? "yes" : "no");
+    printf("Can exec?  %s\\n", (perms & FLAG_EXEC)  ? "yes" : "no");
+    return 0;
+}`}
+  expectedOutput={`Can write? yes
+Can exec?  no`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which bitwise expression clears FLAG_WRITE from perms without affecting other flags?",
+      options: ["perms &= ~FLAG_WRITE;", "perms |= FLAG_WRITE;", "perms == FLAG_WRITE;"],
+      answer: 0,
+      explanation: "~FLAG_WRITE inverts the bitmask, and &= clears only the target bit."
+    }
+  ]}
+/>

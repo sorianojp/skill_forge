@@ -1,0 +1,20 @@
+{
+  "slug": "docker-essentials",
+  "title": "Docker & Containers Essentials",
+  "shortTitle": "Learn Docker",
+  "description": "Package and ship reproducible apps anywhere with Docker. Master images vs. containers, Dockerfiles, layer caching, volumes, networks, and Docker Compose.",
+  "track": "Docker",
+  "difficulty": "Intermediate",
+  "estimatedHours": 4,
+  "accentColor": "#0ea5e9",
+  "prerequisites": ["Basic Linux CLI familiarity"],
+  "outcomes": [
+    "Understand the difference between immutable Docker images and running containers",
+    "Run, inspect, debug, and stop containers cleanly with docker run, logs, and exec",
+    "Author optimized multi-stage Dockerfiles with proper layer caching and .dockerignore",
+    "Persist database state safely using named Docker volumes",
+    "Orchestrate multi-container stacks (app + Postgres + Redis) with Docker Compose"
+  ],
+  "featured": true,
+  "order": 17
+}

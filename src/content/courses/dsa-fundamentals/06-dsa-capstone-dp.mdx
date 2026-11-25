@@ -1,0 +1,82 @@
+---
+title: "DSA Capstone: Dynamic Programming & Memoization"
+description: "Turn exponential O(2^n) recursion into linear O(n) algorithms using memoization and bottom-up Dynamic Programming."
+course: "dsa-fundamentals"
+module: "Capstone"
+order: 6
+durationMinutes: 10
+objectives:
+  - "Spot overlapping subproblems in recursive solutions"
+  - "Optimize Climbing Stairs / Fibonacci from O(2^n) to O(n) time and O(1) space"
+  - "Prepare for the DSA Final Exam and Certificate"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+**Dynamic Programming (DP)** applies whenever a problem has **optimal substructure** and **overlapping subproblems**. Instead of recomputing `climb(4)` thousands of times, store each answer once (**memoization**) or build answers bottom-up in a simple $O(n)$ loop!
+
+## Fill-in-the-Blank Capstone
+
+<Exercise
+  client:visible
+  title="Bottom-Up Climbing Stairs DP"
+  prompt="Compute ways(n) in O(n) time and O(1) space by sliding two variables."
+  template={`let prev2 = 1, prev1 = 1;
+for (let i = 2; i <= n; i++) {
+  const cur = prev1 + {{0}};
+  prev2 = {{1}};
+  prev1 = cur;
+}`}
+  blanks={[
+    { answer: 'prev2', placeholder: 'var' },
+    { answer: 'prev1', placeholder: 'var' },
+  ]}
+  hint={'Each step equals prev1 + prev2, then shift prev2 = prev1 and prev1 = cur.'}
+/>
+
+## Capstone Playground
+
+<Playground
+  client:visible
+  title="O(n) Time, O(1) Space Climbing Stairs DP"
+  defaultTab="js"
+  showConsole={true}
+  html={`<p>Count distinct ways to climb n stairs taking 1 or 2 steps at a time.</p>`}
+  js={`function climbStairs(n) {
+  if (n <= 1) return 1;
+  let prev2 = 1, prev1 = 1;
+  for (let i = 2; i <= n; i++) {
+    const cur = prev1 + prev2;
+    prev2 = prev1;
+    prev1 = cur;
+  }
+  return prev1;
+}
+
+for (const n of [3, 5, 10, 30]) {
+  console.log("n=" + n + " -> " + climbStairs(n) + " ways");
+}`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What two properties signal that a problem can be optimized with Dynamic Programming?",
+      options: [
+        "Overlapping subproblems and optimal substructure",
+        "Sorted input and random access",
+        "Mutable global state and recursion depth 1"
+      ],
+      answer: 0,
+      explanation: "Caching overlapping subproblems turns exponential recursion into polynomial time."
+    }
+  ]}
+/>
+
+<Callout type="tip" title="Earn Your DSA Certificate">
+  Ready to test your algorithmic thinking? Take the <a href="/courses/dsa-fundamentals/exam">DSA Final Exam</a> (score 80% or higher) to unlock your free verifiable certificate.
+</Callout>

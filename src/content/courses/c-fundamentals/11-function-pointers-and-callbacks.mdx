@@ -1,0 +1,81 @@
+---
+title: "Function Pointers & Callbacks (qsort)"
+description: "Pass functions as arguments in C to build flexible callbacks and sort any array type using stdlib's qsort()."
+course: "c-fundamentals"
+module: "Modular C"
+order: 10
+durationMinutes: 9
+objectives:
+  - "Declare and invoke a function pointer cleanly with typedef"
+  - "Pass a custom comparator callback to qsort()"
+  - "Understand how void * enables generic algorithms in C"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+In C, functions live at memory addresses just like data. Passing a **function pointer** lets libraries like `qsort()` sort arrays of *any* type (`int`, `double`, `struct`) by delegating comparisons to your callback function.
+
+<Callout type="tip" title="Safe Integer Comparator">
+  In <code>qsort</code> comparators, write <code>(x &gt; y) - (x &lt; y)</code> instead of <code>x - y</code> to avoid signed integer overflow on extreme values.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Call stdlib qsort"
+  prompt="Sort an array of 4 ints using the cmp_asc callback function."
+  template={`{{0}}(nums, 4, sizeof(int), {{1}});`}
+  blanks={[
+    { answer: 'qsort', placeholder: 'fn' },
+    { answer: 'cmp_asc', placeholder: 'cb' },
+  ]}
+  hint={'qsort(base, count, elem_size, comparator) sorts in place.'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="qsort_demo.c"
+  language="c"
+  code={`#include <stdio.h>
+#include <stdlib.h>
+
+int cmp_asc(const void *a, const void *b) {
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+    return (x > y) - (x < y);
+}
+
+int main(void) {
+    int scores[] = {91, 74, 88, 65};
+    qsort(scores, 4, sizeof(int), cmp_asc);
+
+    for (int i = 0; i < 4; i++) {
+        printf("%d ", scores[i]);
+    }
+    printf("\\n");
+    return 0;
+}`}
+  expectedOutput={`65 74 88 91`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why does qsort's comparator take const void * parameters?",
+      options: [
+        "So qsort can sort arrays of any element type without knowing the concrete type",
+        "Because C does not allow int parameters in functions",
+        "To allocate memory automatically"
+      ],
+      answer: 0,
+      explanation: "void * is C's generic pointer type, allowing qsort to work on any struct or primitive array."
+    }
+  ]}
+/>

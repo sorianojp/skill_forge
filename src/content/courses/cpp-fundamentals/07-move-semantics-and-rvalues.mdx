@@ -1,0 +1,79 @@
+---
+title: "Move Semantics & std::move"
+description: "Transfer ownership of strings and vectors in O(1) without deep copying using std::move and rvalue references (T&&)."
+course: "cpp-fundamentals"
+module: "Modern C++20 Features"
+order: 6
+durationMinutes: 9
+objectives:
+  - "Understand why moving a vector transfers its internal pointer instead of copying elements"
+  - "Use std::move() when transferring ownership of a local variable"
+  - "Avoid using a moved-from object without reassigning it first"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+Copying a `std::vector` with 1 million elements allocates and copies 1 million items. **Moving** it with **`std::move()`** simply transfers ownership of the underlying heap pointer in $O(1)$ time with zero allocations.
+
+<Callout type="tip" title="Do Not Use std::move on Return Statements">
+  Returning a local variable directly (<code>return vec;</code>) allows the compiler to apply Return Value Optimization (NRVO), which is even faster than <code>return std::move(vec);</code>.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Transfer Ownership with std::move"
+  prompt="Move title into the vector without copying the string buffer."
+  template={`std::string title = "Modern C++";
+std::vector<std::string> items;
+items.push_back(std::{{0}}({{1}}));`}
+  blanks={[
+    { answer: 'move', placeholder: 'fn' },
+    { answer: 'title', placeholder: 'var' },
+  ]}
+  hint={'Pass std::move(title) to push_back() to transfer ownership in O(1).'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="move_demo.cpp"
+  language="cpp"
+  code={`#include <iostream>
+#include <string>
+#include <utility>
+#include <vector>
+
+int main() {
+    std::string msg = "Zero-copy transfer";
+    std::vector<std::string> log;
+    log.push_back(std::move(msg));
+
+    std::cout << "Moved into vector: " << log[0] << "\\n";
+    std::cout << "Original size now: " << msg.size() << "\\n";
+    return 0;
+}`}
+  expectedOutput={`Moved into vector: Zero-copy transfer
+Original size now: 0`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does std::move(x) actually do?",
+      options: [
+        "Casts x to an rvalue reference so move constructors/assignments can steal its resources",
+        "Deletes x from memory immediately",
+        "Copies x twice to ensure thread safety"
+      ],
+      answer: 0,
+      explanation: "std::move is a zero-cost cast to T&& that signals ownership may be transferred."
+    }
+  ]}
+/>

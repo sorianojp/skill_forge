@@ -1,0 +1,71 @@
+---
+title: "HTTP Servers & JSON Routing"
+description: "Build zero-dependency HTTP APIs with node:http, parse URL paths cleanly, and return proper HTTP status codes."
+course: "nodejs-essentials"
+module: "Backend APIs"
+order: 4
+durationMinutes: 9
+objectives:
+  - "Create an HTTP request handler with http.createServer()"
+  - "Parse query parameters safely with new URL(req.url, base)"
+  - "Return JSON with Content-Type: application/json and accurate status codes"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+Frameworks like Express, Fastify, and Hono all build on top of Node's built-in **`node:http`** module. Understanding `req.method`, `req.url`, `res.writeHead(status, headers)`, and `res.end(body)` demystifies every Node web framework.
+
+<Callout type="tip" title="Standard HTTP Status Codes">
+  <code>200 OK</code> for reads, <code>201 Created</code> for new resources, <code>400 Bad Request</code> for invalid input, <code>401 Unauthorized</code> for missing auth, and <code>404 Not Found</code> for unknown routes.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Send JSON Response"
+  prompt="Set status 200 with JSON content-type and finish the response."
+  template={`res.writeHead(200, { "Content-Type": "{{0}}" });
+res.{{1}}(JSON.stringify({ ok: true }));`}
+  blanks={[
+    { answer: 'application/json', placeholder: 'mime' },
+    { answer: 'end', placeholder: 'method' },
+  ]}
+  hint={'Use application/json as Content-Type and call res.end() to send the body.'}
+/>
+
+## Live Code Lab (Node.js 20)
+
+<CodeLab
+  client:visible
+  title="router_demo.js"
+  language="node"
+  code={`function handleRequest(method, rawUrl) {
+  const url = new URL(rawUrl, "http://localhost");
+  if (method === "GET" && url.pathname === "/api/courses") {
+    const track = url.searchParams.get("track") ?? "all";
+    return { status: 200, body: { filter: track, ok: true } };
+  }
+  return { status: 404, body: { error: "Not found" } };
+}
+
+console.log(handleRequest("GET", "/api/courses?track=node"));
+console.log(handleRequest("GET", "/api/unknown"));`}
+  expectedOutput={`{ status: 200, body: { filter: 'node', ok: true } }
+{ status: 404, body: { error: 'Not found' } }`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which HTTP status code is best when a POST request successfully creates a new resource?",
+      options: ["201 Created", "304 Not Modified", "403 Forbidden"],
+      answer: 0,
+      explanation: "201 Created signals that the request succeeded and created a new server resource."
+    }
+  ]}
+/>

@@ -1,0 +1,69 @@
+---
+title: "GitHub Actions & Automated CI/CD"
+description: "Automate tests, builds, and deployments on every push and Pull Request using .github/workflows YAML files."
+course: "git-essentials"
+module: "Collaboration & GitHub"
+order: 11
+durationMinutes: 8
+objectives:
+  - "Understand triggers (on: push, pull_request), jobs, and steps in GitHub Actions"
+  - "Run automated build and test checks on every Pull Request"
+  - "Use GitHub Secrets safely for deployment credentials"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import GitSandbox from '@/components/playground/GitSandbox';
+import Quiz from '@/components/quiz/Quiz';
+
+**GitHub Actions** runs automated workflows whenever events happen in your repository (such as pushing to `main` or opening a Pull Request). Workflows live in `.github/workflows/*.yml`.
+
+## Anatomy of a CI Workflow
+
+- **`on:`** defines triggers (`push`, `pull_request`).
+- **`jobs:`** defines isolated virtual machines (`runs-on: ubuntu-latest`).
+- **`steps:`** runs actions (`actions/checkout@v4`) and shell commands (`npm ci && npm test`).
+
+<Callout type="tip" title="Protect Your main Branch">
+  Combine GitHub Actions with Branch Protection Rules so Pull Requests cannot be merged until automated tests and builds pass green.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="GitHub Actions Trigger & Runner"
+  prompt="Trigger CI on pushes to main and run on the latest Ubuntu runner."
+  template={`on:
+  {{0}}:
+    branches: [main]
+jobs:
+  build:
+    runs-on: {{1}}`}
+  blanks={[
+    { answer: 'push', placeholder: 'event' },
+    { answer: 'ubuntu-latest', placeholder: 'runner' },
+  ]}
+  hint={'Use push under on: and ubuntu-latest as the standard Linux runner.'}
+/>
+
+## Interactive Git Sandbox
+
+<GitSandbox
+  client:visible
+  title="Commit a CI Workflow"
+  starterHint={'Stage and commit your CI pipeline on a branch just like production code.'}
+  suggestedCommands={['git checkout -b ci/add-tests', 'git add .', 'git commit -m "Add GitHub Actions CI"', 'git log --oneline']}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Where must GitHub Actions workflow YAML files be stored in a repository?",
+      options: [".github/workflows/", "src/actions/", ".git/hooks/"],
+      answer: 0,
+      explanation: "GitHub automatically discovers workflow YAML files inside .github/workflows/."
+    }
+  ]}
+/>

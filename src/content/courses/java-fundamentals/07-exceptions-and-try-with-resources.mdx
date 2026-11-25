@@ -1,0 +1,83 @@
+---
+title: "Exceptions & Try-With-Resources"
+description: "Distinguish checked vs. unchecked exceptions and auto-close resources cleanly with try-with-resources."
+course: "java-fundamentals"
+module: "Modern Java APIs"
+order: 6
+durationMinutes: 8
+objectives:
+  - "Understand checked exceptions (IOException) vs. unchecked RuntimeExceptions"
+  - "Use try-with-resources to guarantee AutoCloseable cleanup"
+  - "Throw meaningful custom domain exceptions"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+In Java, any resource implementing `AutoCloseable` (files, database connections, HTTP streams) should be opened inside **`try (var res = ...)`**. Java automatically invokes `res.close()` when the block finishes, even if an exception is thrown.
+
+<Callout type="tip" title="Never Swallow Exceptions Silently">
+  An empty <code>catch (Exception e) &#123;&#125;</code> hides bugs. Always log, wrap, or handle the failure explicitly.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Catch & Handle Exception"
+  prompt="Catch IllegalArgumentException and print its message."
+  template={`{{0}} {
+    validate(-5);
+} {{1}} (IllegalArgumentException e) {
+    System.out.println(e.getMessage());
+}`}
+  blanks={[
+    { answer: 'try', placeholder: 'kw' },
+    { answer: 'catch', placeholder: 'kw' },
+  ]}
+  hint={'Wrap risky calls in try { ... } catch (ExceptionType e) { ... }.'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="ExceptionsDemo.java"
+  language="java"
+  code={`public class ExceptionsDemo {
+    static int parsePositive(String raw) {
+        int val = Integer.parseInt(raw);
+        if (val <= 0) throw new IllegalArgumentException("Must be > 0");
+        return val;
+    }
+
+    public static void main(String[] args) {
+        try {
+            System.out.println("Parsed: " + parsePositive("42"));
+            System.out.println(parsePositive("-3"));
+        } catch (IllegalArgumentException e) {
+            System.out.println("Handled: " + e.getMessage());
+        }
+    }
+}`}
+  expectedOutput={`Parsed: 42
+Handled: Must be > 0`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does Java's try-with-resources statement guarantee?",
+      options: [
+        "Every AutoCloseable declared in try(...) is closed automatically when the block exits",
+        "No exceptions can ever be thrown inside the block",
+        "Checked exceptions are ignored"
+      ],
+      answer: 0,
+      explanation: "try-with-resources eliminates manual finally close() boilerplate and prevents resource leaks."
+    }
+  ]}
+/>

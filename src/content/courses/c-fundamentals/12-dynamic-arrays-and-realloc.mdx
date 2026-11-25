@@ -1,0 +1,92 @@
+---
+title: "Dynamic Arrays & realloc"
+description: "Build a growable dynamic array in C using capacity doubling, realloc(), and leak-free cleanup."
+course: "c-fundamentals"
+module: "Modular C"
+order: 11
+durationMinutes: 9
+objectives:
+  - "Track both len (used elements) and cap (allocated capacity) in a dynamic array struct"
+  - "Resize heap buffers safely with realloc() using a temporary pointer"
+  - "Understand why doubling capacity gives amortized O(1) appends"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+Because C does not include a built-in `std::vector`, building a lightweight **dynamic array** (`data`, `len`, `cap`) is a classic systems skill. Doubling capacity whenever `len == cap` makes appending amortized $O(1)$.
+
+<Callout type="warning" title="Assign realloc() to a Temporary Pointer">
+  Never write <code>ptr = realloc(ptr, new_size);</code> directly! If <code>realloc</code> fails and returns <code>NULL</code>, you would overwrite and leak your original pointer.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Safe realloc Pattern"
+  prompt="Grow buf using a temporary pointer tmp before reassigning buf."
+  template={`int *tmp = {{0}}(buf, new_cap * sizeof(int));
+if (tmp != {{1}}) {
+    buf = tmp;
+}`}
+  blanks={[
+    { answer: 'realloc', placeholder: 'fn' },
+    { answer: 'NULL', placeholder: 'val' },
+  ]}
+  hint={'Assign realloc() to tmp, check tmp != NULL, then update buf.'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="dynarray.c"
+  language="c"
+  code={`#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t len;
+    size_t cap;
+} IntVec;
+
+void vec_push(IntVec *v, int val) {
+    if (v->len == v->cap) {
+        size_t next_cap = v->cap ? v->cap * 2 : 2;
+        int *tmp = realloc(v->data, next_cap * sizeof(int));
+        if (!tmp) return;
+        v->data = tmp;
+        v->cap = next_cap;
+    }
+    v->data[v->len++] = val;
+}
+
+int main(void) {
+    IntVec v = {NULL, 0, 0};
+    for (int i = 1; i <= 5; i++) vec_push(&v, i * 10);
+    printf("len=%zu cap=%zu last=%d\\n", v.len, v.cap, v.data[v.len - 1]);
+    free(v.data);
+    return 0;
+}`}
+  expectedOutput={`len=5 cap=8 last=50`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why should realloc() results be assigned to a temporary pointer first?",
+      options: [
+        "If realloc() returns NULL on failure, assigning directly would overwrite and leak the original pointer",
+        "realloc() only works on stack arrays otherwise",
+        "The C compiler forbids assigning realloc() to struct fields"
+      ],
+      answer: 0,
+      explanation: "Checking a temporary pointer preserves the original allocation if resizing fails."
+    }
+  ]}
+/>

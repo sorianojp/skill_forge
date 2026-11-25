@@ -1,0 +1,70 @@
+---
+title: "Processes, Ports & Server Health"
+description: "Monitor CPU, RAM, disk space, open TCP ports, and systemd services on production Linux servers."
+course: "linux-cli"
+module: "Server Administration"
+order: 4
+durationMinutes: 8
+objectives:
+  - "Check memory (free -h) and disk usage (df -h) in one second"
+  - "Inspect running processes with ps aux and listening ports with ss -tulpn"
+  - "Manage background daemons cleanly with systemctl status/restart"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+When a production server slows down or refuses connections, five built-in Linux commands tell you almost everything immediately:
+
+- `free -h` -> RAM and swap usage.
+- `df -h` -> Disk space per partition.
+- `ps aux | grep node` -> Running processes and PIDs.
+- `ss -tulpn` -> Which processes are listening on which TCP/UDP ports.
+- `systemctl status nginx` / `journalctl -u nginx -n 50` -> Service status and logs.
+
+<Callout type="tip" title="Always Check Disk Space First">
+  A 100% full disk (<code>df -h</code>) causes databases, Nginx, and logs to fail with mysterious errors. It is always the first thing to rule out.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Server Health Commands"
+  prompt="Check human-readable disk usage and restart nginx via systemd."
+  template={`{{0}} -h
+systemctl {{1}} nginx`}
+  blanks={[
+    { answer: 'df', placeholder: 'cmd' },
+    { answer: 'restart', placeholder: 'action' },
+  ]}
+  hint={'df -h shows disk free space, and systemctl restart reloads a service.'}
+/>
+
+## Live Bash Lab
+
+<CodeLab
+  client:visible
+  title="health.sh"
+  language="bash"
+  code={`echo "Kernel: $(uname -s)"
+echo "CPUs: $(nproc)"
+df -h / | tail -n 1 | awk '{print "Root disk used: " $5}'`}
+  expectedOutput={`Kernel: Linux
+CPUs: 4
+Root disk used: 32%`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which command shows human-readable free and used disk space on mounted filesystems?",
+      options: ["df -h", "free -h", "chmod -h"],
+      answer: 0,
+      explanation: "df -h (disk free, human-readable) reports filesystem disk usage."
+    }
+  ]}
+/>

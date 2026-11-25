@@ -1,0 +1,20 @@
+{
+  "slug": "typescript-essentials",
+  "title": "TypeScript Essentials",
+  "shortTitle": "Learn TypeScript",
+  "description": "Add rock-solid static types to JavaScript. Master type annotations, interfaces, union narrowing, generics, utility types, and strict TypeScript 5 patterns.",
+  "track": "TypeScript",
+  "difficulty": "Intermediate",
+  "estimatedHours": 5,
+  "accentColor": "#0284c7",
+  "prerequisites": ["JavaScript Essentials"],
+  "outcomes": [
+    "Annotate variables, functions, and objects with strict TypeScript types",
+    "Model complex domain shapes using interfaces, type aliases, and literal unions",
+    "Narrow union types safely with typeof, in, and discriminated unions",
+    "Build reusable type-safe helpers with generics (<T>)",
+    "Transform existing types concisely using Partial, Pick, Omit, and Record"
+  ],
+  "featured": true,
+  "order": 13
+}

@@ -1,0 +1,80 @@
+---
+title: "Lambdas & STL Algorithm Pipelines"
+description: "Write concise inline predicates with lambda capture lists and combine std::transform, std::accumulate, and std::ranges."
+course: "cpp-fundamentals"
+module: "The Standard Library (STL)"
+order: 11
+durationMinutes: 8
+objectives:
+  - "Understand lambda capture clauses ([], [x], [&x])"
+  - "Aggregate values cleanly with std::accumulate from <numeric>"
+  - "Sort custom structs with inline lambda comparators"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+C++ **lambdas** (`[capture](params) { body }`) compile into zero-overhead inline function objects. Pairing lambdas with `<algorithm>` and `<numeric>` (`std::sort`, `std::accumulate`, `std::all_of`) lets you express complex data transformations without hand-written index loops.
+
+<Callout type="tip" title="Capture Explicitly">
+  Capture only what you need: <code>[threshold]</code> captures by value, <code>[&amp;total]</code> captures by reference. Explicit captures prevent accidental dangling references.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Lambda Capture & Accumulate"
+  prompt="Capture min_score by value inside a lambda predicate."
+  template={`int min_score = 80;
+auto is_pass = [{{0}}](int s) { return s >= min_score; };
+std::cout << is_pass(85) << "\\n";`}
+  blanks={[
+    { answer: 'min_score', placeholder: 'var' },
+  ]}
+  hint={'List min_score inside the square brackets [] to capture it by value.'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="lambdas_stl.cpp"
+  language="cpp"
+  code={`#include <algorithm>
+#include <iostream>
+#include <numeric>
+#include <vector>
+
+int main() {
+    std::vector<int> scores = {75, 92, 88, 95};
+    int threshold = 85;
+
+    int sum = std::accumulate(scores.begin(), scores.end(), 0);
+    auto top = std::count_if(scores.begin(), scores.end(), [threshold](int s) {
+        return s >= threshold;
+    });
+
+    std::cout << "Sum: " << sum << " | >= " << threshold << ": " << top << "\\n";
+    return 0;
+}`}
+  expectedOutput={`Sum: 350 | >= 85: 3`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "In a C++ lambda [x, &y](int n) { ... }, how are x and y captured?",
+      options: [
+        "x by value (copy), y by reference",
+        "x by reference, y by value",
+        "Both by raw pointer"
+      ],
+      answer: 0,
+      explanation: "A plain variable name captures by value, while prefixing with & captures by reference."
+    }
+  ]}
+/>

@@ -1,0 +1,25 @@
+---
+title: "React 19 Quick Reference"
+category: "React"
+syntax: "const [items, setItems] = useState<Item[]>([]);"
+summary: "Essential React hooks, immutable state patterns, keyed lists, controlled inputs, and effect cleanup."
+browserSupport: "React 18 / 19"
+---
+
+## Core Hooks
+
+| Hook | Purpose | Example |
+| :--- | :--- | :--- |
+| `useState` | Local reactive component state | `const [open, setOpen] = useState(false);` |
+| `useEffect` | Sync with external system + cleanup | `useEffect(() => { ... return () => cleanup(); }, [id]);` |
+| `useRef` | Mutable ref / DOM element handle | `const inputRef = useRef<HTMLInputElement>(null);` |
+| `useMemo` | Cache expensive derived calculation | `const sorted = useMemo(() => [...xs].sort(), [xs]);` |
+
+## Immutable State Patterns
+
+| Operation | Immutable Pattern |
+| :--- | :--- |
+| Append item | `setList(prev => [...prev, item])` |
+| Remove item | `setList(prev => prev.filter(x => x.id !== id))` |
+| Update item | `setList(prev => prev.map(x => x.id === id ? { ...x, done: true } : x))` |
+| Update object | `setUser(prev => ({ ...prev, name: "Alex" }))` |

@@ -1,0 +1,70 @@
+---
+title: "JSON Serialization with System.Text.Json"
+description: "Serialize and deserialize C# records to and from JSON cleanly using .NET's high-performance System.Text.Json."
+course: "csharp-fundamentals"
+module: "Production .NET 8"
+order: 10
+durationMinutes: 8
+objectives:
+  - "Serialize C# objects and records with JsonSerializer.Serialize()"
+  - "Deserialize JSON payloads safely with JsonSerializer.Deserialize<T>()"
+  - "Configure camelCase naming with JsonSerializerOptions"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+**`System.Text.Json`** is built directly into .NET and powers ASP.NET Core's JSON APIs with low memory allocation. It works seamlessly with C# `record` types and supports camelCase serialization out of the box.
+
+<Callout type="tip" title="Reuse JsonSerializerOptions Instances">
+  Create a single <code>static readonly JsonSerializerOptions</code> instance and reuse it across requests so .NET caches reflection metadata instead of rebuilding it every call.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Serialize & Deserialize JSON"
+  prompt="Convert a record to JSON and deserialize it back into a Course."
+  template={`string json = JsonSerializer.{{0}}(course);
+var copy = JsonSerializer.{{1}}<Course>(json);`}
+  blanks={[
+    { answer: 'Serialize', placeholder: 'method' },
+    { answer: 'Deserialize', placeholder: 'method' },
+  ]}
+  hint={'Use JsonSerializer.Serialize() and JsonSerializer.Deserialize<T>().'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="JsonDemo.cs"
+  language="csharp"
+  code={`using System.Text.Json;
+
+public record CourseDto(string Slug, int Lessons);
+
+var opts = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+var json = JsonSerializer.Serialize(new CourseDto("csharp-fundamentals", 12), opts);
+Console.WriteLine("JSON: " + json);
+
+var parsed = JsonSerializer.Deserialize<CourseDto>(json, opts);
+Console.WriteLine($"Parsed: {parsed?.Slug} ({parsed?.Lessons} lessons)");`}
+  expectedOutput={`JSON: {"slug":"csharp-fundamentals","lessons":12}
+Parsed: csharp-fundamentals (12 lessons)`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which built-in .NET namespace provides high-performance JSON serialization with zero external packages?",
+      options: ["System.Text.Json", "System.Xml.Json", "System.Net.Parser"],
+      answer: 0,
+      explanation: "System.Text.Json is .NET's built-in, high-throughput JSON serializer."
+    }
+  ]}
+/>

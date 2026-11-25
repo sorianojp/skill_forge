@@ -1,0 +1,83 @@
+---
+title: "Lists, Keys & Conditional Rendering"
+description: "Render arrays cleanly with .map(), assign stable unique key props, and derive filtered views without redundant state."
+course: "react-fundamentals"
+module: "React Core"
+order: 3
+durationMinutes: 8
+objectives:
+  - "Render dynamic lists using array.map() and stable IDs as keys"
+  - "Understand why array index keys cause bugs when lists are reordered or filtered"
+  - "Compute derived values directly during render instead of duplicating state"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+When rendering lists in React (`items.map(item => <Row key={item.id} ... />)`), the **`key`** prop lets React match each item across renders so inputs, animations, and local state stay attached to the right row.
+
+<Callout type="warning" title="Avoid Array Index Keys on Dynamic Lists">
+  Using <code>key=&#123;index&#125;</code> breaks when items are inserted, deleted, or sorted. Always use a stable unique ID like <code>item.id</code> or <code>item.slug</code>.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Keyed List Rendering"
+  prompt="Map over courses and pass course.slug as the stable key."
+  template={`{courses.{{0}}((c) => (
+  <li {{1}}={c.slug}>{c.title}</li>
+))}`}
+  blanks={[
+    { answer: 'map', placeholder: 'method' },
+    { answer: 'key', placeholder: 'prop' },
+  ]}
+  hint={'Use .map() to transform data into JSX elements and key={c.slug} for reconciliation.'}
+/>
+
+## Live Derived List Demo
+
+<Playground
+  client:visible
+  title="Derived Filtered List"
+  defaultTab="js"
+  showConsole={true}
+  html={`<input id="q" placeholder="Filter tracks..." style="padding:8px 12px;border-radius:10px;border:1px solid #cbd5e1;width:100%" />
+<ul id="list" style="margin-top:10px;padding-left:18px"></ul>`}
+  js={`const tracks = [
+  { slug: "ts", title: "TypeScript" },
+  { slug: "react", title: "React 19" },
+  { slug: "node", title: "Node.js" }
+];
+
+function render(query) {
+  const visible = tracks.filter((t) =>
+    t.title.toLowerCase().includes(query.toLowerCase())
+  );
+  document.getElementById("list").innerHTML = visible
+    .map((t) => "<li>" + t.title + "</li>")
+    .join("");
+}
+
+document.getElementById("q").addEventListener("input", (e) => render(e.target.value));
+render("");`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Should a filtered list (derived from items + searchQuery) be stored in a separate useState?",
+      options: [
+        "No, compute it directly during render from items and searchQuery to avoid stale sync bugs",
+        "Yes, always duplicate every derived value in useState",
+        "Only inside localStorage"
+      ],
+      answer: 0,
+      explanation: "Deriving values during render keeps one single source of truth."
+    }
+  ]}
+/>

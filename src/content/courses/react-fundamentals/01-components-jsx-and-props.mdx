@@ -1,0 +1,80 @@
+---
+title: "Components, JSX & Props"
+description: "Understand React's core mental model: UI = f(props, state), pure function components, and one-way data flow."
+course: "react-fundamentals"
+module: "React Core"
+order: 1
+durationMinutes: 8
+objectives:
+  - "Write clean function components that return JSX"
+  - "Pass data from parent to child via destructured props"
+  - "Keep render functions pure with zero side effects"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+**React** treats your UI as a pure function of your data: `UI = Component(props, state)`. Instead of manually hunting down DOM elements with `document.querySelector`, you declare *what* the UI should look like for the current state, and React efficiently updates the DOM.
+
+<Callout type="tip" title="Props Are Read-Only">
+  Never mutate a prop object inside a child component. Data flows downward from parent to child, and children notify parents by calling callback props like <code>onSelect(id)</code>.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Destructured Component Props"
+  prompt="Destructure title and count from props and render them in JSX."
+  template={`function Badge({ {{0}}, count }) {
+  return <span className="pill">{title}: {{{1}}}</span>;
+}`}
+  blanks={[
+    { answer: 'title', placeholder: 'prop' },
+    { answer: 'count', placeholder: 'prop' },
+  ]}
+  hint={'Destructure title in the parameter list and embed count inside curly braces {}.'}
+/>
+
+## Live Component Playground
+
+<Playground
+  client:visible
+  title="UI = f(props) in Action"
+  defaultTab="js"
+  showConsole={true}
+  html={`<div id="root"></div>`}
+  css={`.card { padding: 14px; border-radius: 12px; background: #f1f5f9; font-family: system-ui; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 999px; background: #06b6d4; color: white; font-size: 12px; font-weight: 700; }`}
+  js={`// Declarative component function: props -> HTML
+function CourseCard({ title, lessons }) {
+  return \`<div class="card">
+    <span class="badge">\${lessons} lessons</span>
+    <h3 style="margin:8px 0 0">\${title}</h3>
+  </div>\`;
+}
+
+document.getElementById("root").innerHTML = CourseCard({
+  title: "React 19 Fundamentals",
+  lessons: 6
+});
+console.log("Rendered pure component from props!");`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "How does data flow between parent and child components in React?",
+      options: [
+        "One-way downward via props; children communicate upward by invoking callback props",
+        "Children directly mutate parent variables",
+        "Via global window variables only"
+      ],
+      answer: 0,
+      explanation: "Unidirectional data flow makes React apps predictable and easy to debug."
+    }
+  ]}
+/>

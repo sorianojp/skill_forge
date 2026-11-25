@@ -1,0 +1,72 @@
+---
+title: "Big-O Complexity & Growth Rates"
+description: "Compare O(1), O(log n), O(n), O(n log n), and O(n^2) to spot performance bottlenecks before they hit production."
+course: "dsa-fundamentals"
+module: "Complexity & Patterns"
+order: 1
+durationMinutes: 8
+objectives:
+  - "Rank common Big-O time complexities from fastest to slowest"
+  - "Understand why constants and lower-order terms are dropped in Big-O"
+  - "Analyze both time complexity and auxiliary space complexity"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+**Big-O notation** measures how an algorithm's runtime or memory grows as input size `n` increases:
+
+- **`O(1)`**: Array index lookup, Hash Map get/set.
+- **`O(log n)`**: Binary search (halves the search space each step).
+- **`O(n)`**: Single pass over an array.
+- **`O(n log n)`**: Efficient sorting (Merge Sort, Timsort).
+- **`O(n^2)`**: Nested loops comparing every pair of items (slow at `n = 100,000`).
+
+<Callout type="tip" title="Drop Constants in Big-O">
+  Two sequential loops over <code>n</code> items take <code>2n</code> operations, which simplifies to <code>O(n)</code>. Only a <em>nested</em> loop inside another loop becomes <code>O(n^2)</code>.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Identify Complexity"
+  prompt="A single pass loop is O(n), while checking all pairs with a nested loop is O(n^2)."
+  template={`// Single pass: O({{0}})
+// Nested pair check: O({{1}})
+// Binary search: O(log n)`}
+  blanks={[
+    { answer: 'n', placeholder: 'bigO' },
+    { answer: 'n^2', placeholder: 'bigO' },
+  ]}
+  hint={'Single pass is O(n) and nested all-pairs loop is O(n^2).'}
+/>
+
+## Live DSA Playground
+
+<Playground
+  client:visible
+  title="Compare O(n) vs O(n^2) Step Counts"
+  defaultTab="js"
+  showConsole={true}
+  html={`<p>Run to see how fast O(n^2) explodes compared to O(n) and O(log n).</p>`}
+  js={`for (const n of [10, 100, 1000]) {
+  const logN = Math.ceil(Math.log2(n));
+  const nSq = n * n;
+  console.log("n=" + n + " | O(log n)=" + logN + " | O(n)=" + n + " | O(n^2)=" + nSq);
+}`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What is the Big-O time complexity of two separate sequential for-loops each running n times?",
+      options: ["O(n)", "O(n^2)", "O(log n)"],
+      answer: 0,
+      explanation: "n + n = 2n, and dropping the constant factor gives O(n)."
+    }
+  ]}
+/>

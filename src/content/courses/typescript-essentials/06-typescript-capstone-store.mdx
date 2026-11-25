@@ -1,0 +1,80 @@
+---
+title: "TypeScript Capstone: Typed State Store"
+description: "Combine generics, discriminated unions, and utility types to build a type-safe mini store."
+course: "typescript-essentials"
+module: "Capstone"
+order: 6
+durationMinutes: 10
+objectives:
+  - "Model typed actions with a discriminated union"
+  - "Update immutable state safely with exhaustive switch handling"
+  - "Prepare for the TypeScript Final Exam and Certificate"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+In this capstone, you will build a clean, immutable **Typed Reducer** using interfaces, discriminated action unions, and `readonly` state.
+
+## Fill-in-the-Blank Capstone
+
+<Exercise
+  client:visible
+  title="Typed Action Union"
+  prompt="Define an Action union supporting increment and reset."
+  template={`type Action = { type: "inc"; by: number } {{0}} { type: "reset" };`}
+  blanks={[
+    { answer: '|', placeholder: 'op' },
+  ]}
+  hint={'Use | to combine action variants into a discriminated union.'}
+/>
+
+## Capstone Code Lab
+
+<CodeLab
+  client:visible
+  title="store.ts"
+  language="ts"
+  code={`interface CounterState {
+  readonly count: number;
+}
+
+type Action =
+  | { type: "inc"; by: number }
+  | { type: "reset" };
+
+function reducer(state: CounterState, action: Action): CounterState {
+  switch (action.type) {
+    case "inc": return { count: state.count + action.by };
+    case "reset": return { count: 0 };
+  }
+}
+
+let state: CounterState = { count: 0 };
+state = reducer(state, { type: "inc", by: 5 });
+state = reducer(state, { type: "inc", by: 3 });
+console.log("Final count:", state.count);`}
+  expectedOutput={`Final count: 8`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What happens if you add a new action variant to Action without handling it in reducer()?",
+      options: [
+        "TypeScript flags a compile-time error because the return type is no longer guaranteed on every branch",
+        "TypeScript silently deletes the new action",
+        "JavaScript throws a SyntaxError before loading"
+      ],
+      answer: 0,
+      explanation: "Strict return type checking ensures every action variant in a discriminated union is handled."
+    }
+  ]}
+/>
+
+<Callout type="tip" title="Earn Your TypeScript Certificate">
+  Ready to lock in your TypeScript mastery? Take the <a href="/courses/typescript-essentials/exam">TypeScript Final Exam</a> (score 80% or higher) to unlock your free verifiable certificate.
+</Callout>

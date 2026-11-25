@@ -1,0 +1,76 @@
+---
+title: "Node.js Capstone: JSON API & Validation"
+description: "Combine URL routing, input validation, crypto IDs, and clean HTTP responses in a mini Node.js backend service."
+course: "nodejs-essentials"
+module: "Capstone"
+order: 6
+durationMinutes: 10
+objectives:
+  - "Validate incoming JSON payloads before storing them"
+  - "Generate unique IDs with crypto.randomUUID()"
+  - "Prepare for the Node.js Final Exam and Certificate"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+In this capstone, you will build a clean, testable **Task API handler** that validates request bodies, assigns secure UUIDs, and returns structured HTTP status codes.
+
+## Fill-in-the-Blank Capstone
+
+<Exercise
+  client:visible
+  title="Generate Secure UUID"
+  prompt="Assign a cryptographically strong UUID to each newly created task."
+  template={`const id = crypto.{{0}}();
+return { status: {{1}}, body: { id, title } };`}
+  blanks={[
+    { answer: 'randomUUID', placeholder: 'fn' },
+    { answer: '201', placeholder: 'code' },
+  ]}
+  hint={'Use crypto.randomUUID() and return HTTP 201 Created.'}
+/>
+
+## Capstone Code Lab (Node.js 20)
+
+<CodeLab
+  client:visible
+  title="task_api.js"
+  language="node"
+  code={`const crypto = require("node:crypto");
+
+const db = [];
+
+function createTask(body) {
+  const title = typeof body?.title === "string" ? body.title.trim() : "";
+  if (title.length < 3) {
+    return { status: 400, body: { error: "Title must be at least 3 chars" } };
+  }
+  const task = { id: crypto.randomUUID().slice(0, 8), title, done: false };
+  db.push(task);
+  return { status: 201, body: task };
+}
+
+console.log(createTask({ title: "Hi" }));
+console.log("Created status:", createTask({ title: "Deploy Node API" }).status, "| Count:", db.length);`}
+  expectedOutput={`{ status: 400, body: { error: 'Title must be at least 3 chars' } }
+Created status: 201 | Count: 1`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What status code should a Node.js API return when a client submits invalid JSON fields?",
+      options: ["400 Bad Request", "200 OK", "502 Bad Gateway"],
+      answer: 0,
+      explanation: "400 Bad Request tells the client their input failed validation."
+    }
+  ]}
+/>
+
+<Callout type="tip" title="Earn Your Node.js Certificate">
+  Ready to verify your backend skills? Take the <a href="/courses/nodejs-essentials/exam">Node.js 20 Final Exam</a> (score 80% or higher) to unlock your free verifiable certificate.
+</Callout>

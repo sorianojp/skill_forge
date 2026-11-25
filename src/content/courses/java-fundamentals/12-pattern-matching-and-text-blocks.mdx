@@ -1,0 +1,80 @@
+---
+title: "Pattern Matching & Text Blocks"
+description: "Write expressive Java 21 code with switch pattern matching, record deconstruction, and multi-line text blocks."
+course: "java-fundamentals"
+module: "Production Java 21"
+order: 11
+durationMinutes: 8
+objectives:
+  - "Match types and bind variables cleanly with pattern matching for switch"
+  - "Write clean multi-line JSON or SQL strings using triple-quoted text blocks"
+  - "Use instanceof pattern variables without redundant casts"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+Java 21 eliminates verbose `instanceof` casts with **pattern matching**: `if (obj instanceof String s)` tests the type *and* binds `s` in one step, and `switch` can match directly on types and guarded conditions (`case String s when !s.isBlank() -> ...`).
+
+<Callout type="tip" title="Text Blocks Keep JSON & SQL Readable">
+  Triple quotes (<code>"""</code>) preserve indentation cleanly without cluttered <code>\n</code> and <code>\"</code> escapes.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Pattern Matching instanceof"
+  prompt="Check if obj is a String and bind it to s without a manual cast."
+  template={`if (obj {{0}} String {{1}}) {
+    System.out.println(s.toUpperCase());
+}`}
+  blanks={[
+    { answer: 'instanceof', placeholder: 'kw' },
+    { answer: 's', placeholder: 'var' },
+  ]}
+  hint={'Use obj instanceof String s to test and bind in a single expression.'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="PatternsJava21.java"
+  language="java"
+  code={`public class PatternsJava21 {
+    static String describe(Object obj) {
+        return switch (obj) {
+            case Integer i -> "Int: " + (i * 2);
+            case String s -> "Text(" + s.length() + "): " + s;
+            case null -> "Null";
+            default -> "Other";
+        };
+    }
+
+    public static void main(String[] args) {
+        System.out.println(describe(21));
+        System.out.println(describe("SkillForge"));
+    }
+}`}
+  expectedOutput={`Int: 42
+Text(10): SkillForge`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does Java 21's switch pattern matching allow you to do?",
+      options: [
+        "Match on runtime types and bind typed pattern variables directly inside case arms",
+        "Skip compiling main()",
+        "Convert Java into C++"
+      ],
+      answer: 0,
+      explanation: "Type patterns in switch replace chains of instanceof + explicit casts."
+    }
+  ]}
+/>

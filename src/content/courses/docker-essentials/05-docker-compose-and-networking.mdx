@@ -1,0 +1,79 @@
+---
+title: "Docker Compose & Multi-Container Stacks"
+description: "Define and launch multi-service apps (web + API + database) with a single compose.yaml and docker compose up."
+course: "docker-essentials"
+module: "Networking & Persistence"
+order: 5
+durationMinutes: 8
+objectives:
+  - "Define services, ports, environment variables, and volumes in compose.yaml"
+  - "Connect containers by service name using Compose's automatic DNS network"
+  - "Start and tear down an entire stack with docker compose up -d and down"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+**Docker Compose** lets you describe your entire multi-container architecture (frontend, backend API, PostgreSQL, Redis) in one declarative `compose.yaml` file. Services on the same Compose network automatically resolve each other by **service name** (e.g., `DATABASE_URL=postgres://user:pass@db:5432/app`).
+
+<Callout type="tip" title="Never Hardcode localhost Between Containers">
+  Inside a container, <code>localhost</code> refers to the container itself, not sibling containers. Always connect using the Compose service name (like <code>db</code> or <code>redis</code>).
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Launch Compose Stack"
+  prompt="Build and start all services in detached mode with Docker Compose."
+  template={`docker {{0}} up -d --{{1}}`}
+  blanks={[
+    { answer: 'compose', placeholder: 'sub' },
+    { answer: 'build', placeholder: 'flag' },
+  ]}
+  hint={'Use docker compose up -d --build to rebuild images and start the stack.'}
+/>
+
+## Live Compose YAML Lab
+
+<CodeLab
+  client:visible
+  title="compose_check.sh"
+  language="bash"
+  code={`cat << 'EOF'
+services:
+  api:
+    build: .
+    ports: ["8787:8787"]
+    depends_on: [db]
+  db:
+    image: postgres:16-alpine
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+volumes:
+  pgdata:
+EOF`}
+  expectedOutput={`services:
+  api:
+    build: .
+    ports: ["8787:8787"]
+    depends_on: [db]
+  db:
+    image: postgres:16-alpine
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+volumes:
+  pgdata:`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Inside a Docker Compose stack with services 'api' and 'db', what hostname should 'api' use to connect to PostgreSQL?",
+      options: ["db (the Compose service name)", "localhost", "127.0.0.1"],
+      answer: 0,
+      explanation: "Docker Compose creates a bridge network with built-in DNS resolving each service by name."
+    }
+  ]}
+/>

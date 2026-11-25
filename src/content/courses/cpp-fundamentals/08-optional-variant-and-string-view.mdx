@@ -1,0 +1,80 @@
+---
+title: "std::optional & std::string_view"
+description: "Express nullable return values cleanly with std::optional and read strings with zero allocations using std::string_view."
+course: "cpp-fundamentals"
+module: "Modern C++20 Features"
+order: 7
+durationMinutes: 8
+objectives:
+  - "Return std::optional<T> instead of magic sentinel values like -1 or empty strings"
+  - "Use .value_or() for safe defaults"
+  - "Accept read-only string slices without allocating via std::string_view"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+- **`std::optional<T>`** represents a value that may or may not be present (`std::nullopt`), replacing fragile sentinel values like `-1`.
+- **`std::string_view`** is a lightweight non-owning view (`pointer + length`) over any `std::string` or string literal with zero heap allocation.
+
+<Callout type="warning" title="Never Return a string_view to a Local String">
+  Because <code>std::string_view</code> does not own memory, returning a view to a local <code>std::string</code> creates a dangling reference. Use <code>string_view</code> primarily for read-only function parameters.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Safe Optional Default"
+  prompt="Return std::nullopt when not found and unwrap with value_or()."
+  template={`std::optional<int> found = std::{{0}};
+int score = found.{{1}}(0);`}
+  blanks={[
+    { answer: 'nullopt', placeholder: 'val' },
+    { answer: 'value_or', placeholder: 'method' },
+  ]}
+  hint={'Use std::nullopt for an empty optional and .value_or(default) to extract safely.'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="optional_view.cpp"
+  language="cpp"
+  code={`#include <iostream>
+#include <optional>
+#include <string_view>
+
+std::optional<int> parse_tier(std::string_view label) {
+    if (label == "gold") return 1;
+    if (label == "silver") return 2;
+    return std::nullopt;
+}
+
+int main() {
+    auto t1 = parse_tier("gold");
+    auto t2 = parse_tier("unknown");
+    std::cout << "gold=" << t1.value_or(99) << " unknown=" << t2.value_or(99) << "\\n";
+    return 0;
+}`}
+  expectedOutput={`gold=1 unknown=99`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why is std::string_view fast for read-only string parameters?",
+      options: [
+        "It stores only a pointer and length without allocating or copying string characters",
+        "It compresses strings using gzip",
+        "It runs on the GPU"
+      ],
+      answer: 0,
+      explanation: "string_view avoids heap allocations even when callers pass string literals or substrings."
+    }
+  ]}
+/>

@@ -1,0 +1,75 @@
+---
+title: "Modern Dates with java.time"
+description: "Work with immutable LocalDate, Instant, and Duration from java.time instead of legacy java.util.Date."
+course: "java-fundamentals"
+module: "Modern Java APIs"
+order: 9
+durationMinutes: 7
+objectives:
+  - "Use LocalDate for calendar dates and Instant for UTC timestamps"
+  - "Perform immutable date math with .plusDays() and Period.between()"
+  - "Format dates cleanly with DateTimeFormatter"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+Always use the **`java.time`** package (`LocalDate`, `LocalDateTime`, `ZonedDateTime`, `Instant`). Unlike the old mutable `java.util.Date`, every `java.time` class is **immutable** and thread-safe.
+
+<Callout type="tip" title="Store Instant (UTC) in Databases">
+  Keep timestamps in UTC using <code>Instant.now()</code> on the backend, and format them to the user's local timezone only at display time.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Immutable LocalDate Math"
+  prompt="Create a LocalDate and return a new date 7 days later."
+  template={`var start = LocalDate.{{0}}(2026, 11, 1);
+var due = start.{{1}}(7);`}
+  blanks={[
+    { answer: 'of', placeholder: 'method' },
+    { answer: 'plusDays', placeholder: 'method' },
+  ]}
+  hint={'Use LocalDate.of(year, month, day) and .plusDays(7).'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="TimeDemo.java"
+  language="java"
+  code={`import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+
+public class TimeDemo {
+    public static void main(String[] args) {
+        var start = LocalDate.of(2026, 11, 1);
+        var deadline = start.plusDays(14);
+        long days = ChronoUnit.DAYS.between(start, deadline);
+
+        System.out.println("Start: " + start + " | Deadline: " + deadline + " (" + days + " days)");
+    }
+}`}
+  expectedOutput={`Start: 2026-11-01 | Deadline: 2026-11-15 (14 days)`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What happens to start when you call start.plusDays(14) on a java.time.LocalDate?",
+      options: [
+        "start stays unchanged because LocalDate is immutable; plusDays() returns a new LocalDate",
+        "start is mutated in place",
+        "It throws UnsupportedOperationException"
+      ],
+      answer: 0,
+      explanation: "All java.time value types are immutable and thread-safe."
+    }
+  ]}
+/>

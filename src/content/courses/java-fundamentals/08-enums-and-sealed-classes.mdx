@@ -1,0 +1,77 @@
+---
+title: "Rich Enums & Sealed Interfaces"
+description: "Attach fields and methods to Java enums and model closed domain hierarchies with Java 17+ sealed interfaces."
+course: "java-fundamentals"
+module: "Object-Oriented Java"
+order: 7
+durationMinutes: 8
+objectives:
+  - "Attach data and behavior directly to Java enum constants"
+  - "Restrict which types can implement an interface using sealed ... permits"
+  - "Achieve compiler-verified exhaustive switch expressions"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+Java **`enum`** types are full classes: each constant can hold fields and methods. Modern Java also adds **`sealed interface`**, letting you declare the exact closed set of permitted subtypes so the compiler guarantees your `switch` handles every case.
+
+<Callout type="info" title="No Default Needed When Exhaustive">
+  When switching over an <code>enum</code> or <code>sealed</code> hierarchy with every case covered, you do not need a <code>default</code> branch, and adding a new subtype immediately flags every switch that needs updating.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Sealed Interface Declaration"
+  prompt="Declare a sealed Result interface that permits only Ok and Err."
+  template={`{{0}} interface Result {{1}} Ok, Err {}`}
+  blanks={[
+    { answer: 'sealed', placeholder: 'kw' },
+    { answer: 'permits', placeholder: 'kw' },
+  ]}
+  hint={'Use sealed interface Name permits SubA, SubB.'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="EnumsDemo.java"
+  language="java"
+  code={`public class EnumsDemo {
+    enum Plan {
+        FREE(0), PRO(19), TEAM(49);
+        final int monthlyUsd;
+        Plan(int monthlyUsd) { this.monthlyUsd = monthlyUsd; }
+    }
+
+    public static void main(String[] args) {
+        for (Plan p : Plan.values()) {
+            System.out.println(p + ": $" + p.monthlyUsd + "/mo");
+        }
+    }
+}`}
+  expectedOutput={`FREE: $0/mo
+PRO: $19/mo
+TEAM: $49/mo`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does declaring a sealed interface with permits A, B enforce?",
+      options: [
+        "Only A and B are allowed to implement that interface, enabling exhaustive switch checks",
+        "No class can instantiate A or B",
+        "All fields become mutable"
+      ],
+      answer: 0,
+      explanation: "Sealed hierarchies give you algebraic data types with compile-time exhaustiveness."
+    }
+  ]}
+/>

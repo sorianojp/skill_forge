@@ -1,0 +1,75 @@
+---
+title: "Pointer Arithmetic & Const Correctness"
+description: "Traverse contiguous arrays using pointer increments and understand const int *p vs. int *const p."
+course: "c-fundamentals"
+module: "Systems Programming"
+order: 6
+durationMinutes: 9
+objectives:
+  - "Understand why p + 1 advances by sizeof(*p) bytes, not 1 byte"
+  - "Traverse arrays cleanly with pointer start/end bounds"
+  - "Read const pointer declarations accurately right-to-left"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+In C, adding `1` to an `int *p` advances the address by **`sizeof(int)`** bytes (typically 4 bytes), pointing directly to the next integer in the array. In fact, `arr[i]` is literally defined by the C standard as `*(arr + i)`.
+
+<Callout type="info" title="Reading Const Pointers">
+  <code>const int *p</code> means the integer pointed to is read-only. <code>int *const p</code> means the pointer address itself cannot be reassigned.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Sum Array with Pointer Walk"
+  prompt="Dereference p to add each element, then advance p to the next int."
+  template={`int sum = 0;
+for (const int *p = arr; p < arr + n; {{0}}++) {
+    sum += {{1}}p;
+}`}
+  blanks={[
+    { answer: 'p', placeholder: 'ptr' },
+    { answer: '*', placeholder: 'op' },
+  ]}
+  hint={'Increment p each iteration and dereference *p to read the integer value.'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="pointer_math.c"
+  language="c"
+  code={`#include <stdio.h>
+
+int main(void) {
+    int nums[] = {10, 20, 30, 40};
+    const int *end = nums + 4;
+    int sum = 0;
+
+    for (const int *p = nums; p < end; p++) {
+        sum += *p;
+    }
+
+    printf("Sum via pointer walk: %d\\n", sum);
+    return 0;
+}`}
+  expectedOutput={`Sum via pointer walk: 100`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "If int *p points to address 1000 on a system where sizeof(int) is 4, what address does p + 2 represent?",
+      options: ["1002", "1008", "1004"],
+      answer: 1,
+      explanation: "Pointer arithmetic scales by sizeof(*p): 1000 + (2 * 4) = 1008."
+    }
+  ]}
+/>

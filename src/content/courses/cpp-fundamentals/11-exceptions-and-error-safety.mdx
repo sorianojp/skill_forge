@@ -1,0 +1,84 @@
+---
+title: "Exceptions & Exception Safety"
+description: "Throw standard exceptions cleanly, catch by const reference, and rely on RAII for automatic cleanup during stack unwinding."
+course: "cpp-fundamentals"
+module: "Modern C++20 Features"
+order: 10
+durationMinutes: 8
+objectives:
+  - "Throw standard exception types from <stdexcept> like std::invalid_argument"
+  - "Catch exceptions by const reference (const std::exception& e)"
+  - "Understand how RAII destructors run automatically during stack unwinding"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+In C++, the idiom is **"throw by value, catch by const reference"** (`catch (const std::exception& e)`). Catching by reference avoids object slicing and unnecessary copies. Because of RAII, every local `std::vector`, `std::string`, and `std::unique_ptr` is destroyed cleanly when an exception unwinds the stack.
+
+<Callout type="tip" title="Use Standard Exception Types">
+  Prefer built-in types from <code>&lt;stdexcept&gt;</code> like <code>std::invalid_argument</code>, <code>std::out_of_range</code>, and <code>std::runtime_error</code> instead of throwing raw strings or ints.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Throw & Catch by Const Reference"
+  prompt="Throw std::invalid_argument and catch std::exception by const reference."
+  template={`try {
+    {{0}} std::invalid_argument("Negative price");
+} catch ({{1}} std::exception& e) {
+    std::cout << e.what() << "\\n";
+}`}
+  blanks={[
+    { answer: 'throw', placeholder: 'kw' },
+    { answer: 'const', placeholder: 'kw' },
+  ]}
+  hint={'Use throw to raise an exception and catch (const std::exception& e) to handle it.'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="exceptions.cpp"
+  language="cpp"
+  code={`#include <iostream>
+#include <stdexcept>
+
+double divide(double a, double b) {
+    if (b == 0.0) throw std::invalid_argument("Division by zero");
+    return a / b;
+}
+
+int main() {
+    try {
+        std::cout << divide(10, 2) << "\\n";
+        std::cout << divide(10, 0) << "\\n";
+    } catch (const std::exception& e) {
+        std::cout << "Caught: " << e.what() << "\\n";
+    }
+    return 0;
+}`}
+  expectedOutput={`5
+Caught: Division by zero`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What is the recommended way to catch C++ exceptions?",
+      options: [
+        "By const reference: catch (const std::exception& e)",
+        "By raw pointer: catch (std::exception* e)",
+        "By value: catch (std::exception e)"
+      ],
+      answer: 0,
+      explanation: "Catching by const reference preserves the derived exception type (no slicing) and avoids copying."
+    }
+  ]}
+/>

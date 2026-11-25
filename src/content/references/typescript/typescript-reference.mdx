@@ -1,0 +1,25 @@
+---
+title: "TypeScript 5 Quick Reference"
+category: "TypeScript"
+syntax: "type PublicUser = Omit<User, 'passwordHash'>;"
+summary: "Essential TypeScript syntax: annotations, interfaces, discriminated unions, generics, and utility types."
+browserSupport: "TypeScript 5.x"
+---
+
+## Core Types & Narrowing
+
+| Syntax | Purpose | Example |
+| :--- | :--- | :--- |
+| `readonly` / `?` | Immutable / optional fields | `interface User { readonly id: string; bio?: string; }` |
+| `A \| B` | Union & literal types | `type Status = "idle" \| "loading" \| "done";` |
+| `unknown` | Safe top type (narrow first) | `if (typeof x === "string") x.toUpperCase();` |
+| `<T, K extends keyof T>` | Constrained generics | `function get<T, K extends keyof T>(o: T, k: K)` |
+
+## Utility Types
+
+| Utility | Effect | Example |
+| :--- | :--- | :--- |
+| `Partial<T>` | All properties optional | `Partial<User>` |
+| `Pick<T, K>` | Keep selected keys | `Pick<User, "id" \| "name">` |
+| `Omit<T, K>` | Remove selected keys | `Omit<User, "password">` |
+| `Record<K, V>` | Typed key-value object | `Record<string, number>` |

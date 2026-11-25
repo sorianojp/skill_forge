@@ -1,0 +1,20 @@
+{
+  "slug": "nodejs-essentials",
+  "title": "Node.js 20 Backend Essentials",
+  "shortTitle": "Learn Node.js",
+  "description": "Build fast, scalable server-side JavaScript with Node.js 20. Master ES modules, the event loop, fs/promises, HTTP servers, streams, and REST API patterns.",
+  "track": "Node.js",
+  "difficulty": "Intermediate",
+  "estimatedHours": 5,
+  "accentColor": "#16a34a",
+  "prerequisites": ["JavaScript Essentials"],
+  "outcomes": [
+    "Run JavaScript on the server with Node.js 20 built-in modules (node:fs, node:path, node:http)",
+    "Understand the non-blocking event loop and async/await I/O",
+    "Read and write files safely with fs/promises and path.join()",
+    "Parse environment config and JSON payloads cleanly",
+    "Design RESTful HTTP endpoints with proper status codes and error handling"
+  ],
+  "featured": true,
+  "order": 15
+}

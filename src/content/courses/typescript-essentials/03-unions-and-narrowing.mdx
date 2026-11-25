@@ -1,0 +1,83 @@
+---
+title: "Unions, Literal Types & Narrowing"
+description: "Model exact states with discriminated unions and narrow types safely using typeof and switch."
+course: "typescript-essentials"
+module: "TypeScript Foundations"
+order: 3
+durationMinutes: 9
+objectives:
+  - "Restrict values to exact literal unions like 'idle' | 'loading' | 'done'"
+  - "Build discriminated unions with a shared kind or status tag"
+  - "Narrow union types automatically inside if and switch branches"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+**Discriminated unions** are one of TypeScript's superpowers. By giving each variant in a union a literal tag (like `status: "ok"` vs `status: "error"`), TypeScript automatically narrows which properties exist inside each `if` or `switch` branch.
+
+<Callout type="tip" title="Replace Boolean Soup with Literal Unions">
+  Instead of <code>isLoading: boolean; isError: boolean; isSuccess: boolean</code>, use a single <code>status: "idle" | "loading" | "error" | "success"</code> so impossible states cannot happen.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Discriminated Union Narrowing"
+  prompt="Define a union of Ok and Err using | and check res.ok to narrow."
+  template={`type ApiResult = { ok: true; data: string } {{0}} { ok: false; error: string };
+
+function printResult(res: ApiResult) {
+  if (res.{{1}}) console.log(res.data);
+  else console.log(res.error);
+}`}
+  blanks={[
+    { answer: '|', placeholder: 'op' },
+    { answer: 'ok', placeholder: 'prop' },
+  ]}
+  hint={'Join union members with | and branch on the shared discriminant property res.ok.'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="narrowing.ts"
+  language="ts"
+  code={`type LoadState =
+  | { status: "loading" }
+  | { status: "ready"; items: number }
+  | { status: "error"; message: string };
+
+function describe(state: LoadState): string {
+  switch (state.status) {
+    case "loading": return "Loading...";
+    case "ready": return "Loaded " + state.items + " items";
+    case "error": return "Error: " + state.message;
+  }
+}
+
+console.log(describe({ status: "ready", items: 12 }));
+console.log(describe({ status: "error", message: "Timeout" }));`}
+  expectedOutput={`Loaded 12 items
+Error: Timeout`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why are discriminated unions preferred over multiple boolean flags like isLoading and isError?",
+      options: [
+        "They make invalid state combinations impossible and give automatic type narrowing per state",
+        "Booleans are deprecated in TypeScript 5",
+        "Unions execute faster in V8"
+      ],
+      answer: 0,
+      explanation: "Each union variant carries only the fields valid for that exact state."
+    }
+  ]}
+/>

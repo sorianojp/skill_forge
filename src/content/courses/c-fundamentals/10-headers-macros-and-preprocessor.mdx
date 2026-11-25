@@ -1,0 +1,79 @@
+---
+title: "Headers, Include Guards & Preprocessor"
+description: "Split C programs across .h headers and .c implementation files cleanly using #ifndef include guards and safe macros."
+course: "c-fundamentals"
+module: "Modular C"
+order: 9
+durationMinutes: 8
+objectives:
+  - "Separate public declarations (.h) from private implementations (.c)"
+  - "Prevent duplicate definition errors with #ifndef / #define / #endif include guards"
+  - "Avoid macro side-effect pitfalls by preferring static inline functions"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+Before the C compiler parses your code, the **preprocessor** handles directives starting with `#` (`#include`, `#define`, `#ifdef`). Putting declarations in `.h` headers with **include guards** prevents multiple-inclusion errors across multi-file projects.
+
+<Callout type="warning" title="Macro Trap: Double Evaluation">
+  A macro like <code>#define SQUARE(x) ((x) * (x))</code> evaluates <code>SQUARE(i++)</code> twice! Prefer <code>static inline int square(int x)</code> for type safety and single evaluation.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Header Include Guard"
+  prompt="Guard MATH_UTILS_H so the header is processed at most once per translation unit."
+  template={`{{0}} MATH_UTILS_H
+{{1}} MATH_UTILS_H
+int clamp(int v, int lo, int hi);
+#endif`}
+  blanks={[
+    { answer: '#ifndef', placeholder: 'dir' },
+    { answer: '#define', placeholder: 'dir' },
+  ]}
+  hint={'Wrap headers with #ifndef NAME, #define NAME, and #endif.'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="preprocessor.c"
+  language="c"
+  code={`#include <stdio.h>
+
+#define MAX_SCORE 100
+
+static inline int clamp(int v, int lo, int hi) {
+    if (v < lo) return lo;
+    if (v > hi) return hi;
+    return v;
+}
+
+int main(void) {
+    printf("Clamped: %d (max=%d)\\n", clamp(125, 0, MAX_SCORE), MAX_SCORE);
+    return 0;
+}`}
+  expectedOutput={`Clamped: 100 (max=100)`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why are static inline functions generally safer than function-like #define macros in C?",
+      options: [
+        "They enforce argument types and evaluate each argument only once",
+        "They skip compilation entirely",
+        "Macros cannot accept integers"
+      ],
+      answer: 0,
+      explanation: "Inline functions avoid double-evaluation bugs and provide full compiler type checking."
+    }
+  ]}
+/>

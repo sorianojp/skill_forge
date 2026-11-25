@@ -1,0 +1,93 @@
+---
+title: "React Capstone: Interactive Task Board"
+description: "Combine component composition, immutable state updates, derived counts, and controlled inputs in a task board."
+course: "react-fundamentals"
+module: "Capstone"
+order: 6
+durationMinutes: 10
+objectives:
+  - "Manage an immutable list of tasks with add and toggle handlers"
+  - "Derive remaining task counts during render"
+  - "Prepare for the React Final Exam and Certificate"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+In this capstone, you will combine React's core patterns: **single source of truth state**, **immutable updates**, **derived counts**, and **keyed list rendering**.
+
+## Fill-in-the-Blank Capstone
+
+<Exercise
+  client:visible
+  title="Immutable Toggle by ID"
+  prompt="Toggle done on the matching task without mutating the original array."
+  template={`setTasks((prev) =>
+  prev.{{0}}((t) => (t.id === id ? { ...t, done: !t.{{1}} } : t))
+);`}
+  blanks={[
+    { answer: 'map', placeholder: 'method' },
+    { answer: 'done', placeholder: 'prop' },
+  ]}
+  hint={'Use .map() to return a new array with only the target object copied and toggled.'}
+/>
+
+## Capstone Playground
+
+<Playground
+  client:visible
+  title="Interactive Task Board"
+  defaultTab="js"
+  showConsole={true}
+  html={`<div style="font-family:system-ui">
+  <p id="stats" style="font-weight:700;margin:0 0 8px"></p>
+  <ul id="tasks" style="list-style:none;padding:0;margin:0;display:grid;gap:6px"></ul>
+</div>`}
+  js={`let tasks = [
+  { id: 1, title: "Learn Components & Props", done: true },
+  { id: 2, title: "Master Immutable State", done: false },
+  { id: 3, title: "Pass React Final Exam", done: false }
+];
+
+function toggle(id) {
+  tasks = tasks.map((t) => (t.id === id ? { ...t, done: !t.done } : t));
+  render();
+}
+
+function render() {
+  const remaining = tasks.filter((t) => !t.done).length;
+  document.getElementById("stats").textContent = remaining + " remaining of " + tasks.length;
+  const ul = document.getElementById("tasks");
+  ul.innerHTML = "";
+  tasks.forEach((t) => {
+    const li = document.createElement("li");
+    li.innerHTML = \`<button style="width:100%;text-align:left;padding:8px 12px;border-radius:10px;border:0;background:\${t.done ? "#dcfce7" : "#f1f5f9"};cursor:pointer">\${t.done ? "✓ " : "○ "}\${t.title}</button>\`;
+    li.querySelector("button").addEventListener("click", () => toggle(t.id));
+    ul.appendChild(li);
+  });
+}
+
+render();`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "In React, how do you toggle a single item's done boolean inside a tasks array state?",
+      options: [
+        "setTasks(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t))",
+        "tasks[0].done = true; setTasks(tasks);",
+        "setTasks(tasks.splice(0, 1))"
+      ],
+      answer: 0,
+      explanation: "Using .map() with object spread produces both a new array and a new updated object reference."
+    }
+  ]}
+/>
+
+<Callout type="tip" title="Earn Your React Certificate">
+  Ready to prove your React skills? Take the <a href="/courses/react-fundamentals/exam">React 19 Final Exam</a> (score 80% or higher) to unlock your free verifiable certificate.
+</Callout>

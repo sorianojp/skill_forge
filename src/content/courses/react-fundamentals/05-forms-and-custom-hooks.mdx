@@ -1,0 +1,78 @@
+---
+title: "Forms, Controlled Inputs & Custom Hooks"
+description: "Build accessible controlled forms and extract reusable stateful logic into custom hooks like useLocalStorage."
+course: "react-fundamentals"
+module: "Hooks & Architecture"
+order: 5
+durationMinutes: 8
+objectives:
+  - "Bind input value and onChange to React state (controlled inputs)"
+  - "Extract shared hook logic into functions prefixed with use*"
+  - "Follow the Rules of Hooks (call hooks only at the top level)"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+A **custom hook** is simply a JavaScript function whose name starts with **`use`** (like `useDebounce` or `useLocalStorage`) and that calls built-in React hooks. Custom hooks let multiple components reuse stateful behavior cleanly without duplicating code.
+
+<Callout type="warning" title="Rules of Hooks">
+  Always call hooks at the <strong>top level</strong> of your React component or custom hook, never inside <code>if</code> conditions, loops, or nested callbacks.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Controlled Input Element"
+  prompt="Connect the input value to name and update it via onChange."
+  template={`<input
+  {{0}}={name}
+  {{1}}={(e) => setName(e.target.value)}
+/>`}
+  blanks={[
+    { answer: 'value', placeholder: 'prop' },
+    { answer: 'onChange', placeholder: 'prop' },
+  ]}
+  hint={'Controlled inputs pair value={state} with onChange={(e) => setState(e.target.value)}.'}
+/>
+
+## Live Controlled Form Demo
+
+<Playground
+  client:visible
+  title="Controlled Form Validation"
+  defaultTab="js"
+  showConsole={true}
+  html={`<form id="f" style="display:flex;gap:8px">
+  <input id="email" placeholder="you@dev.io" style="padding:8px 12px;border-radius:10px;border:1px solid #cbd5e1;flex:1" />
+  <button type="submit" style="padding:8px 14px;border-radius:10px;border:0;background:#0891b2;color:#fff;font-weight:700">Save</button>
+</form>
+<p id="msg" style="margin-top:8px;font-size:13px"></p>`}
+  js={`document.getElementById("f").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const val = document.getElementById("email").value.trim();
+  const ok = val.includes("@");
+  document.getElementById("msg").textContent = ok
+    ? "Valid email saved: " + val
+    : "Please enter a valid email address.";
+});`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why must custom React hook names always start with the prefix 'use'?",
+      options: [
+        "So React and ESLint can verify the Rules of Hooks (top-level calls only)",
+        "Because JavaScript throws a SyntaxError otherwise",
+        "To make the function run asynchronously"
+      ],
+      answer: 0,
+      explanation: "The use* naming convention tells React's linter and developers that the function uses hooks internally."
+    }
+  ]}
+/>

@@ -1,0 +1,78 @@
+---
+title: "Linux Capstone: Log Analyzer Script"
+description: "Combine strict Bash, pipes, grep, awk, and functions to summarize server access logs."
+course: "linux-cli"
+module: "Capstone"
+order: 6
+durationMinutes: 10
+objectives:
+  - "Parse structured log lines using awk and sort | uniq -c"
+  - "Write a reusable Bash function with local variables"
+  - "Prepare for the Linux CLI Final Exam and Certificate"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+In this capstone, you will write a compact **Linux Log Analyzer** that counts HTTP status codes from access logs using `awk`, `sort`, and `uniq -c`.
+
+## Fill-in-the-Blank Capstone
+
+<Exercise
+  client:visible
+  title="Count Unique Status Codes"
+  prompt="Sort status codes and count occurrences with uniq -c."
+  template={`awk '{print $2}' access.log | {{0}} | {{1}} -c`}
+  blanks={[
+    { answer: 'sort', placeholder: 'cmd' },
+    { answer: 'uniq', placeholder: 'cmd' },
+  ]}
+  hint={'uniq -c only collapses adjacent identical lines, so always pipe through sort first.'}
+/>
+
+## Capstone Bash Lab
+
+<CodeLab
+  client:visible
+  title="log_analyzer.sh"
+  language="bash"
+  code={`#!/usr/bin/env bash
+set -euo pipefail
+
+logs=$(cat << 'EOF'
+/ 200
+/courses 200
+/missing 404
+/api/run 200
+/old 404
+EOF
+)
+
+echo "Status summary:"
+echo "$logs" | awk '{print $2}' | sort | uniq -c | awk '{print "HTTP " $2 ": " $1 " req(s)"}'`}
+  expectedOutput={`Status summary:
+HTTP 200: 3 req(s)
+HTTP 404: 2 req(s)`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why must you pipe through sort before running uniq -c?",
+      options: [
+        "uniq only groups adjacent identical lines, so sorting brings matching values together",
+        "uniq refuses to run without sort",
+        "sort deletes duplicate lines automatically"
+      ],
+      answer: 0,
+      explanation: "Sorting first ensures all identical entries are adjacent so uniq -c counts them accurately."
+    }
+  ]}
+/>
+
+<Callout type="tip" title="Earn Your Linux CLI Certificate">
+  Ready to prove your command-line skills? Take the <a href="/courses/linux-cli/exam">Linux CLI Final Exam</a> (score 80% or higher) to unlock your free verifiable certificate.
+</Callout>

@@ -1,0 +1,77 @@
+---
+title: "Interfaces & Dependency Injection"
+description: "Decouple .NET services with I-prefixed interfaces and C# 12 primary constructors."
+course: "csharp-fundamentals"
+module: "Object-Oriented C#"
+order: 6
+durationMinutes: 8
+objectives:
+  - "Define clean service contracts using C# interfaces"
+  - "Use C# 12 primary constructors to inject dependencies concisely"
+  - "Swap real implementations for test fakes without changing callers"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+In .NET, **Dependency Injection (DI)** is built directly into the framework. **C# 12 primary constructors** (`class Notifier(ISender sender)`) eliminate repetitive private field and constructor assignment boilerplate.
+
+<Callout type="tip" title="Primary Constructors Keep DI Concise">
+  <code>public class OrderService(IPaymentGateway gateway)</code> captures <code>gateway</code> across the entire class body with zero extra lines.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Implement Interface with Primary Constructor"
+  prompt="Implement IGreeter and inject it into WelcomeService."
+  template={`public interface IGreeter { string Greet(string name); }
+
+public class WelcomeService({{0}} greeter)
+{
+    public void Run(string name) => Console.WriteLine({{1}}.Greet(name));
+}`}
+  blanks={[
+    { answer: 'IGreeter', placeholder: 'type' },
+    { answer: 'greeter', placeholder: 'param' },
+  ]}
+  hint={'Inject the interface IGreeter in the primary constructor and invoke greeter.Greet(name).'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="DependencyInjection.cs"
+  language="csharp"
+  code={`public interface IClock { string Today(); }
+public class FixedClock : IClock { public string Today() => "2026-11-26"; }
+
+public class ReportService(IClock clock)
+{
+    public string Header() => $"Report generated on {clock.Today()}";
+}
+
+var svc = new ReportService(new FixedClock());
+Console.WriteLine(svc.Header());`}
+  expectedOutput={`Report generated on 2026-11-26`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What do C# 12 primary constructors eliminate?",
+      options: [
+        "Boilerplate private field declarations and manual constructor assignments for injected dependencies",
+        "The need for interfaces",
+        "All return types"
+      ],
+      answer: 0,
+      explanation: "Primary constructor parameters are automatically in scope throughout the class."
+    }
+  ]}
+/>

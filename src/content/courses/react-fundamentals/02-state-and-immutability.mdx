@@ -1,0 +1,81 @@
+---
+title: "State & Immutable Updates (useState)"
+description: "Manage interactive UI state with useState, functional updaters (prev => prev + 1), and immutable array/object updates."
+course: "react-fundamentals"
+module: "React Core"
+order: 2
+durationMinutes: 8
+objectives:
+  - "Declare component state with const [value, setValue] = useState(initial)"
+  - "Use functional updates setCount(c => c + 1) when new state depends on previous state"
+  - "Update arrays and objects immutably with spread (...) and .filter()/.map()"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+React detects state changes by comparing object references (`Object.is`). If you mutate an array in place (`items.push(x); setItems(items)`), React sees the exact same array reference and **skips re-rendering**. Always create a fresh copy: `setItems(prev => [...prev, x])`.
+
+<Callout type="warning" title="Never Mutate State Directly">
+  Use <code>[...items, newItem]</code> to append, <code>items.filter(...)</code> to remove, and <code>&#123; ...user, name: "New" &#125;</code> to update objects.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Functional State Update"
+  prompt="Initialize count to 0 with useState and increment using a functional updater."
+  template={`const [count, setCount] = {{0}}(0);
+const increment = () => setCount({{1}} => prev + 1);`}
+  blanks={[
+    { answer: 'useState', placeholder: 'hook' },
+    { answer: 'prev', placeholder: 'param' },
+  ]}
+  hint={'Call useState(0) and pass prev => prev + 1 to setCount.'}
+/>
+
+## Live Interactive State Demo
+
+<Playground
+  client:visible
+  title="Immutable Counter & List State"
+  defaultTab="js"
+  showConsole={true}
+  html={`<button id="inc" style="padding:8px 14px;border-radius:10px;border:0;background:#0284c7;color:#fff;font-weight:700;cursor:pointer">Add Lesson (+1)</button>
+<p id="out" style="margin-top:12px;font-weight:700"></p>`}
+  js={`let state = { completed: ["Lesson 1"] };
+
+function setState(updater) {
+  state = updater(state);
+  document.getElementById("out").textContent =
+    "Completed (" + state.completed.length + "): " + state.completed.join(", ");
+}
+
+document.getElementById("inc").addEventListener("click", () => {
+  setState((prev) => ({
+    ...prev,
+    completed: [...prev.completed, "Lesson " + (prev.completed.length + 1)]
+  }));
+});
+
+setState((s) => s);`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why does items.push(newItem); setItems(items); fail to trigger a React re-render?",
+      options: [
+        "Because mutating in place keeps the same array reference, so React thinks state did not change",
+        "Because JavaScript arrays cannot be pushed inside functions",
+        "Because setItems only accepts numbers"
+      ],
+      answer: 0,
+      explanation: "Passing a new array reference ([...prev, newItem]) signals React to re-render."
+    }
+  ]}
+/>

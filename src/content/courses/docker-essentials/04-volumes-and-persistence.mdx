@@ -1,0 +1,69 @@
+---
+title: "Volumes & Persistent Data"
+description: "Keep database files safe across container restarts and upgrades using named Docker volumes and bind mounts."
+course: "docker-essentials"
+module: "Networking & Persistence"
+order: 4
+durationMinutes: 8
+objectives:
+  - "Understand why a container's writable layer is ephemeral"
+  - "Persist PostgreSQL/SQLite data with named volumes (-v pgdata:/var/lib/postgresql/data)"
+  - "Use bind mounts (-v $(pwd):/app) for live local development"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+Containers are **ephemeral**: when you remove a container (`docker rm`), any files written inside its container layer disappear. To persist database tables or uploaded files safely across container rebuilds, mount a **named Docker volume**.
+
+<Callout type="info" title="Named Volumes vs. Bind Mounts">
+  Use <strong>named volumes</strong> (<code>db_data:/var/lib/postgresql/data</code>) for production databases, and <strong>bind mounts</strong> (<code>./src:/app/src</code>) for local hot-reload development.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Attach a Named Volume"
+  prompt="Mount the named volume sf_data to /var/lib/skillforge inside the container."
+  template={`docker run -d {{0}} sf_data:{{1}} skillforge-api`}
+  blanks={[
+    { answer: '-v', placeholder: 'flag' },
+    { answer: '/var/lib/skillforge', placeholder: 'path' },
+  ]}
+  hint={'Use -v volume_name:/container/path to mount persistent storage.'}
+/>
+
+## Live Volume Command Lab
+
+<CodeLab
+  client:visible
+  title="volumes.sh"
+  language="bash"
+  code={`cat << 'EOF'
+# Create & inspect a named volume
+docker volume create sf_data
+docker run -d -v sf_data:/var/lib/skillforge --name api skillforge-api
+EOF`}
+  expectedOutput={`# Create & inspect a named volume
+docker volume create sf_data
+docker run -d -v sf_data:/var/lib/skillforge --name api skillforge-api`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What happens to data stored in a named Docker volume when you run docker rm -f db_container?",
+      options: [
+        "The data persists safely in the named volume and can be mounted by a new container",
+        "The named volume is permanently erased immediately",
+        "It is emailed to root"
+      ],
+      answer: 0,
+      explanation: "Named volumes have an independent lifecycle from individual containers."
+    }
+  ]}
+/>

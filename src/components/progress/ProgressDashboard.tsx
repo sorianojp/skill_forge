@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, Award, BookOpen, CheckCircle2, Download, Trash2 } from 'lucide-react';
+import { ArrowRight, Award, BookOpen, CheckCircle2, Download, ShieldCheck, Trash2 } from 'lucide-react';
+import CloudSyncPanel from '@/components/progress/CloudSyncPanel';
 import {
   clearAllProgress,
   getProgress,
@@ -47,6 +48,9 @@ export default function ProgressDashboard({ courses }: Props) {
 
   return (
     <div className="space-y-10">
+      {/* Cloud Sync Account Panel */}
+      <CloudSyncPanel />
+
       {/* Top Stats */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="rounded-3xl bg-[var(--bg-elevated)] p-6">
@@ -103,13 +107,24 @@ export default function ProgressDashboard({ courses }: Props) {
                     ID: {exam?.certificateId}
                   </p>
                 </div>
-                <a
-                  href={`/courses/${course.slug}/exam`}
-                  className="inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-2xl bg-[var(--success)] px-5 py-3 text-sm font-semibold text-white hover:opacity-90"
-                >
-                  <Download className="h-4 w-4" />
-                  <span>Download</span>
-                </a>
+                <div className="flex shrink-0 flex-wrap items-center gap-2">
+                  {exam?.certificateId && (
+                    <a
+                      href={`/verify?id=${encodeURIComponent(exam.certificateId)}`}
+                      className="inline-flex min-h-11 items-center gap-1.5 rounded-2xl bg-[var(--bg-elevated)] px-4 py-3 text-sm font-semibold text-[var(--text)] hover:opacity-90"
+                    >
+                      <ShieldCheck className="h-4 w-4 text-[var(--success)]" />
+                      <span>Verify</span>
+                    </a>
+                  )}
+                  <a
+                    href={`/courses/${course.slug}/exam`}
+                    className="inline-flex min-h-11 items-center gap-1.5 rounded-2xl bg-[var(--success)] px-5 py-3 text-sm font-semibold text-white hover:opacity-90"
+                  >
+                    <Download className="h-4 w-4" />
+                    <span>Download</span>
+                  </a>
+                </div>
               </div>
             ))}
           </div>

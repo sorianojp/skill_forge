@@ -1,0 +1,20 @@
+{
+  "slug": "linux-cli",
+  "title": "Linux CLI & Bash Scripting",
+  "shortTitle": "Learn Linux",
+  "description": "Navigate Linux servers with confidence. Master files, permissions (chmod), pipes, grep/awk/sed text processing, systemd processes, and safe Bash scripts.",
+  "track": "Linux",
+  "difficulty": "Beginner",
+  "estimatedHours": 4,
+  "accentColor": "#3f3f46",
+  "prerequisites": ["None, essential for backend and DevOps engineers"],
+  "outcomes": [
+    "Navigate directories, inspect files, and copy/move assets fluently in the shell",
+    "Compose powerful pipelines with |, >, grep, sort, uniq, and wc",
+    "Understand Unix file permissions (rwx, 755, 644, 600) and chmod",
+    "Inspect running processes, ports, and disk/memory usage on Linux servers",
+    "Write defensive Bash scripts using set -euo pipefail, variables, and loops"
+  ],
+  "featured": true,
+  "order": 16
+}

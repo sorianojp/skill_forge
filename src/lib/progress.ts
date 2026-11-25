@@ -1,3 +1,5 @@
+import { pushProgressToCloud } from './cloudSync';
+
 const STORAGE_KEY = 'openlearn_progress_v1';
 const CHANGE_EVENT = 'openlearn:progress-change';
 
@@ -38,7 +40,7 @@ function readState(): ProgressState {
   }
 }
 
-function writeState(state: ProgressState): void {
+function writeState(state: ProgressState, syncToCloud = true): void {
   if (typeof window === 'undefined') return;
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -46,6 +48,36 @@ function writeState(state: ProgressState): void {
     // Ignore storage quota or privacy-mode errors
   }
   window.dispatchEvent(new CustomEvent(CHANGE_EVENT, { detail: state }));
+  if (syncToCloud) {
+    void pushProgressToCloud(state);
+  }
+}
+
+export function mergeProgressState(remote: ProgressState): ProgressState {
+  const local = readState();
+  const mergedCompleted = { ...(remote.completed ?? {}), ...(local.completed ?? {}) };
+  const mergedExams: Record<string, ExamResultRecord> = { ...(remote.exams ?? {}) };
+  for (const [slug, localRec] of Object.entries(local.exams ?? {})) {
+    const remoteRec = mergedExams[slug];
+    if (!remoteRec) {
+      mergedExams[slug] = localRec;
+    } else {
+      mergedExams[slug] = {
+        bestScore: Math.max(remoteRec.bestScore ?? 0, localRec.bestScore ?? 0),
+        passed: Boolean(remoteRec.passed || localRec.passed),
+        passedAt: remoteRec.passedAt ?? localRec.passedAt,
+        certificateId: remoteRec.certificateId ?? localRec.certificateId,
+        learnerName: localRec.learnerName ?? remoteRec.learnerName,
+      };
+    }
+  }
+  const merged: ProgressState = {
+    completed: mergedCompleted,
+    exams: mergedExams,
+    lastVisited: local.lastVisited ?? remote.lastVisited,
+  };
+  writeState(merged, false);
+  return merged;
 }
 
 export function getProgress(): ProgressState {

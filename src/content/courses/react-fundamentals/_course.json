@@ -1,0 +1,20 @@
+{
+  "slug": "react-fundamentals",
+  "title": "React 19 Fundamentals",
+  "shortTitle": "Learn React",
+  "description": "Build modern declarative user interfaces with React. Master components, props, useState, immutable updates, useEffect, lists & keys, and custom hooks.",
+  "track": "React",
+  "difficulty": "Intermediate",
+  "estimatedHours": 5,
+  "accentColor": "#06b6d4",
+  "prerequisites": ["HTML, CSS, and JavaScript Essentials"],
+  "outcomes": [
+    "Think in React by breaking UIs into composable, pure function components",
+    "Pass typed data down via props and events up via callback props",
+    "Manage interactive UI state cleanly with useState and immutable updates",
+    "Render dynamic lists with stable key props and conditional UI",
+    "Synchronize side effects cleanly with useEffect and reusable custom hooks"
+  ],
+  "featured": true,
+  "order": 14
+}

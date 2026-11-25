@@ -1,0 +1,73 @@
+---
+title: "Node.js Runtime, Modules & process"
+description: "Understand how Node.js runs JavaScript outside the browser using V8, libuv, built-in node: modules, and process.env."
+course: "nodejs-essentials"
+module: "Node.js Core"
+order: 1
+durationMinutes: 8
+objectives:
+  - "Import Node built-ins explicitly with the node: prefix (node:path, node:os)"
+  - "Read runtime configuration safely from process.env with defaults"
+  - "Understand why blocking the single-threaded event loop hurts concurrency"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+**Node.js** executes JavaScript on the server using Chrome's V8 engine and an asynchronous, event-driven I/O model (`libuv`). Because JavaScript runs on a single main thread, keeping I/O asynchronous lets one Node process serve thousands of concurrent connections.
+
+<Callout type="tip" title="Always Prefix Built-Ins with node:">
+  Writing <code>require('node:path')</code> or <code>import path from 'node:path'</code> makes it explicit that you are importing a built-in Node module, not an npm package.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Read Port from Environment"
+  prompt="Read PORT from process.env with a fallback of 3000."
+  template={`const port = Number({{0}}.env.PORT {{1}} 3000);`}
+  blanks={[
+    { answer: 'process', placeholder: 'obj' },
+    { answer: '??', placeholder: 'op' },
+  ]}
+  hint={'Environment variables live on process.env, and ?? supplies a safe fallback.'}
+/>
+
+## Live Code Lab (Node.js 20)
+
+<CodeLab
+  client:visible
+  title="runtime.js"
+  language="node"
+  code={`const os = require("node:os");
+const path = require("node:path");
+
+const port = Number(process.env.PORT ?? 3000);
+const filePath = path.join("data", "courses.json");
+
+console.log("Node:", process.version);
+console.log("Platform:", os.platform(), "| Port:", port);
+console.log("Safe path:", filePath);`}
+  expectedOutput={`Node: v20.17.0
+Platform: linux | Port: 3000
+Safe path: data/courses.json`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why should Node.js servers avoid synchronous blocking calls like fs.readFileSync() inside request handlers?",
+      options: [
+        "Blocking the single-threaded event loop freezes all other incoming requests until the call finishes",
+        "Node.js does not have a file system module",
+        "readFileSync() deletes the file after reading"
+      ],
+      answer: 0,
+      explanation: "Non-blocking async I/O keeps the event loop responsive for concurrent users."
+    }
+  ]}
+/>

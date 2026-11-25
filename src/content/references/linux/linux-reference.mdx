@@ -1,0 +1,17 @@
+---
+title: "Linux CLI & Bash Quick Reference"
+category: "Linux"
+syntax: "grep -i 'error' app.log | sort | uniq -c"
+summary: "Everyday Linux commands for navigation, pipes, permissions (chmod), server health, and strict Bash scripting."
+browserSupport: "Ubuntu / Debian / macOS / GNU Bash"
+---
+
+## Files, Pipes & Permissions
+
+| Command | Purpose | Example |
+| :--- | :--- | :--- |
+| `ls -lah` / `mkdir -p` | List all files / create nested dirs | `mkdir -p app/dist` |
+| `grep -rn` | Recursive text search with line numbers | `grep -rn "TODO" src/` |
+| `chmod 600 / 755` | Private key / executable script permissions | `chmod +x deploy.sh` |
+| `df -h` / `free -h` | Disk space and RAM usage | `df -h && free -h` |
+| `set -euo pipefail` | Strict fail-fast Bash script header | `#!/usr/bin/env bash` |

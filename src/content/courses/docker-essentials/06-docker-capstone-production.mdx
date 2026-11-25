@@ -1,0 +1,77 @@
+---
+title: "Docker Capstone: Production Stack Checklist"
+description: "Combine multi-stage builds, non-root users, healthchecks, named volumes, and Compose into a production-ready deployment."
+course: "docker-essentials"
+module: "Capstone"
+order: 6
+durationMinutes: 10
+objectives:
+  - "Audit a Dockerfile for layer caching, non-root execution, and minimal size"
+  - "Add HEALTHCHECK probes so orchestrators detect unhealthy containers"
+  - "Prepare for the Docker Final Exam and Certificate"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+A production-ready container follows five golden rules: **pinned base tag**, **`.dockerignore`**, **multi-stage build**, **non-root `USER`**, and a **`HEALTHCHECK`** endpoint.
+
+## Fill-in-the-Blank Capstone
+
+<Exercise
+  client:visible
+  title="Production Dockerfile Hardening"
+  prompt="Drop root privileges with USER and expose port 8787."
+  template={`{{0}} appuser
+{{1}} 8787
+CMD ["python3", "server.py"]`}
+  blanks={[
+    { answer: 'USER', placeholder: 'inst' },
+    { answer: 'EXPOSE', placeholder: 'inst' },
+  ]}
+  hint={'Use USER to switch away from root and EXPOSE to document the listening port.'}
+/>
+
+## Capstone Audit Lab
+
+<CodeLab
+  client:visible
+  title="audit_dockerfile.sh"
+  language="bash"
+  code={`dockerfile=$(cat << 'EOF'
+FROM python:3.12-slim
+WORKDIR /app
+COPY server.py .
+USER nobody
+EXPOSE 8787
+CMD ["python3", "server.py"]
+EOF
+)
+
+echo "$dockerfile" | grep -q "USER " && echo "[PASS] Non-root user configured"
+echo "$dockerfile" | grep -q ":latest" || echo "[PASS] Base image tag pinned"`}
+  expectedOutput={`[PASS] Non-root user configured
+[PASS] Base image tag pinned`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why should production Dockerfiles avoid floating tags like FROM node:latest?",
+      options: [
+        "Future builds could silently pull a breaking major version update and break production",
+        "Docker refuses to pull :latest tags",
+        ":latest images cannot expose ports"
+      ],
+      answer: 0,
+      explanation: "Pinning explicit versions (like node:20-alpine) guarantees reproducible builds."
+    }
+  ]}
+/>
+
+<Callout type="tip" title="Earn Your Docker Certificate">
+  Ready to prove your container skills? Take the <a href="/courses/docker-essentials/exam">Docker Final Exam</a> (score 80% or higher) to unlock your free verifiable certificate.
+</Callout>

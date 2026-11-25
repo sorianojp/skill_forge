@@ -1,0 +1,77 @@
+---
+title: "Hash Maps & Two Pointers"
+description: "Eliminate O(n^2) nested loops using O(1) Hash Map lookups (Two Sum) and sorted Two Pointers."
+course: "dsa-fundamentals"
+module: "Complexity & Patterns"
+order: 2
+durationMinutes: 9
+objectives:
+  - "Solve Two Sum in O(n) time using a Hash Map of seen values"
+  - "Check palindromes or sorted pairs in O(n) time and O(1) space using Two Pointers"
+  - "Trade O(n) space for a huge speed win over O(n^2) brute force"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+Whenever you see a brute-force solution checking "is there another element that complements `x`?", a **Hash Map** (`new Map()`) turns the inner $O(n)$ scan into an $O(1)$ lookup, dropping total runtime from $O(n^2)$ to **$O(n)$**.
+
+<Callout type="tip" title="Two Pointers Save Memory on Sorted Arrays">
+  When an array is already sorted, placing one pointer at index <code>0</code> and one at <code>n - 1</code> solves pair-sum and palindrome problems in <code>O(n)</code> time and <code>O(1)</code> extra space.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="O(n) Two Sum with Map"
+  prompt="Compute the needed complement and check if seen already contains it."
+  template={`const need = target - nums[i];
+if (seen.{{0}}(need)) return [seen.{{1}}(need), i];
+seen.set(nums[i], i);`}
+  blanks={[
+    { answer: 'has', placeholder: 'method' },
+    { answer: 'get', placeholder: 'method' },
+  ]}
+  hint={'Use Map.has(need) to check existence and Map.get(need) to retrieve its index.'}
+/>
+
+## Live DSA Playground
+
+<Playground
+  client:visible
+  title="Two Sum in O(n) Time"
+  defaultTab="js"
+  showConsole={true}
+  html={`<p>Check the console for the O(n) Hash Map Two Sum result.</p>`}
+  js={`function twoSum(nums, target) {
+  const seen = new Map();
+  for (let i = 0; i < nums.length; i++) {
+    const need = target - nums[i];
+    if (seen.has(need)) return [seen.get(need), i];
+    seen.set(nums[i], i);
+  }
+  return [];
+}
+
+console.log("Indices for target 9:", twoSum([2, 7, 11, 15], 9));
+console.log("Indices for target 18:", twoSum([2, 7, 11, 15], 18));`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What is the time and space complexity of Hash Map Two Sum?",
+      options: [
+        "O(n) time and O(n) space",
+        "O(n^2) time and O(1) space",
+        "O(1) time and O(1) space"
+      ],
+      answer: 0,
+      explanation: "Each element is visited once with O(1) Map operations, storing up to n entries in the Map."
+    }
+  ]}
+/>

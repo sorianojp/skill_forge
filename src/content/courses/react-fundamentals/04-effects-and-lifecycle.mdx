@@ -1,0 +1,81 @@
+---
+title: "Side Effects & Cleanup (useEffect)"
+description: "Synchronize components with external systems (fetch, timers, event listeners) using useEffect and cleanup functions."
+course: "react-fundamentals"
+module: "Hooks & Architecture"
+order: 4
+durationMinutes: 9
+objectives:
+  - "Understand when you need useEffect (external systems) vs. when you do not (derived data)"
+  - "Declare accurate dependency arrays ([userId])"
+  - "Return a cleanup function to cancel timers, listeners, or stale fetches"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+**`useEffect`** synchronizes a React component with an **external system** (DOM event listeners, timers, WebSockets, or data fetching). Always return a **cleanup function** whenever you subscribe to a listener or start an interval so React cleans it up on unmount.
+
+<Callout type="tip" title="You Might Not Need an Effect">
+  Never use <code>useEffect</code> just to compute a derived value or handle a button click. Handle user actions inside event handlers, and compute derived values directly during render.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Effect with Cleanup"
+  prompt="Start an interval inside useEffect and clear it in the returned cleanup function."
+  template={`{{0}}(() => {
+  const id = setInterval(() => tick(), 1000);
+  return () => {{1}}(id);
+}, []);`}
+  blanks={[
+    { answer: 'useEffect', placeholder: 'hook' },
+    { answer: 'clearInterval', placeholder: 'fn' },
+  ]}
+  hint={'Use useEffect with [] to run on mount, and return () => clearInterval(id) to clean up.'}
+/>
+
+## Live Lifecycle Cleanup Demo
+
+<Playground
+  client:visible
+  title="Effect Mount & Unmount Simulation"
+  defaultTab="js"
+  showConsole={true}
+  html={`<p>Check the console to see how effect setup and cleanup pair together.</p>`}
+  js={`function mountEffect(effectFn) {
+  console.log("Component mounted");
+  const cleanup = effectFn();
+  return () => {
+    console.log("Component unmounting...");
+    if (cleanup) cleanup();
+  };
+}
+
+const unmount = mountEffect(() => {
+  console.log("-> Subscribed to keyboard shortcuts");
+  return () => console.log("-> Removed keyboard listener cleanly");
+});
+
+unmount();`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does passing an empty dependency array [] to useEffect(() => { ... }, []) mean?",
+      options: [
+        "Run the effect once on mount, and run its cleanup function on unmount",
+        "Run the effect on every single keystroke",
+        "Never run the effect at all"
+      ],
+      answer: 0,
+      explanation: "An empty dependency array tells React the effect depends on no reactive props or state."
+    }
+  ]}
+/>

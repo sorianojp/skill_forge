@@ -967,4 +967,520 @@ export const COURSE_EXAMS: Record<string, ExamQuestion[]> = {
       explanation: 'Task.WhenAll awaits multiple concurrent tasks cleanly without blocking threads.',
     },
   ],
+  'typescript-essentials': [
+    {
+      question: 'Why is unknown safer than any in TypeScript?',
+      options: [
+        'unknown forces you to narrow or verify the type before using the value',
+        'unknown disables type checking completely',
+        'unknown runs faster at runtime',
+      ],
+      answer: 0,
+      explanation: 'unknown preserves compile-time safety by requiring explicit narrowing.',
+    },
+    {
+      question: 'What does adding ? after a property name in an interface (hours?: number) mean?',
+      options: ['The property is optional', 'The property must be boolean', 'The property is private'],
+      answer: 0,
+      explanation: 'Optional properties may be omitted or undefined.',
+    },
+    {
+      question: 'What does readonly id: string enforce on an interface property?',
+      options: [
+        'The compiler prevents reassigning id after object creation',
+        'The property is hidden from JSON.stringify',
+        'The property can only hold uppercase strings',
+      ],
+      answer: 0,
+      explanation: 'readonly catches accidental mutations at compile time.',
+    },
+    {
+      question: 'Why are discriminated unions preferred over multiple boolean flags like isLoading and isError?',
+      options: [
+        'They prevent impossible state combinations and provide automatic type narrowing per variant',
+        'Booleans are not supported in TypeScript',
+        'Unions execute in parallel threads',
+      ],
+      answer: 0,
+      explanation: 'Each variant in a discriminated union carries only the properties valid for that state.',
+    },
+    {
+      question: 'What does <T, K extends keyof T> guarantee on a generic function?',
+      options: [
+        'K must be a valid property key of type T',
+        'K must be a number',
+        'T must be an array',
+      ],
+      answer: 0,
+      explanation: 'keyof T extracts the union of property names of T for compile-time safe indexing.',
+    },
+    {
+      question: 'Which utility type makes every property of User optional for PATCH updates?',
+      options: ['Partial<User>', 'Required<User>', 'Record<User>'],
+      answer: 0,
+      explanation: 'Partial<T> marks every property on T as optional.',
+    },
+    {
+      question: 'Which utility type removes passwordHash from a User type?',
+      options: ['Omit<User, "passwordHash">', 'Pick<User, "passwordHash">', 'Partial<User>'],
+      answer: 0,
+      explanation: 'Omit<T, K> creates a new type excluding the listed keys.',
+    },
+    {
+      question: 'How do you type a dictionary mapping string keys to number values in TypeScript?',
+      options: ['Record<string, number>', 'Dict<string, number>', 'Partial<number>'],
+      answer: 0,
+      explanation: 'Record<K, V> defines a strongly typed object map.',
+    },
+    {
+      question: 'What happens to TypeScript type annotations after compilation to JavaScript?',
+      options: [
+        'They are completely erased with zero runtime overhead',
+        'They are converted into runtime if-checks on every line',
+        'They are saved in localStorage',
+      ],
+      answer: 0,
+      explanation: 'TypeScript performs static checking at compile time and emits plain JavaScript.',
+    },
+    {
+      question: 'What is structural typing in TypeScript?',
+      options: [
+        'Any object with the required property shapes satisfies an interface even without naming it',
+        'Classes must inherit from Object.Struct',
+        'Types only work on structs',
+      ],
+      answer: 0,
+      explanation: 'TypeScript checks compatibility by shape (structure), not nominal class names.',
+    },
+  ],
+  'react-fundamentals': [
+    {
+      question: 'How does data flow between parent and child components in React?',
+      options: [
+        'One-way downward via props; children notify parents using callback props',
+        'Children mutate parent props directly',
+        'Only via global window variables',
+      ],
+      answer: 0,
+      explanation: 'Unidirectional data flow keeps React state predictable.',
+    },
+    {
+      question: 'Why does mutating an array in place (items.push(x); setItems(items)) fail to re-render?',
+      options: [
+        'React compares references with Object.is and sees the exact same array reference',
+        'push() is disabled in React',
+        'setItems only accepts strings',
+      ],
+      answer: 0,
+      explanation: 'Always pass a new array reference like [...prev, x] when updating state.',
+    },
+    {
+      question: 'When should you use a functional state updater like setCount(c => c + 1)?',
+      options: [
+        'Whenever the next state depends on the previous state value',
+        'Only inside CSS files',
+        'Never, always mutate state directly',
+      ],
+      answer: 0,
+      explanation: 'Functional updaters always receive the latest queued state even across batched updates.',
+    },
+    {
+      question: 'Why should dynamic lists avoid using array index as the React key prop?',
+      options: [
+        'Reordering, inserting, or deleting items shifts indexes and breaks component state reconciliation',
+        'Numbers are invalid React keys',
+        'Index keys cause syntax errors',
+      ],
+      answer: 0,
+      explanation: 'Use a stable unique ID (item.id or item.slug) as the key.',
+    },
+    {
+      question: 'Should a filtered list derived from items + query be duplicated in a second useState?',
+      options: [
+        'No, compute it directly during render to maintain a single source of truth',
+        'Yes, always duplicate derived values in useState and sync with useEffect',
+        'Only store it in document.title',
+      ],
+      answer: 0,
+      explanation: 'Deriving values during render prevents stale state synchronization bugs.',
+    },
+    {
+      question: 'What does an empty dependency array [] on useEffect(() => { ... }, []) do?',
+      options: [
+        'Runs the effect once on mount and runs its cleanup function on unmount',
+        'Runs the effect on every render',
+        'Disables the component',
+      ],
+      answer: 0,
+      explanation: 'Empty dependencies mean the effect only synchronizes on mount and cleans up on unmount.',
+    },
+    {
+      question: 'Why should useEffect return a cleanup function when registering a window event listener?',
+      options: [
+        'To detach the listener on unmount or re-run and prevent memory leaks',
+        'To force an infinite render loop',
+        'To clear localStorage automatically',
+      ],
+      answer: 0,
+      explanation: 'Cleanup functions keep subscriptions and timers leak-free.',
+    },
+    {
+      question: 'What makes an <input> a controlled component in React?',
+      options: [
+        'Its value is driven by React state and updated via its onChange handler',
+        'It has the disabled attribute set',
+        'It is wrapped in a <form> with no props',
+      ],
+      answer: 0,
+      explanation: 'Controlled inputs keep form state as the single source of truth.',
+    },
+    {
+      question: 'What is the naming rule for custom React hooks?',
+      options: [
+        'They must start with the prefix "use" and be called only at the top level',
+        'They must start with "hook_"',
+        'They must be static class methods',
+      ],
+      answer: 0,
+      explanation: 'The use* prefix lets React and linters enforce the Rules of Hooks.',
+    },
+    {
+      question: 'How do you immutably toggle done on one task inside a tasks array state?',
+      options: [
+        'setTasks(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t))',
+        'tasks[0].done = !tasks[0].done; setTasks(tasks);',
+        'setTasks(tasks.pop())',
+      ],
+      answer: 0,
+      explanation: '.map() with object spread produces new references for both the array and updated item.',
+    },
+  ],
+  'nodejs-essentials': [
+    {
+      question: 'Why should Node.js request handlers avoid synchronous blocking calls like fs.readFileSync()?',
+      options: [
+        'Blocking the single-threaded event loop stalls all other concurrent requests',
+        'Node.js has no file system API',
+        'readFileSync() deletes files',
+      ],
+      answer: 0,
+      explanation: 'Async I/O keeps the event loop free to serve concurrent traffic.',
+    },
+    {
+      question: 'Why is importing built-ins as node:fs/promises recommended in Node.js 20?',
+      options: [
+        'It explicitly marks the import as a built-in Node core module, not an npm package',
+        'It makes the module synchronous',
+        'It disables TypeScript',
+      ],
+      answer: 0,
+      explanation: 'The node: protocol prevents ambiguity or shadowing by third-party packages.',
+    },
+    {
+      question: 'Which executes first after synchronous code: a resolved Promise .then() or setTimeout(fn, 0)?',
+      options: ['The Promise .then() microtask', 'setTimeout(fn, 0)', 'They run on separate CPU cores'],
+      answer: 0,
+      explanation: 'Microtasks always drain completely before the event loop moves to timers.',
+    },
+    {
+      question: 'How do you run two independent async calls concurrently in Node.js?',
+      options: ['await Promise.all([a(), b()])', 'await a(); await b();', 'setTimeout(a, b)'],
+      answer: 0,
+      explanation: 'Promise.all executes independent promises in parallel.',
+    },
+    {
+      question: 'What does fs.readFile("a.txt") return if you omit the "utf8" encoding?',
+      options: ['A binary Buffer', 'A parsed JSON object', 'null'],
+      answer: 0,
+      explanation: 'Specifying "utf8" decodes the Buffer into a string.',
+    },
+    {
+      question: 'Which HTTP status code indicates a POST endpoint successfully created a new resource?',
+      options: ['201 Created', '404 Not Found', '500 Internal Server Error'],
+      answer: 0,
+      explanation: '201 Created is the standard REST status for newly created resources.',
+    },
+    {
+      question: 'Why should you use streams instead of fs.readFile() for gigabyte-sized files?',
+      options: [
+        'Streams process small chunks incrementally with constant memory usage',
+        'Streams bypass the filesystem',
+        'fs.readFile() cannot read text files',
+      ],
+      answer: 0,
+      explanation: 'Streams avoid exhausting server RAM on large payloads.',
+    },
+    {
+      question: 'Which built-in Node API generates cryptographically secure random tokens or UUIDs?',
+      options: ['node:crypto (crypto.randomBytes / crypto.randomUUID)', 'Math.random()', 'Date.now()'],
+      answer: 0,
+      explanation: 'node:crypto provides CSPRNG randomness suitable for security tokens.',
+    },
+    {
+      question: 'How do you safely build a cross-platform file path in Node.js?',
+      options: ['path.join(dir, "file.json")', 'dir + "\\\\" + "file.json"', 'url.parse(dir)'],
+      answer: 0,
+      explanation: 'path.join() handles OS-specific path separators cleanly.',
+    },
+    {
+      question: 'What HTTP status code should an API return when client input fails validation?',
+      options: ['400 Bad Request', '200 OK', '503 Service Unavailable'],
+      answer: 0,
+      explanation: '400 Bad Request signals invalid client-supplied parameters or JSON.',
+    },
+  ],
+  'linux-cli': [
+    {
+      question: 'What does mkdir -p a/b/c do?',
+      options: [
+        'Creates missing parent directories and succeeds cleanly if they already exist',
+        'Deletes directory a/b/c',
+        'Changes permissions to 777',
+      ],
+      answer: 0,
+      explanation: 'mkdir -p creates the entire nested path idempotently.',
+    },
+    {
+      question: 'Which ls flag combination shows hidden dotfiles with human-readable sizes?',
+      options: ['ls -lah', 'ls -x', 'ls --only'],
+      answer: 0,
+      explanation: '-l (long), -a (all including dotfiles), -h (human-readable sizes).',
+    },
+    {
+      question: 'What is the difference between > and >> in Bash redirection?',
+      options: [
+        '> overwrites the target file, while >> appends to the end',
+        '>> overwrites and > appends',
+        'They are identical',
+      ],
+      answer: 0,
+      explanation: 'Use >> when appending log lines so previous content is preserved.',
+    },
+    {
+      question: 'What does the pipe operator (|) do in cmd1 | cmd2?',
+      options: [
+        'Sends stdout of cmd1 into stdin of cmd2',
+        'Runs cmd2 only if cmd1 fails',
+        'Deletes the output of cmd1',
+      ],
+      answer: 0,
+      explanation: 'Pipes let you compose small Unix tools into powerful data pipelines.',
+    },
+    {
+      question: 'What permissions does chmod 600 set on an SSH private key?',
+      options: [
+        'Read and write for owner only; zero access for group and others',
+        'Full access for everyone',
+        'Execute-only for everyone',
+      ],
+      answer: 0,
+      explanation: '6 = read(4) + write(2) for owner; 0 for group and others.',
+    },
+    {
+      question: 'Which command makes a Bash script file executable?',
+      options: ['chmod +x script.sh', 'mkdir +x script.sh', 'cat +x script.sh'],
+      answer: 0,
+      explanation: 'chmod +x adds the execute bit so the script can be run directly.',
+    },
+    {
+      question: 'Which command displays human-readable disk usage across mounted filesystems?',
+      options: ['df -h', 'free -h', 'ps -h'],
+      answer: 0,
+      explanation: 'df -h reports disk free and used space per mount.',
+    },
+    {
+      question: 'Which command displays RAM and swap usage on a Linux server?',
+      options: ['free -h', 'ls -h', 'pwd -h'],
+      answer: 0,
+      explanation: 'free -h summarizes total, used, and available memory.',
+    },
+    {
+      question: 'What does set -euo pipefail do at the top of a Bash script?',
+      options: [
+        'Fails immediately on errors, unset variables, and failed pipeline stages',
+        'Ignores all errors silently',
+        'Runs the script in the background',
+      ],
+      answer: 0,
+      explanation: 'Strict mode catches bugs early instead of continuing blindly.',
+    },
+    {
+      question: 'Why must you pipe through sort before uniq -c?',
+      options: [
+        'uniq only collapses adjacent identical lines',
+        'uniq deletes unsorted files',
+        'sort is required to print numbers',
+      ],
+      answer: 0,
+      explanation: 'Sorting brings matching lines together so uniq -c counts every occurrence accurately.',
+    },
+  ],
+  'docker-essentials': [
+    {
+      question: 'What is the difference between a Docker image and a Docker container?',
+      options: [
+        'An image is an immutable blueprint; a container is a running instance of that image',
+        'A container is read-only; an image is a running process',
+        'They are identical terms',
+      ],
+      answer: 0,
+      explanation: 'You can launch many isolated containers from a single read-only image.',
+    },
+    {
+      question: 'In docker run -p 8080:80 nginx, which port do you visit on the host machine?',
+      options: ['8080', '80', '443'],
+      answer: 0,
+      explanation: '-p always maps HOST_PORT:CONTAINER_PORT.',
+    },
+    {
+      question: 'Why should COPY package*.json ./ and RUN npm ci come before COPY . . in a Dockerfile?',
+      options: [
+        'To maximize Docker layer caching so code edits do not re-download dependencies',
+        'Because COPY . . cannot copy JSON files',
+        'To expose port 80 automatically',
+      ],
+      answer: 0,
+      explanation: 'Docker reuses cached layers until an instruction or its copied files change.',
+    },
+    {
+      question: 'What is the purpose of a .dockerignore file?',
+      options: [
+        'Prevents local folders like node_modules, .git, and .env from being sent into the Docker build context',
+        'Stops containers from connecting to the internet',
+        'Deletes unused volumes automatically',
+      ],
+      answer: 0,
+      explanation: '.dockerignore speeds up builds and prevents baking secrets into images.',
+    },
+    {
+      question: 'What is the primary benefit of a multi-stage Dockerfile?',
+      options: [
+        'Keeps production images small and secure by copying only compiled artifacts into a minimal runtime stage',
+        'Starts multiple containers automatically',
+        'Replaces Docker Compose',
+      ],
+      answer: 0,
+      explanation: 'Build SDKs and dev tools stay in the builder stage and never ship to production.',
+    },
+    {
+      question: 'Why should production Dockerfiles include a non-root USER instruction?',
+      options: [
+        'It reduces security blast radius if the application process is ever compromised',
+        'Root cannot bind ports in Linux',
+        'Docker refuses to run as root',
+      ],
+      answer: 0,
+      explanation: 'Running with least privilege is a core container security best practice.',
+    },
+    {
+      question: 'How do you persist database files safely across container rebuilds?',
+      options: [
+        'Mount a named Docker volume (-v pgdata:/var/lib/postgresql/data)',
+        'Write them to /tmp inside the container',
+        'Never restart the container',
+      ],
+      answer: 0,
+      explanation: 'Named volumes survive container removal and upgrades.',
+    },
+    {
+      question: 'In Docker Compose, how does an api service connect to a sibling db service?',
+      options: [
+        'By using the Compose service name (db) as the hostname',
+        'By connecting to localhost',
+        'By hardcoding a random container IP',
+      ],
+      answer: 0,
+      explanation: 'Compose provides internal DNS resolving every service by its service name.',
+    },
+    {
+      question: 'Which command streams live logs from a running container named api?',
+      options: ['docker logs -f api', 'docker ps -f api', 'docker build -f api'],
+      answer: 0,
+      explanation: 'docker logs -f follows stdout and stderr output in real time.',
+    },
+    {
+      question: 'Why should production Dockerfiles pin base image versions (node:20-alpine) instead of :latest?',
+      options: [
+        'To guarantee reproducible builds and avoid unexpected breaking major upgrades',
+        'Because :latest images have no shell',
+        'Pinned tags disable caching',
+      ],
+      answer: 0,
+      explanation: 'Floating tags can silently change underneath your CI/CD pipeline.',
+    },
+  ],
+  'dsa-fundamentals': [
+    {
+      question: 'What is the Big-O time complexity of two sequential (non-nested) loops each running n times?',
+      options: ['O(n)', 'O(n^2)', 'O(log n)'],
+      answer: 0,
+      explanation: '2n drops the constant factor and simplifies to O(n).',
+    },
+    {
+      question: 'What is the average time complexity of Hash Map get() and set() operations?',
+      options: ['O(1)', 'O(n)', 'O(n log n)'],
+      answer: 0,
+      explanation: 'Hash tables compute bucket indices directly for constant-time average lookups.',
+    },
+    {
+      question: 'How does the Hash Map Two Sum solution improve on the nested-loop brute force?',
+      options: [
+        'Reduces time complexity from O(n^2) to O(n) using O(n) space',
+        'Reduces space complexity to O(0)',
+        'Requires sorting the array first in O(n^2)',
+      ],
+      answer: 0,
+      explanation: 'Looking up target - nums[i] in a Map takes O(1) per element.',
+    },
+    {
+      question: 'Which data structure follows LIFO (Last In, First Out) ordering?',
+      options: ['Stack', 'Queue', 'Binary Search Tree'],
+      answer: 0,
+      explanation: 'Stacks push and pop from the top in LIFO order.',
+    },
+    {
+      question: 'Which data structure is ideal for validating balanced parentheses ({[]})?',
+      options: ['Stack', 'Queue', 'Min Heap'],
+      answer: 0,
+      explanation: 'Each closing bracket must match the most recently opened bracket on top of the stack.',
+    },
+    {
+      question: 'What precondition is required for standard Binary Search?',
+      options: [
+        'The search space must be sorted (or monotonic)',
+        'All numbers must be even',
+        'The array must be stored in a linked list',
+      ],
+      answer: 0,
+      explanation: 'Binary Search halves the search range each step using ordering.',
+    },
+    {
+      question: 'Roughly how many comparisons does Binary Search need in the worst case on 1,000,000 sorted items?',
+      options: ['About 20', 'About 500,000', 'About 1,000'],
+      answer: 0,
+      explanation: 'log2(1,000,000) is approximately 20.',
+    },
+    {
+      question: 'Which data structure powers Breadth-First Search (BFS)?',
+      options: ['FIFO Queue', 'LIFO Stack', 'Hash Set only'],
+      answer: 0,
+      explanation: 'A queue visits nodes level by level in order of distance from the start.',
+    },
+    {
+      question: 'Which traversal guarantees the shortest path (fewest edges) in an unweighted graph?',
+      options: ['Breadth-First Search (BFS)', 'Depth-First Search (DFS)', 'In-order traversal'],
+      answer: 0,
+      explanation: 'BFS explores all nodes at distance d before distance d + 1.',
+    },
+    {
+      question: 'What two properties indicate a problem is a good fit for Dynamic Programming?',
+      options: [
+        'Overlapping subproblems and optimal substructure',
+        'Sorted input and O(1) memory',
+        'Random graph weights',
+      ],
+      answer: 0,
+      explanation: 'Caching overlapping subproblems eliminates redundant exponential recursion.',
+    },
+  ],
 };

@@ -1,0 +1,75 @@
+---
+title: "Generics & Type Constraints"
+description: "Write reusable, type-preserving functions and wrappers with <T> and extends constraints."
+course: "typescript-essentials"
+module: "Advanced TypeScript"
+order: 4
+durationMinutes: 9
+objectives:
+  - "Preserve exact input-to-output types using generic functions (<T>)"
+  - "Constrain generic parameters with <T extends { id: string }>"
+  - "Use keyof T to index objects with 100% compile-time safety"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+**Generics** act like type-level parameters. Instead of losing type information with `any`, `function first<T>(items: T[]): T | undefined` remembers whether you passed `number[]` or `User[]` and returns the exact matching element type.
+
+<Callout type="info" title="Type-Safe Property Access with keyof">
+  <code>function pick&lt;T, K extends keyof T&gt;(obj: T, key: K): T[K]</code> guarantees at compile time that <code>key</code> actually exists on <code>obj</code>.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Generic First Helper"
+  prompt="Declare a generic type parameter T so first() preserves the element type."
+  template={`function first<{{0}}>(items: T[]): T | undefined {
+  return items[{{1}}];
+}`}
+  blanks={[
+    { answer: 'T', placeholder: 'type' },
+    { answer: '0', placeholder: 'idx' },
+  ]}
+  hint={'Declare <T> after the function name and return items[0].'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="generics.ts"
+  language="ts"
+  code={`function first<T>(items: readonly T[]): T | undefined {
+  return items[0];
+}
+
+function getProp<T, K extends keyof T>(obj: T, key: K): T[K] {
+  return obj[key];
+}
+
+const top = first([95, 88, 91]);
+const track = { name: "TypeScript", lessons: 6 };
+console.log("First:", top, "| Name:", getProp(track, "name"));`}
+  expectedOutput={`First: 95 | Name: TypeScript`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does K extends keyof T constrain in a TypeScript generic function?",
+      options: [
+        "K must be one of the valid property keys of type T",
+        "K must be a number",
+        "T must inherit from K at runtime"
+      ],
+      answer: 0,
+      explanation: "keyof T produces the union of property names of T, preventing invalid key lookups."
+    }
+  ]}
+/>

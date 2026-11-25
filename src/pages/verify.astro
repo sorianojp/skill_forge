@@ -1,0 +1,25 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import CertificateVerifier from '@/components/progress/CertificateVerifier';
+---
+
+<BaseLayout
+  title="Verify Certificate · SkillForge"
+  description="Verify the authenticity of any SkillForge Course Completion Certificate using its unique Certificate ID."
+>
+  <section class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+    <div class="mb-8">
+      <span class="inline-flex items-center rounded-full bg-[var(--accent-soft)] px-3 py-1 text-xs font-bold uppercase tracking-wider text-[var(--accent)]">
+        Public Credential Registry
+      </span>
+      <h1 class="mt-3 text-3xl font-extrabold tracking-tight text-[var(--text)] sm:text-4xl">
+        Verify a SkillForge Certificate
+      </h1>
+      <p class="mt-2 text-base text-[var(--text-muted)]">
+        Enter the unique Certificate ID printed at the bottom of a SkillForge certificate to confirm the recipient, track, score, and issue date.
+      </p>
+    </div>
+
+    <CertificateVerifier client:load />
+  </section>
+</BaseLayout>

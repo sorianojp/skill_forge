@@ -1,0 +1,74 @@
+---
+title: "Event Loop & Async Concurrency"
+description: "Master microtasks (Promises), timers, and running independent async tasks concurrently with Promise.all()."
+course: "nodejs-essentials"
+module: "Node.js Core"
+order: 2
+durationMinutes: 8
+objectives:
+  - "Predict execution order across synchronous code, Promise microtasks, and setTimeout"
+  - "Run independent async I/O calls concurrently using Promise.all()"
+  - "Handle partial failures cleanly with Promise.allSettled()"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+In Node.js, **Promise callbacks (microtasks)** always drain immediately after the current call stack finishes, *before* the next timer (`setTimeout`) callback runs.
+
+<Callout type="tip" title="Avoid Sequential await Waterfalls">
+  If two database or HTTP calls do not depend on each other, run them together with <code>await Promise.all([a(), b()])</code> instead of awaiting them one after another.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Concurrent Async Calls"
+  prompt="Run fetchUsers() and fetchCourses() in parallel with Promise.all."
+  template={`const [users, courses] = {{0}} Promise.{{1}}([
+  fetchUsers(),
+  fetchCourses(),
+]);`}
+  blanks={[
+    { answer: 'await', placeholder: 'kw' },
+    { answer: 'all', placeholder: 'method' },
+  ]}
+  hint={'Use await Promise.all([...]) to wait for independent promises concurrently.'}
+/>
+
+## Live Code Lab (Node.js 20)
+
+<CodeLab
+  client:visible
+  title="event_loop.js"
+  language="node"
+  code={`console.log("1. sync start");
+
+setTimeout(() => console.log("4. timer macrotask"), 0);
+Promise.resolve().then(() => console.log("3. promise microtask"));
+
+console.log("2. sync end");`}
+  expectedOutput={`1. sync start
+2. sync end
+3. promise microtask
+4. timer macrotask`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which runs first after synchronous code finishes: a resolved Promise .then() or a setTimeout(fn, 0)?",
+      options: [
+        "The Promise .then() microtask runs first",
+        "The setTimeout(fn, 0) runs first",
+        "Their order is random"
+      ],
+      answer: 0,
+      explanation: "The microtask queue drains completely before the event loop advances to the timers phase."
+    }
+  ]}
+/>

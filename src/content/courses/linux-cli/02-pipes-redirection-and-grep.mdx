@@ -1,0 +1,63 @@
+---
+title: "Pipes, Redirection & Text Search (grep)"
+description: "Chain small Unix tools with pipes (|), redirect output (> and >>), and filter logs cleanly with grep, sort, and wc."
+course: "linux-cli"
+module: "Shell Basics"
+order: 2
+durationMinutes: 8
+objectives:
+  - "Send one command's stdout into another command's stdin with |"
+  - "Distinguish overwrite (>) from append (>>)"
+  - "Search logs and codebases with grep -i and count matches with wc -l"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+The Unix philosophy is **"do one thing well, and compose tools with pipes (`|`)"**. Instead of writing a 50-line script, a one-line pipeline like `grep "ERROR" app.log | sort | uniq -c | wc -l` summarizes gigabytes of logs instantaneously.
+
+<Callout type="tip" title="> Overwrites, >> Appends">
+  <code>echo "line" &gt; log.txt</code> replaces the file; <code>echo "line" &gt;&gt; log.txt</code> appends to the end.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Filter & Count Log Errors"
+  prompt="Search for 'ERROR' in server.log and pipe into wc -l to count matching lines."
+  template={`{{0}} "ERROR" server.log {{1}} wc -l`}
+  blanks={[
+    { answer: 'grep', placeholder: 'cmd' },
+    { answer: '|', placeholder: 'op' },
+  ]}
+  hint={'Use grep to filter matching lines and | to pipe them to wc -l.'}
+/>
+
+## Live Bash Lab
+
+<CodeLab
+  client:visible
+  title="pipes.sh"
+  language="bash"
+  code={`printf "INFO ok\nERROR db timeout\nINFO ok\nERROR auth failed\n" | grep "ERROR" | wc -l`}
+  expectedOutput={`2`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What is the difference between > and >> in Bash?",
+      options: [
+        "> overwrites the destination file, while >> appends to the end of it",
+        ">> deletes the file before writing",
+        "They are identical"
+      ],
+      answer: 0,
+      explanation: "Single > truncates and overwrites; double >> appends safely."
+    }
+  ]}
+/>

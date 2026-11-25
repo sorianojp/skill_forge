@@ -1,0 +1,92 @@
+---
+title: "Unit Testing OOP Classes with Fakes"
+description: "Write fast, deterministic unit tests for object-oriented services by injecting lightweight in-memory fakes."
+course: "oop-fundamentals"
+module: "Architecture & Testing"
+order: 11
+durationMinutes: 8
+objectives:
+  - "Structure tests with Arrange, Act, Assert (AAA)"
+  - "Test business logic cleanly using an in-memory fake repository"
+  - "Verify both happy paths and validation edge cases"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+Clean OOP pays its biggest dividend during **unit testing**. Because your service accepts its dependencies through the constructor (Dependency Injection), you can pass a 5-line **in-memory fake** instead of spinning up a real database or HTTP server.
+
+## Arrange, Act, Assert (AAA)
+
+1. **Arrange:** Instantiate the fake dependency and the service under test.
+2. **Act:** Call the method you want to verify.
+3. **Assert:** Check the return value or state stored in the fake.
+
+<Callout type="tip" title="Fakes Beat Brittle Mocks">
+  A tiny in-memory fake class (like <code>InMemoryRepo</code> backed by an array or <code>Map</code>) tests real behavior without breaking whenever you refactor internal method calls.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Arrange-Act-Assert Test"
+  prompt="Inject InMemoryRepo into UserService and assert that 1 user was saved."
+  template={`const repo = new InMemoryRepo();
+const svc = new UserService({{0}});
+svc.register("ada@dev.io");
+console.log(repo.items.{{1}} === 1);`}
+  blanks={[
+    { answer: 'repo', placeholder: 'arg' },
+    { answer: 'length', placeholder: 'prop' },
+  ]}
+  hint={'Pass repo into UserService and check repo.items.length.'}
+/>
+
+## Live OOP Playground
+
+<Playground
+  client:visible
+  title="Unit Testing with an In-Memory Fake"
+  defaultTab="js"
+  showConsole={true}
+  html={`<p>Run the mini test suite below to verify RegistrationService.</p>`}
+  js={`class InMemoryUserRepo {
+  items = [];
+  save(email) { this.items.push(email); }
+  exists(email) { return this.items.includes(email); }
+}
+
+class RegistrationService {
+  constructor(repo) { this.repo = repo; }
+  register(email) {
+    if (this.repo.exists(email)) return false;
+    this.repo.save(email);
+    return true;
+  }
+}
+
+// Mini unit test runner
+const repo = new InMemoryUserRepo();
+const svc = new RegistrationService(repo);
+console.log("Test 1 (new user):", svc.register("sam@dev.io") === true ? "PASS" : "FAIL");
+console.log("Test 2 (duplicate):", svc.register("sam@dev.io") === false ? "PASS" : "FAIL");`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why do unit tests run much faster when you inject an in-memory fake repository?",
+      options: [
+        "They avoid slow disk, network, and database I/O while still testing business rules",
+        "They skip executing the service methods",
+        "They disable assertions"
+      ],
+      answer: 0,
+      explanation: "In-memory fakes run in microseconds and keep unit tests deterministic."
+    }
+  ]}
+/>

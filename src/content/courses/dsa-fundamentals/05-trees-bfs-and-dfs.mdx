@@ -1,0 +1,87 @@
+---
+title: "Trees, BFS & DFS Traversal"
+description: "Traverse hierarchical trees and graphs using Breadth-First Search (Queue) and Depth-First Search (Recursion)."
+course: "dsa-fundamentals"
+module: "Searching & Trees"
+order: 5
+durationMinutes: 9
+objectives:
+  - "Implement recursive Depth-First Search (DFS) on a binary tree"
+  - "Implement level-by-level Breadth-First Search (BFS) using a Queue"
+  - "Know when BFS beats DFS (shortest path in unweighted graphs)"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+- **DFS (Depth-First Search):** Explores as deep as possible along each branch before backtracking (uses recursion or a Stack). Great for computing tree height, path sums, and topological sort.
+- **BFS (Breadth-First Search):** Explores level by level (uses a Queue). Guarantees the **shortest path** (fewest edges) in unweighted graphs.
+
+<Callout type="tip" title="Remember the Queue vs. Stack Rule">
+  BFS uses a <strong>Queue</strong> (FIFO); DFS uses a <strong>Stack</strong> (or recursion call stack).
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Recursive Tree Sum (DFS)"
+  prompt="Handle the null base case and recursively sum left and right subtrees."
+  template={`function treeSum(node) {
+  if (!node) return {{0}};
+  return node.val + treeSum(node.left) + treeSum(node.{{1}});
+}`}
+  blanks={[
+    { answer: '0', placeholder: 'base' },
+    { answer: 'right', placeholder: 'prop' },
+  ]}
+  hint={'An empty node contributes 0; add node.val plus both left and right subtrees.'}
+/>
+
+## Live DSA Playground
+
+<Playground
+  client:visible
+  title="BFS Level-Order & DFS Tree Sum"
+  defaultTab="js"
+  showConsole={true}
+  html={`<p>Run to see both BFS level-order and recursive DFS sum on a binary tree.</p>`}
+  js={`const root = {
+  val: 10,
+  left: { val: 5, left: { val: 2 }, right: { val: 7 } },
+  right: { val: 15, right: { val: 20 } }
+};
+
+function bfs(node) {
+  const queue = [node], order = [];
+  for (let head = 0; head < queue.length; head++) {
+    const cur = queue[head];
+    order.push(cur.val);
+    if (cur.left) queue.push(cur.left);
+    if (cur.right) queue.push(cur.right);
+  }
+  return order;
+}
+
+function dfsSum(node) {
+  if (!node) return 0;
+  return node.val + dfsSum(node.left) + dfsSum(node.right);
+}
+
+console.log("BFS order:", bfs(root));
+console.log("DFS sum:  ", dfsSum(root));`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which traversal algorithm guarantees finding the shortest path (fewest hops) in an unweighted graph?",
+      options: ["Breadth-First Search (BFS)", "Depth-First Search (DFS)", "QuickSort"],
+      answer: 0,
+      explanation: "BFS explores nodes in increasing distance from the start node, so the first time it reaches the goal is guaranteed shortest."
+    }
+  ]}
+/>

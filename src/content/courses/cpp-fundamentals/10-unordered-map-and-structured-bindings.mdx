@@ -1,0 +1,79 @@
+---
+title: "unordered_map & Structured Bindings"
+description: "Perform O(1) hash lookups with std::unordered_map and unpack key-value pairs cleanly with C++17 structured bindings."
+course: "cpp-fundamentals"
+module: "The Standard Library (STL)"
+order: 9
+durationMinutes: 8
+objectives:
+  - "Count frequencies and store key-value pairs in std::unordered_map"
+  - "Iterate cleanly with for (const auto& [key, val] : map)"
+  - "Check membership safely with .contains() (C++20) or .find()"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+**`std::unordered_map<K, V>`** provides average $O(1)$ hash-table lookups. With C++17 **structured bindings** (`const auto& [key, value]`), iterating over maps is concise and readable.
+
+<Callout type="info" title="Be Careful with map[key] on Missing Keys">
+  Reading <code>counts["missing"]</code> inserts a default-initialized <code>0</code> entry! Use <code>counts.contains(key)</code> (C++20) or <code>counts.find(key)</code> when you only want to check presence.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Structured Binding Loop"
+  prompt="Unpack each key and count while iterating over a map."
+  template={`for (const {{0}}& [{{1}}, count] : counts) {
+    std::cout << word << ": " << count << "\\n";
+}`}
+  blanks={[
+    { answer: 'auto', placeholder: 'kw' },
+    { answer: 'word', placeholder: 'var' },
+  ]}
+  hint={'Use const auto& [word, count] for zero-copy structured binding.'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="maps_demo.cpp"
+  language="cpp"
+  code={`#include <iostream>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
+int main() {
+    std::vector<std::string> tags = {"cpp", "stl", "cpp", "raii"};
+    std::unordered_map<std::string, int> counts;
+    for (const auto& t : tags) counts[t]++;
+
+    std::cout << "cpp count: " << counts["cpp"] << "\\n";
+    std::cout << "has rust? " << (counts.contains("rust") ? "yes" : "no") << "\\n";
+    return 0;
+}`}
+  expectedOutput={`cpp count: 2
+has rust? no`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What happens in C++ if you read map[\"missing\"] on an std::unordered_map<std::string, int>?",
+      options: [
+        "It inserts \"missing\" with value 0 into the map",
+        "It returns std::nullopt",
+        "It fails to compile"
+      ],
+      answer: 0,
+      explanation: "operator[] default-constructs and inserts missing keys; use .contains() or .find() for read-only lookups."
+    }
+  ]}
+/>

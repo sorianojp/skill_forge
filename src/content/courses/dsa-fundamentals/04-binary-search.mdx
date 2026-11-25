@@ -1,0 +1,80 @@
+---
+title: "Binary Search in O(log n)"
+description: "Search sorted arrays of a million items in at most 20 comparisons using clean, bug-free Binary Search."
+course: "dsa-fundamentals"
+module: "Searching & Trees"
+order: 4
+durationMinutes: 8
+objectives:
+  - "Write overflow-safe midpoint calculation: lo + Math.floor((hi - lo) / 2)"
+  - "Maintain strict loop invariants (lo <= hi) to avoid infinite loops"
+  - "Understand why Binary Search requires a sorted or monotonic search space"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+**Binary Search** cuts the remaining search interval in **half** on every iteration. Even on 1,000,000 sorted elements, $\log_2(1,000,000) \approx 20$, so Binary Search finishes in at most **20 steps**.
+
+<Callout type="tip" title="Avoid Integer Overflow in C/C++/Java">
+  Always compute the midpoint as <code>lo + Math.floor((hi - lo) / 2)</code> (or <code>lo + (hi - lo) / 2</code> in C/Java/C#) instead of <code>(lo + hi) / 2</code>.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Binary Search Bounds Update"
+  prompt="Narrow the left or right half based on comparing nums[mid] to target."
+  template={`if (nums[mid] === target) return mid;
+if (nums[mid] < target) lo = mid + {{0}};
+else hi = mid - {{1}};`}
+  blanks={[
+    { answer: '1', placeholder: 'num' },
+    { answer: '1', placeholder: 'num' },
+  ]}
+  hint={'Exclude mid itself by moving lo to mid + 1 or hi to mid - 1 so the loop always terminates.'}
+/>
+
+## Live DSA Playground
+
+<Playground
+  client:visible
+  title="O(log n) Binary Search"
+  defaultTab="js"
+  showConsole={true}
+  html={`<p>Watch how few steps Binary Search takes on a sorted array.</p>`}
+  js={`function binarySearch(nums, target) {
+  let lo = 0, hi = nums.length - 1, steps = 0;
+  while (lo <= hi) {
+    steps++;
+    const mid = lo + Math.floor((hi - lo) / 2);
+    if (nums[mid] === target) return { index: mid, steps };
+    if (nums[mid] < target) lo = mid + 1;
+    else hi = mid - 1;
+  }
+  return { index: -1, steps };
+}
+
+const sorted = [3, 8, 15, 22, 31, 44, 59, 73, 88, 95];
+console.log("Find 73:", binarySearch(sorted, 73));
+console.log("Find 40:", binarySearch(sorted, 40));`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What precondition must hold for standard Binary Search to work on an array?",
+      options: [
+        "The array must be sorted (or have a monotonic predicate)",
+        "The array length must be a power of 2",
+        "All numbers must be positive"
+      ],
+      answer: 0,
+      explanation: "Binary Search discards half the array on every step only because the elements are ordered."
+    }
+  ]}
+/>

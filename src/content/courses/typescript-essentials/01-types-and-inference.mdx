@@ -1,0 +1,72 @@
+---
+title: "Types, Inference & Strict Mode"
+description: "Understand how TypeScript infers types automatically, when to annotate explicitly, and why strict mode prevents null bugs."
+course: "typescript-essentials"
+module: "TypeScript Foundations"
+order: 1
+durationMinutes: 8
+objectives:
+  - "Let TypeScript infer local variables while explicitly typing function parameters"
+  - "Avoid the any escape hatch in favor of unknown"
+  - "Enable strict mode for null and undefined safety"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+**TypeScript** is JavaScript with static type checking. Types are checked at compile time and erased completely before your code runs, giving you zero runtime overhead and instant editor autocomplete.
+
+<Callout type="warning" title="Prefer unknown Over any">
+  <code>any</code> turns off the type checker completely. Use <code>unknown</code> for untrusted inputs (like parsed JSON), which forces you to narrow the type before using it.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Typed Function Signature"
+  prompt="Annotate name as string and the return type as string."
+  template={`function greet(name: {{0}}): {{1}} {
+  return "Hello, " + name;
+}`}
+  blanks={[
+    { answer: 'string', placeholder: 'type' },
+    { answer: 'string', placeholder: 'type' },
+  ]}
+  hint={'Annotate parameters with name: string and return types after the closing parenthesis.'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="basics.ts"
+  language="ts"
+  code={`const course = "TypeScript 5"; // inferred as string
+const lessons: number = 6;
+
+function formatSummary(title: string, count: number): string {
+  return title + " (" + count + " lessons)";
+}
+
+console.log(formatSummary(course, lessons));`}
+  expectedOutput={`TypeScript 5 (6 lessons)`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why is unknown safer than any in TypeScript?",
+      options: [
+        "unknown requires you to narrow or verify the value's type before accessing properties on it",
+        "unknown runs faster at runtime",
+        "unknown allows calling any method without checking"
+      ],
+      answer: 0,
+      explanation: "unknown preserves type safety by forcing explicit checks before using the value."
+    }
+  ]}
+/>

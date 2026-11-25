@@ -1,0 +1,66 @@
+---
+title: "Generics & Type Constraints"
+description: "Write reusable, compile-time-safe C# classes and methods with <T> and where T : constraints."
+course: "csharp-fundamentals"
+module: "Object-Oriented C#"
+order: 7
+durationMinutes: 8
+objectives:
+  - "Build generic result wrappers like Result<T>"
+  - "Restrict type parameters with where T : IComparable<T>"
+  - "Understand why C# generics avoid boxing value types at runtime"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+Unlike Java's type erasure, **.NET reifies generics at runtime**, meaning `List<int>` stores raw unboxed 32-bit integers with zero heap allocation per element. Use **`where T : ...`** to constrain `T` to types that implement a required interface.
+
+<Callout type="info" title="Generic Result<T> Pattern">
+  Returning a generic <code>Result&lt;T&gt;</code> record makes expected failures explicit without throwing exceptions for normal control flow.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Generic Type Constraint"
+  prompt="Constrain T so Max<T> can call CompareTo()."
+  template={`static T Max<T>(T a, T b) {{0}} T : IComparable<T>
+    => a.CompareTo(b) >= 0 ? a : {{1}};`}
+  blanks={[
+    { answer: 'where', placeholder: 'kw' },
+    { answer: 'b', placeholder: 'var' },
+  ]}
+  hint={'Use where T : IComparable<T> to constrain generic type parameters in C#.'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="GenericsDemo.cs"
+  language="csharp"
+  code={`public record Result<T>(bool Ok, T? Value, string? Error);
+
+static T MaxOf<T>(T a, T b) where T : IComparable<T>
+    => a.CompareTo(b) >= 0 ? a : b;
+
+var res = new Result<int>(true, MaxOf(42, 99), null);
+Console.WriteLine($"Ok={res.Ok}, Max={res.Value}");`}
+  expectedOutput={`Ok=True, Max=99`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "How do you require a generic type parameter T in C# to implement IComparable<T>?",
+      options: ["where T : IComparable<T>", "T extends IComparable<T>", "require(T, IComparable)"],
+      answer: 0,
+      explanation: "C# uses the where T : Constraint clause after the method or class signature."
+    }
+  ]}
+/>

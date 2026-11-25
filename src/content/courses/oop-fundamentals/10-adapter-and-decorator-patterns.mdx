@@ -1,0 +1,94 @@
+---
+title: "Adapter & Decorator Patterns"
+description: "Bridge incompatible APIs with Adapters and layer cross-cutting behavior (logging, caching) cleanly with Decorators."
+course: "oop-fundamentals"
+module: "Design Patterns"
+order: 9
+durationMinutes: 8
+objectives:
+  - "Wrap a third-party API behind your own interface using the Adapter pattern"
+  - "Layer behavior dynamically around an object using the Decorator pattern"
+  - "Avoid subclass explosion when combining orthogonal features"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+- **Adapter** translates an external or legacy interface into the clean contract your app expects (like a power plug adapter).
+- **Decorator** wraps an object implementing the *same* interface to add extra behavior (logging, timing, retries, caching) without modifying the original class.
+
+<Callout type="tip" title="Decorators Beat Subclass Explosion">
+  Instead of creating <code>CachedLoggedRetryingHttpClient</code>, compose <code>new CacheDecorator(new LogDecorator(new HttpClient()))</code>.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Logging Decorator"
+  prompt="Wrap an inner service, log the call, and delegate to inner.fetch(id)."
+  template={`class LoggingDecorator {
+  constructor(inner) { this.inner = inner; }
+  fetch(id) {
+    console.log("Fetching", id);
+    return this.{{0}}.{{1}}(id);
+  }
+}`}
+  blanks={[
+    { answer: 'inner', placeholder: 'field' },
+    { answer: 'fetch', placeholder: 'method' },
+  ]}
+  hint={'Delegate the actual work to this.inner.fetch(id).'}
+/>
+
+## Live OOP Playground
+
+<Playground
+  client:visible
+  title="Composable Caching Decorator"
+  defaultTab="js"
+  showConsole={true}
+  html={`<p>Notice the second fetch hits the cache without calling the base service.</p>`}
+  js={`class CourseApi {
+  fetch(id) {
+    console.log("-> Network fetch for", id);
+    return "Course #" + id;
+  }
+}
+
+class CacheDecorator {
+  #cache = new Map();
+  constructor(inner) { this.inner = inner; }
+  fetch(id) {
+    if (this.#cache.has(id)) {
+      console.log("-> Cache hit for", id);
+      return this.#cache.get(id);
+    }
+    const result = this.inner.fetch(id);
+    this.#cache.set(id, result);
+    return result;
+  }
+}
+
+const api = new CacheDecorator(new CourseApi());
+console.log(api.fetch("oop"));
+console.log(api.fetch("oop"));`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What is the key difference between an Adapter and a Decorator?",
+      options: [
+        "Adapter changes an object's interface; Decorator preserves the same interface while adding behavior",
+        "Decorator deletes methods from a class",
+        "Adapter is only used in C++"
+      ],
+      answer: 0,
+      explanation: "Adapters translate between incompatible interfaces, while Decorators wrap an interface to layer responsibilities."
+    }
+  ]}
+/>

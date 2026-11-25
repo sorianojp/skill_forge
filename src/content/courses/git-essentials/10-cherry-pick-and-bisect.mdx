@@ -1,0 +1,63 @@
+---
+title: "Cherry-Pick & Git Bisect"
+description: "Copy a single hotfix commit across branches with git cherry-pick and pinpoint regressions in O(log n) steps with git bisect."
+course: "git-essentials"
+module: "Safety & Recovery"
+order: 9
+durationMinutes: 8
+objectives:
+  - "Apply one specific commit onto another branch using git cherry-pick"
+  - "Find the exact commit that introduced a bug using binary search (git bisect)"
+  - "End a bisect session cleanly with git bisect reset"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import GitSandbox from '@/components/playground/GitSandbox';
+import Quiz from '@/components/quiz/Quiz';
+
+Sometimes you need **one** bug-fix commit from a feature branch without merging the entire unfinished branch. **`git cherry-pick <hash>`** copies just that commit onto your current branch.
+
+## Finding Bugs Fast with `git bisect`
+
+When a bug appeared somewhere in the last 1,000 commits, **`git bisect`** performs a binary search across history, pinpointing the exact offending commit in ~10 steps instead of 1,000.
+
+<Callout type="tip" title="Automate Bisect with a Test Command">
+  Running <code>git bisect run npm test</code> lets Git test every midpoint automatically and hand you the exact commit that broke the test suite.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Cherry-Pick a Hotfix"
+  prompt="Apply commit a1b2c3d onto main and later exit a bisect session."
+  template={`git {{0}} a1b2c3d
+git bisect {{1}}`}
+  blanks={[
+    { answer: 'cherry-pick', placeholder: 'cmd' },
+    { answer: 'reset', placeholder: 'cmd' },
+  ]}
+  hint={'Use git cherry-pick to copy a single commit and git bisect reset to finish bisecting.'}
+/>
+
+## Interactive Git Sandbox
+
+<GitSandbox
+  client:visible
+  title="Inspect Commit Hashes for Cherry-Pick"
+  starterHint={'Run git log --oneline to copy exact commit hashes before cherry-picking.'}
+  suggestedCommands={['git add .', 'git commit -m "Fix null check hotfix"', 'git log --oneline']}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What algorithm does git bisect use to find the commit that introduced a regression?",
+      options: ["Binary search", "Bubble sort", "Random sampling"],
+      answer: 0,
+      explanation: "git bisect halves the commit range on every step, finding the bad commit in O(log n) checks."
+    }
+  ]}
+/>

@@ -1,0 +1,85 @@
+---
+title: "Immutability & Value Objects"
+description: "Eliminate shared-mutation bugs by modeling concepts like Money, Email, and DateRange as immutable Value Objects."
+course: "oop-fundamentals"
+module: "Architecture & Testing"
+order: 10
+durationMinutes: 8
+objectives:
+  - "Distinguish Entities (identity-based) from Value Objects (value-based)"
+  - "Return new instances on operations instead of mutating in place"
+  - "Enforce domain validation at construction time so invalid states cannot exist"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+A **Value Object** (like `Money(10, "USD")` or `Email("a@b.com")`) has no unique ID; two value objects are equal if their values match. Making value objects **immutable** eliminates subtle side-effect bugs where changing a price in one service silently mutates another object.
+
+<Callout type="tip" title="Make Invalid States Unrepresentable">
+  Validate inside the Value Object constructor (for example, rejecting negative amounts or mismatched currencies) so the rest of your codebase never has to re-validate.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Immutable Money Addition"
+  prompt="Return a brand-new Money object instead of mutating this.amount."
+  template={`add(other) {
+  if (this.currency !== other.currency) throw new Error("Mismatch");
+  return {{0}} Money(this.amount + other.{{1}}, this.currency);
+}`}
+  blanks={[
+    { answer: 'new', placeholder: 'kw' },
+    { answer: 'amount', placeholder: 'field' },
+  ]}
+  hint={'Construct and return a new Money with the summed amount.'}
+/>
+
+## Live OOP Playground
+
+<Playground
+  client:visible
+  title="Immutable Money Value Object"
+  defaultTab="js"
+  showConsole={true}
+  html={`<p>Adding two Money objects leaves both originals completely unchanged.</p>`}
+  js={`class Money {
+  constructor(amount, currency) {
+    this.amount = amount;
+    this.currency = currency;
+    Object.freeze(this);
+  }
+  add(other) {
+    if (this.currency !== other.currency) throw new Error("Currency mismatch");
+    return new Money(this.amount + other.amount, this.currency);
+  }
+  equals(other) {
+    return this.amount === other.amount && this.currency === other.currency;
+  }
+}
+
+const a = new Money(25, "USD");
+const b = new Money(15, "USD");
+const total = a.add(b);
+console.log("a:", a.amount, "total:", total.amount, "equals 40?", total.equals(new Money(40, "USD")));`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "How do two immutable Value Objects like Money(10, 'USD') determine equality?",
+      options: [
+        "By comparing their attribute values (amount and currency)",
+        "By comparing database auto-increment IDs",
+        "Value objects can never be equal"
+      ],
+      answer: 0,
+      explanation: "Value Objects are defined solely by their values, not by a mutable identity ID."
+    }
+  ]}
+/>

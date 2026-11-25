@@ -1,0 +1,91 @@
+---
+title: "Polymorphism, virtual & override"
+description: "Build clean C++ interfaces with pure virtual methods (= 0), virtual destructors, and the override keyword."
+course: "cpp-fundamentals"
+module: "OOP & Resource Safety"
+order: 8
+durationMinutes: 9
+objectives:
+  - "Define abstract interfaces using pure virtual functions (= 0)"
+  - "Always declare a virtual destructor on polymorphic base classes"
+  - "Use override on derived methods so the compiler verifies signatures"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+In C++, methods are **non-virtual by default** for zero-overhead speed. To enable runtime polymorphism through base pointers (`std::unique_ptr<Shape>`), mark base methods `virtual`, pure interface methods `= 0`, and derived implementations **`override`**.
+
+<Callout type="warning" title="Always Add virtual ~Base() = default;">
+  If you delete a derived object through a base class pointer without a <code>virtual</code> destructor, C++ triggers undefined behavior and skips the derived destructor.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Pure Virtual Interface & Override"
+  prompt="Mark area() pure virtual in Shape and override it in Square."
+  template={`struct Shape {
+    virtual ~Shape() = default;
+    {{0}} double area() const = 0;
+};
+struct Square : Shape {
+    double s;
+    explicit Square(double side) : s(side) {}
+    double area() const {{1}} { return s * s; }
+};`}
+  blanks={[
+    { answer: 'virtual', placeholder: 'kw' },
+    { answer: 'override', placeholder: 'kw' },
+  ]}
+  hint={'Declare polymorphic base methods virtual and derived implementations override.'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="polymorphism.cpp"
+  language="cpp"
+  code={`#include <iostream>
+#include <memory>
+#include <vector>
+
+struct Shape {
+    virtual ~Shape() = default;
+    virtual double area() const = 0;
+};
+
+struct Rect : Shape {
+    double w, h;
+    Rect(double w, double h) : w(w), h(h) {}
+    double area() const override { return w * h; }
+};
+
+int main() {
+    std::vector<std::unique_ptr<Shape>> shapes;
+    shapes.push_back(std::make_unique<Rect>(4.0, 5.0));
+    std::cout << "Area: " << shapes[0]->area() << "\\n";
+    return 0;
+}`}
+  expectedOutput={`Area: 20`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why must a polymorphic base class in C++ have a virtual destructor?",
+      options: [
+        "So deleting a derived object through a base pointer invokes the derived destructor safely",
+        "Because C++ forbids constructors without virtual destructors",
+        "To disable std::unique_ptr"
+      ],
+      answer: 0,
+      explanation: "A virtual destructor guarantees full derived-to-base cleanup when deleting through a base pointer."
+    }
+  ]}
+/>

@@ -1,0 +1,71 @@
+---
+title: "Streams, Buffers & Crypto Hashing"
+description: "Process large payloads with constant memory using Node streams and generate secure hashes with node:crypto."
+course: "nodejs-essentials"
+module: "Backend APIs"
+order: 5
+durationMinutes: 8
+objectives:
+  - "Understand why streams handle gigabyte files without exhausting RAM"
+  - "Generate cryptographically secure tokens with crypto.randomBytes()"
+  - "Hash payloads cleanly with crypto.createHash('sha256')"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+Reading a 2 GB log file with `fs.readFile()` loads all 2 GB into RAM at once. **Streams** process chunks (typically 64 KB at a time) using constant memory. Meanwhile, **`node:crypto`** gives you built-in SHA-256 hashing, HMAC signatures, and secure random token generation (`crypto.randomUUID()`).
+
+<Callout type="warning" title="Never Use Math.random() for Tokens">
+  <code>Math.random()</code> is predictable and unsafe for session IDs or password resets. Always use <code>crypto.randomBytes(32).toString('hex')</code> or <code>crypto.randomUUID()</code>.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="SHA-256 Digest with node:crypto"
+  prompt="Compute the hex SHA-256 hash of a string."
+  template={`const crypto = require("node:crypto");
+const hash = crypto.createHash("{{0}}").update("skillforge").digest("{{1}}");`}
+  blanks={[
+    { answer: 'sha256', placeholder: 'alg' },
+    { answer: 'hex', placeholder: 'enc' },
+  ]}
+  hint={'Pass "sha256" to createHash() and "hex" to digest().'}
+/>
+
+## Live Code Lab (Node.js 20)
+
+<CodeLab
+  client:visible
+  title="crypto_demo.js"
+  language="node"
+  code={`const crypto = require("node:crypto");
+
+const digest = crypto.createHash("sha256").update("SkillForge").digest("hex");
+const tokenLen = crypto.randomBytes(16).toString("hex").length;
+
+console.log("SHA-256 prefix:", digest.slice(0, 16));
+console.log("Secure token hex length:", tokenLen);`}
+  expectedOutput={`SHA-256 prefix: 9e46c0a26829524c
+Secure token hex length: 32`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why should you use streams instead of fs.readFile() when serving large video or CSV files?",
+      options: [
+        "Streams process small chunks incrementally with constant memory usage",
+        "Streams skip TCP networking",
+        "fs.readFile() cannot read files over 1 KB"
+      ],
+      answer: 0,
+      explanation: "Streaming avoids loading the entire file into server RAM."
+    }
+  ]}
+/>
