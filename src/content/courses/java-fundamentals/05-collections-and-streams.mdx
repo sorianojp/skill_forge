@@ -1,0 +1,90 @@
+---
+title: "Collections, Optional & Streams API"
+description: "Transform Lists and Maps declaratively with Java Streams (filter, map, toList) and avoid NullPointerException with Optional."
+course: "java-fundamentals"
+module: "Modern Java APIs"
+order: 5
+durationMinutes: 9
+objectives:
+  - "Create immutable collections with List.of() and Map.of()"
+  - "Filter, transform, and aggregate data using the Streams API"
+  - "Handle missing values safely with Optional and .orElse()"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+The **Java Collections Framework** (`List`, `Set`, `Map`) paired with the **Streams API** lets you express data pipelines cleanly without mutable temporary lists.
+
+## Streams & `Optional`
+
+- `list.stream().filter(...).map(...).toList()` builds a clean transformation pipeline.
+- `Optional<T>` signals explicitly that a lookup might return no value, encouraging safe handling with `.orElse(...)` instead of risking a `NullPointerException`.
+
+<Callout type="tip" title="List.of() Creates Unmodifiable Lists">
+  <code>List.of("Java", "C#")</code> is concise and immutable. If you need to add or remove items later, wrap it in <code>new ArrayList&lt;&gt;(...)</code>.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Filter & Collect with Streams"
+  prompt="Keep scores of 80 or higher and collect them into a List."
+  template={`var passing = scores.{{0}}()
+    .{{1}}(s -> s >= 80)
+    .toList();`}
+  blanks={[
+    { answer: 'stream', placeholder: 'method' },
+    { answer: 'filter', placeholder: 'method' },
+  ]}
+  hint={'Call .stream() to start a pipeline and .filter() to keep matching items.'}
+/>
+
+## Interactive Code Lab
+
+<CodeLab
+  client:visible
+  title="StreamsDemo.java"
+  language="java"
+  code={`import java.util.List;
+
+public class StreamsDemo {
+    public static void main(String[] args) {
+        var scores = List.of(72, 88, 95, 64, 91);
+
+        var topScores = scores.stream()
+            .filter(s -> s >= 85)
+            .sorted()
+            .toList();
+
+        var firstPerfect = scores.stream()
+            .filter(s -> s == 100)
+            .findFirst()
+            .orElse(0);
+
+        System.out.println("Top scores: " + topScores);
+        System.out.println("Perfect found: " + firstPerfect);
+    }
+}`}
+  expectedOutput={`Top scores: [88, 91, 95]
+Perfect found: 0`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What problem does Optional<T> help prevent in modern Java?",
+      options: [
+        "Accidental NullPointerExceptions when a method may have no result",
+        "Syntax errors in switch expressions",
+        "Slow integer arithmetic"
+      ],
+      answer: 0,
+      explanation: "Optional makes the possible absence of a value explicit in the return type so callers handle it safely."
+    }
+  ]}
+/>

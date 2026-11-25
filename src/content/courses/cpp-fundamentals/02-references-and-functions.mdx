@@ -1,0 +1,88 @@
+---
+title: "References, const & Functions"
+description: "Pass large objects without copying using const references (const T&) and mutate arguments cleanly with T&."
+course: "cpp-fundamentals"
+module: "Modern C++ Foundations"
+order: 2
+durationMinutes: 8
+objectives:
+  - "Understand how C++ references differ from raw pointers"
+  - "Pass read-only strings and containers by const T& to avoid copies"
+  - "Use function overloading and default parameter values cleanly"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+A **reference** (`int& ref = x;`) is an alias for an existing variable. Unlike a pointer, a reference cannot be `nullptr` and cannot be reseated to point somewhere else, making it much safer for everyday function parameters.
+
+## Parameter Passing Cheat Sheet
+
+- Small primitives (`int`, `double`, `bool`): pass **by value** (`int n`).
+- Read-only objects (`std::string`, `std::vector`): pass **by const reference** (`const std::string& name`).
+- In-place mutation: pass **by non-const reference** (`int& counter`).
+
+<Callout type="tip" title="Zero-Copy Reads with const&">
+  Passing a 10MB <code>std::vector</code> by value copies all 10MB. Passing it as <code>const std::vector&lt;int&gt;&amp;</code> costs a single pointer-sized word with full read safety.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Pass by Const Reference"
+  prompt="Accept a read-only std::string without copying it."
+  template={`void greet({{0}} std::string{{1}} name) {
+    std::cout << "Hello, " << name << "\\n";
+}`}
+  blanks={[
+    { answer: 'const', placeholder: 'qual' },
+    { answer: '&', placeholder: 'ref' },
+  ]}
+  hint={'Combine const and & (const std::string&) for zero-copy read-only parameters.'}
+/>
+
+## Interactive Code Lab
+
+<CodeLab
+  client:visible
+  title="references.cpp"
+  language="cpp"
+  code={`#include <iostream>
+#include <string>
+
+void add_bonus(int& score, int bonus = 5) {
+    score += bonus;
+}
+
+void print_label(const std::string& name, int score) {
+    std::cout << name << ": " << score << "\\n";
+}
+
+int main() {
+    int score = 85;
+    add_bonus(score);
+    add_bonus(score, 10);
+    print_label("Alex", score);
+    return 0;
+}`}
+  expectedOutput={`Alex: 100`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "How should you pass a large std::vector to a function that only reads its elements?",
+      options: [
+        "By value (std::vector<int> v)",
+        "By const reference (const std::vector<int>& v)",
+        "By raw void pointer (void* v)"
+      ],
+      answer: 1,
+      explanation: "const T& avoids copying the entire container while guaranteeing the function cannot mutate it."
+    }
+  ]}
+/>

@@ -1,0 +1,20 @@
+{
+  "slug": "cpp-fundamentals",
+  "title": "Modern C++ Essentials",
+  "shortTitle": "Learn C++",
+  "description": "Write fast, safe Modern C++ (C++17/20). Master references, std::vector, STL algorithms, RAII classes, smart pointers, and generic templates.",
+  "track": "C++",
+  "difficulty": "Intermediate",
+  "estimatedHours": 6,
+  "accentColor": "#1d4ed8",
+  "prerequisites": ["Basic programming or C fundamentals"],
+  "outcomes": [
+    "Write clean Modern C++ using std::string, auto, and range-based for loops",
+    "Avoid unnecessary copies with const references (const T&)",
+    "Manipulate dynamic collections with std::vector, std::unordered_map, and STL algorithms",
+    "Design RAII classes with constructors, member initializer lists, and destructors",
+    "Manage heap ownership safely using std::unique_ptr and generic templates"
+  ],
+  "featured": true,
+  "order": 10
+}

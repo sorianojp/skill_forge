@@ -1,0 +1,97 @@
+---
+title: "C++ Capstone: Inventory Tracker"
+description: "Combine classes, std::vector, const references, and STL algorithms to build a clean Modern C++ inventory tracker."
+course: "cpp-fundamentals"
+module: "Capstone"
+order: 6
+durationMinutes: 10
+objectives:
+  - "Encapsulate a std::vector inside a clean domain class"
+  - "Compute totals with range-based loops and const member functions"
+  - "Prepare for the Modern C++ Final Exam and Certificate"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+In this capstone, you will combine `struct`, `class`, `std::vector`, `const&` parameters, and `const` methods to build a clean, zero-leak **Inventory** service in Modern C++.
+
+## Fill-in-the-Blank Capstone
+
+<Exercise
+  client:visible
+  title="Add Item & Compute Value"
+  prompt="Accept an Item by const reference and append it to items_."
+  template={`void add(const Item{{0}} item) {
+    items_.{{1}}(item);
+}`}
+  blanks={[
+    { answer: '&', placeholder: 'ref' },
+    { answer: 'push_back', placeholder: 'method' },
+  ]}
+  hint={'Pass Item by const reference (&) and append using push_back().'}
+/>
+
+## Capstone Code Lab
+
+<CodeLab
+  client:visible
+  title="inventory.cpp"
+  language="cpp"
+  code={`#include <iostream>
+#include <string>
+#include <vector>
+
+struct Item {
+    std::string name;
+    double price;
+    int qty;
+};
+
+class Inventory {
+    std::vector<Item> items_;
+public:
+    void add(const Item& item) {
+        items_.push_back(item);
+    }
+
+    double total_value() const {
+        double total = 0.0;
+        for (const auto& item : items_) {
+            total += item.price * item.qty;
+        }
+        return total;
+    }
+};
+
+int main() {
+    Inventory inv;
+    inv.add({"Keyboard", 85.0, 2});
+    inv.add({"Mouse", 40.0, 3});
+    std::cout << "Total inventory value: $" << inv.total_value() << "\\n";
+    return 0;
+}`}
+  expectedOutput={`Total inventory value: $290`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why does Inventory need no custom destructor to free items_?",
+      options: [
+        "std::vector manages its own memory via RAII and cleans up automatically",
+        "C++ never frees class fields",
+        "Because Item has a double field"
+      ],
+      answer: 0,
+      explanation: "Following the Rule of Zero: by storing std::vector and std::string, the compiler-generated destructor cleans everything up safely."
+    }
+  ]}
+/>
+
+<Callout type="tip" title="Earn Your Modern C++ Certificate">
+  Ready to verify your C++ skills? Take the <a href="/courses/cpp-fundamentals/exam">Modern C++ Final Exam</a> (score 80% or higher) to unlock your free downloadable certificate.
+</Callout>

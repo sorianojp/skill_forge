@@ -1,0 +1,25 @@
+---
+title: "Java 21 Quick Reference"
+category: "Java"
+syntax: "record User(String name, int score) {}"
+summary: "Modern Java 17/21 syntax: records, switch expressions, interfaces, generics, Optional, and the Streams API."
+browserSupport: "JDK 17 / JDK 21 LTS"
+---
+
+## Core Syntax & Records
+
+| Feature | Purpose | Example |
+| :--- | :--- | :--- |
+| `a.equals(b)` | Value equality for Strings/Objects | `if ("Java".equals(track))` |
+| `switch (x) { case 1 -> ...; }` | Expression switch (no fall-through) | `var g = switch (n) { case 1 -> "A"; default -> "B"; };` |
+| `record` | Concise immutable data carrier | `record Item(String name, double price) {}` |
+| `var` | Local variable type inference | `var list = List.of(1, 2, 3);` |
+
+## Collections, Optional & Streams
+
+| API | Purpose | Example |
+| :--- | :--- | :--- |
+| `List.of(...)` / `Map.of(...)` | Unmodifiable collections | `var tags = List.of("java", "oop");` |
+| `.stream().filter().toList()` | Declarative data pipeline | `nums.stream().filter(n -> n > 0).toList()` |
+| `.mapToDouble().sum()` | Numeric stream aggregation | `items.stream().mapToDouble(Item::price).sum()` |
+| `Optional.orElse(val)` | Safe fallback for missing values | `opt.orElse("Unknown")` |

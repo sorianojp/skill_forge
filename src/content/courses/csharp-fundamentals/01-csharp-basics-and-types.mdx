@@ -1,0 +1,77 @@
+---
+title: "C# Basics, Types & String Interpolation"
+description: "Write clean modern C# with top-level statements, string interpolation, and nullable safety (??)."
+course: "csharp-fundamentals"
+module: "C# Foundations"
+order: 1
+durationMinutes: 8
+objectives:
+  - "Use top-level statements and Console.WriteLine in modern .NET"
+  - "Format strings cleanly with $\"Hello, {name}!\" interpolation"
+  - "Handle nullable values safely using string? and the ?? operator"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+**C#** is a modern, strongly typed language built for **.NET** web APIs (ASP.NET Core), desktop/mobile apps, cloud services, and Unity game development.
+
+## Modern C# Ergonomics
+
+- **String interpolation:** `$"Track: {track}"` embeds expressions directly inside strings.
+- **Nullable annotations:** `string? nickname = null;` tells the compiler a variable may be null, and `nickname ?? "Guest"` provides a clean fallback.
+
+<Callout type="tip" title="String Equality with == in C#">
+  Unlike Java, C#'s <code>==</code> operator on <code>string</code> compares text values directly, not memory references.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Interpolation & Null Coalescing"
+  prompt="Fall back to 'Learner' when name is null and print an interpolated greeting."
+  template={`string? name = null;
+string display = name {{0}} "Learner";
+Console.WriteLine({{1}}"Hello, {display}!");`}
+  blanks={[
+    { answer: '??', placeholder: 'op' },
+    { answer: '$', placeholder: 'sym' },
+  ]}
+  hint={'Use ?? for null coalescing and prefix interpolated strings with $.'}
+/>
+
+## Interactive Code Lab
+
+<CodeLab
+  client:visible
+  title="Program.cs"
+  language="csharp"
+  code={`string track = "C# 12";
+int lessons = 6;
+string? nickname = null;
+string user = nickname ?? "Builder";
+
+Console.WriteLine($"Welcome, {user}!");
+Console.WriteLine($"Course: {track} ({lessons} lessons)");`}
+  expectedOutput={`Welcome, Builder!
+Course: C# 12 (6 lessons)`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does the ?? operator do in C#?",
+      options: [
+        "Returns the left value if non-null, otherwise returns the right fallback value",
+        "Checks if two strings are unequal",
+        "Starts a ternary loop"
+      ],
+      answer: 0,
+      explanation: "The null-coalescing operator (??) provides a clean default when the left operand is null."
+    }
+  ]}
+/>

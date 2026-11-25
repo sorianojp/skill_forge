@@ -1,0 +1,26 @@
+---
+title: "Modern C++ Quick Reference"
+category: "C++"
+syntax: "auto ptr = std::make_unique<T>(args...);"
+summary: "Essential Modern C++ (C++17/20) patterns: const references, std::vector, STL algorithms, RAII, smart pointers, and templates."
+browserSupport: "ISO C++17 / C++20 (g++, clang++)"
+---
+
+## Everyday Modern C++
+
+| Feature | Purpose | Example |
+| :--- | :--- | :--- |
+| `const T&` | Zero-copy read-only parameter | `void log(const std::string& msg)` |
+| `std::vector<T>` | Dynamic contiguous array | `std::vector<int> v = {1, 2, 3};` |
+| Range-based `for` | Clean container iteration | `for (const auto& x : v) { ... }` |
+| Lambda `[](...){}` | Inline function object | `[](int n) { return n > 0; }` |
+| `constexpr` | Compile-time constant | `constexpr int MAX_USERS = 100;` |
+
+## RAII, Smart Pointers & Templates
+
+| Feature | Purpose | Example |
+| :--- | :--- | :--- |
+| Member initializer | Direct field initialization | `User(int id) : id_(id) {}` |
+| `const` method | Guarantees no object mutation | `int id() const { return id_; }` |
+| `std::unique_ptr` | Exclusive RAII heap ownership | `auto p = std::make_unique<Node>();` |
+| `template <typename T>` | Zero-cost generic code | `template <typename T> T add(T a, T b)` |

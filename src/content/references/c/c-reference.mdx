@@ -1,0 +1,27 @@
+---
+title: "C Programming Quick Reference"
+category: "C"
+syntax: "int *p = malloc(n * sizeof(int)); free(p);"
+summary: "Essential C11 syntax, printf format specifiers, pointers, structs, and dynamic heap allocation."
+browserSupport: "ISO C11 / C17 (GCC, Clang)"
+---
+
+## Types & printf Specifiers
+
+| Type | Specifier | Example |
+| :--- | :--- | :--- |
+| `int` | `%d` | `printf("%d", count);` |
+| `size_t` | `%zu` | `printf("%zu", sizeof(arr));` |
+| `double` | `%.2f` | `printf("%.2f", price);` |
+| `const char *` | `%s` | `printf("%s", name);` |
+| `void *` | `%p` | `printf("%p", (void *)ptr);` |
+
+## Pointers, Structs & Heap
+
+| Pattern | Purpose | Example |
+| :--- | :--- | :--- |
+| `&x` / `*p` | Take address / dereference pointer | `int *p = &x; *p = 10;` |
+| `typedef struct` | Define custom composite type | `typedef struct { int x, y; } Point;` |
+| `ptr->field` | Access field through struct pointer | `user->score += 5;` |
+| `malloc` / `free` | Allocate and release heap memory | `int *a = malloc(16); free(a);` |
+| `sizeof(a)/sizeof(a[0])` | Local fixed array length | `size_t n = sizeof(a) / sizeof(a[0]);` |

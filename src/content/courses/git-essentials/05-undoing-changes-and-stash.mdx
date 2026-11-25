@@ -1,0 +1,73 @@
+---
+title: "Undoing Changes, Stash & Revert"
+description: "Fix mistakes confidently with git restore, git stash, git reset, and git revert without losing work."
+course: "git-essentials"
+module: "Safety & Recovery"
+order: 5
+durationMinutes: 8
+objectives:
+  - "Temporarily shelve unfinished edits with git stash and git stash pop"
+  - "Discard unstaged edits safely with git restore"
+  - "Choose git revert over git reset on shared branches"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import GitSandbox from '@/components/playground/GitSandbox';
+import Quiz from '@/components/quiz/Quiz';
+
+Every developer makes mistakes in Git. Knowing which undo command matches your situation prevents panic and data loss.
+
+## Choosing the Right Undo Tool
+
+| Situation | Recommended Command | Safe on Shared Branch? |
+| :--- | :--- | :--- |
+| Need to switch branches mid-edit | `git stash` / `git stash pop` | Yes |
+| Discard unstaged edits in a file | `git restore file.js` | Yes |
+| Undo a commit already pushed to `main` | `git revert <hash>` | Yes (adds an inverse commit) |
+| Move a local unpushed commit back to staging | `git reset --soft HEAD~1` | Local only |
+
+<Callout type="warning" title="Revert vs. Reset">
+  Use <code>git revert</code> for commits already shared with others because it preserves history by creating a new commit that reverses the bug. Reserve <code>git reset</code> for local, unpushed commits.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Safe Recovery Commands"
+  prompt="Temporarily save uncommitted work, and later safely undo a pushed commit on main."
+  template={`git {{0}}
+git {{1}} a1b2c3d`}
+  blanks={[
+    { answer: 'stash', placeholder: 'cmd' },
+    { answer: 'revert', placeholder: 'cmd' },
+  ]}
+  hint={'git stash shelves uncommitted changes, and git revert safely reverses a pushed commit.'}
+/>
+
+## Try It Yourself (Interactive Git Terminal)
+
+<GitSandbox
+  client:visible
+  title="Inspect History Before Undoing"
+  starterHint={'Check git status and git log --oneline to identify commit hashes before reverting.'}
+  suggestedCommands={[
+    'git status',
+    'git add .',
+    'git commit -m "Experimental layout tweak"',
+    'git log --oneline',
+  ]}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which command safely undoes a buggy commit that has already been pushed to main?",
+      options: ["git revert <hash>", "git reset --hard HEAD~1", "git clean -fd"],
+      answer: 0,
+      explanation: "git revert creates a new inverse commit without rewriting shared history."
+    }
+  ]}
+/>

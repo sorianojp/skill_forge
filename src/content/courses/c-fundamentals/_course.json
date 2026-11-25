@@ -1,0 +1,20 @@
+{
+  "slug": "c-fundamentals",
+  "title": "C Programming Fundamentals",
+  "shortTitle": "Learn C",
+  "description": "Learn the foundational systems language that powers operating systems, compilers, and embedded firmware. Master types, functions, arrays, pointers, structs, and dynamic memory.",
+  "track": "C",
+  "difficulty": "Intermediate",
+  "estimatedHours": 6,
+  "accentColor": "#334155",
+  "prerequisites": ["None, though basic programming logic helps"],
+  "outcomes": [
+    "Compile and run clean C11 programs with strict compiler warnings",
+    "Work confidently with primitive types, format specifiers, and control flow",
+    "Manipulate fixed arrays and null-terminated C strings safely",
+    "Understand memory addresses, pointers, and pass-by-reference patterns",
+    "Design structs and manage heap memory cleanly with malloc and free"
+  ],
+  "featured": true,
+  "order": 9
+}

@@ -1,0 +1,93 @@
+---
+title: "Polymorphism & Interfaces"
+description: "Write flexible code that works against shared contracts so new implementations plug in without modifying existing logic."
+course: "oop-fundamentals"
+module: "Abstraction & Design"
+order: 4
+durationMinutes: 8
+objectives:
+  - "Understand runtime polymorphism through method overriding"
+  - "Replace sprawling if/else or switch chains with polymorphic objects"
+  - "Program to an interface (contract) rather than a concrete class"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+**Polymorphism** literally means "many forms." It lets callers invoke the same method name (such as `area()` or `pay(amount)`) on different object types, and each object executes its own specialized implementation.
+
+## Killing Long `if / else` Chains
+
+Without polymorphism, adding a new shape (`Triangle`) forces you to hunt down every `if (shape.type === 'circle') ... else if ...` block. With polymorphism, you simply create a new class that implements `area()`, and existing callers work automatically.
+
+<Callout type="info" title="Interfaces in Typed Languages">
+  In Java, C#, and TypeScript, you formalize a polymorphic contract with the <code>interface</code> keyword (for example, <code>interface Shape &#123; double area(); &#125;</code>). In C++, you use pure virtual functions.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Polymorphic Method Dispatch"
+  prompt="Sum the area of any list of shapes by calling the shared area() method."
+  template={`function totalArea(shapes) {
+  return shapes.reduce((sum, s) => sum + s.{{0}}(), 0);
+}`}
+  blanks={[
+    { answer: 'area', placeholder: 'method' },
+  ]}
+  hint={'Every shape implements the same area() method contract.'}
+/>
+
+## Try It Yourself (Live OOP Playground)
+
+<Playground
+  client:visible
+  title="Polymorphic Payment Processors"
+  defaultTab="js"
+  showConsole={true}
+  html={`<p>Checkout works with any payment class that implements charge(amount).</p>`}
+  js={`class CardPayment {
+  charge(amount) {
+    return "Charged $" + amount + " via Credit Card";
+  }
+}
+
+class WalletPayment {
+  charge(amount) {
+    return "Charged $" + amount + " via Digital Wallet";
+  }
+}
+
+class BankTransfer {
+  charge(amount) {
+    return "Initiated $" + amount + " bank transfer";
+  }
+}
+
+function checkout(processor, amount) {
+  console.log(processor.charge(amount));
+}
+
+[new CardPayment(), new WalletPayment(), new BankTransfer()].forEach((p) => {
+  checkout(p, 49);
+});`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "How does polymorphism make a codebase easier to extend?",
+      options: [
+        "New classes can implement an existing method contract without editing existing caller code",
+        "It merges all classes into a single global function",
+        "It prevents subclasses from overriding parent methods"
+      ],
+      answer: 0,
+      explanation: "Because callers depend on a shared contract, you can plug in new implementations without changing the caller."
+    }
+  ]}
+/>

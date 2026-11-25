@@ -1,0 +1,97 @@
+---
+title: "Classes, Objects & Constructors"
+description: "Understand how classes act as blueprints, instantiate objects with new, and initialize state in constructors."
+course: "oop-fundamentals"
+module: "Core OOP Foundations"
+order: 1
+durationMinutes: 8
+objectives:
+  - "Distinguish between a class (blueprint) and an object (instance)"
+  - "Initialize instance state cleanly inside a constructor"
+  - "Attach behavior to objects using methods and the this reference"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+**Object-Oriented Programming (OOP)** organizes software around **objects** that bundle **data (properties/fields)** and **behavior (methods)** together. These concepts transfer directly across Java, C#, C++, Python, PHP, and JavaScript.
+
+## Blueprint vs. Instance
+
+- A **class** defines the structure and behavior (for example, `Course`).
+- An **object** is a concrete instance created from that class (`new Course("OOP", 6)`), with its own independent state.
+
+<Callout type="tip" title="One Class, Many Independent Objects">
+  Each instance created with <code>new</code> gets its own memory for fields like <code>this.title</code>, while sharing the class's methods cleanly.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Define a Class and Constructor"
+  prompt="Create a Book class with a constructor that stores title and pages."
+  template={`{{0}} Book {
+  {{1}}(title, pages) {
+    this.title = title;
+    this.pages = pages;
+  }
+}
+const guide = {{2}} Book("Clean Code", 464);`}
+  blanks={[
+    { answer: 'class', placeholder: 'kw' },
+    { answer: 'constructor', placeholder: 'fn' },
+    { answer: 'new', placeholder: 'kw' },
+  ]}
+  hint={'Use class to declare the blueprint, constructor to initialize fields, and new to instantiate.'}
+/>
+
+## Try It Yourself (Live OOP Playground)
+
+<Playground
+  client:visible
+  title="Classes & Objects in Action"
+  defaultTab="js"
+  showConsole={true}
+  html={`<p>Check the console output below to inspect your Course objects.</p>`}
+  js={`class Course {
+  constructor(title, lessons) {
+    this.title = title;
+    this.lessons = lessons;
+    this.completed = 0;
+  }
+
+  completeLesson() {
+    if (this.completed < this.lessons) {
+      this.completed++;
+    }
+  }
+
+  summary() {
+    return this.title + ": " + this.completed + "/" + this.lessons + " lessons";
+  }
+}
+
+const oop = new Course("OOP Fundamentals", 6);
+oop.completeLesson();
+oop.completeLesson();
+console.log(oop.summary());`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What is the role of a constructor in an object-oriented class?",
+      options: [
+        "It deletes an object from memory",
+        "It initializes a new object's properties when the class is instantiated",
+        "It converts a class into a static JSON file"
+      ],
+      answer: 1,
+      explanation: "A constructor runs automatically when you create a new instance to set up valid initial state."
+    }
+  ]}
+/>

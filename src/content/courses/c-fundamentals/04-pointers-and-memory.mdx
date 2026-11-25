@@ -1,0 +1,81 @@
+---
+title: "Pointers & Memory Addresses"
+description: "Demystify pointers using the address-of operator (&) and dereference operator (*) to mutate data in place."
+course: "c-fundamentals"
+module: "Memory & Data"
+order: 4
+durationMinutes: 10
+objectives:
+  - "Explain what a pointer stores (a memory address)"
+  - "Take an address with & and read or write through a pointer with *"
+  - "Write a swap(int *a, int *b) function that mutates caller variables"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+A **pointer** is a variable whose value is the **memory address** of another variable. Mastering two operators unlocks pointers completely:
+
+- **`&x`** (address-of): produces the memory address of `x`.
+- **`*p`** (dereference): reads or writes the value stored at address `p`.
+
+<Callout type="warning" title="Never Dereference NULL or Uninitialized Pointers">
+  Always initialize pointers (to a valid address or <code>NULL</code>) and check <code>if (p != NULL)</code> before dereferencing to avoid segmentation faults.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Swap Two Integers via Pointers"
+  prompt="Dereference pointers a and b to swap the caller's values in place."
+  template={`void swap(int *a, int *b) {
+    int tmp = {{0}}a;
+    *a = *b;
+    *b = tmp;
+}
+// Call site:
+swap({{1}}x, &y);`}
+  blanks={[
+    { answer: '*', placeholder: 'op' },
+    { answer: '&', placeholder: 'op' },
+  ]}
+  hint={'Use * to dereference a pointer and & to pass the address of x.'}
+/>
+
+## Interactive Code Lab
+
+<CodeLab
+  client:visible
+  title="pointers.c"
+  language="c"
+  code={`#include <stdio.h>
+
+void swap(int *a, int *b) {
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+int main(void) {
+    int x = 10, y = 25;
+    swap(&x, &y);
+    printf("After swap: x=%d, y=%d\\n", x, y);
+    return 0;
+}`}
+  expectedOutput={`After swap: x=25, y=10`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "If int x = 42; and int *p = &x;, what does *p evaluate to?",
+      options: ["The memory address of p", "42", "0"],
+      answer: 1,
+      explanation: "Dereferencing p (*p) reads the integer stored at the address of x, which is 42."
+    }
+  ]}
+/>

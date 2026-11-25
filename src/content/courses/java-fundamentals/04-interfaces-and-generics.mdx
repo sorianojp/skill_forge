@@ -1,0 +1,88 @@
+---
+title: "Interfaces & Generics"
+description: "Write decoupled, compile-time-safe Java APIs using interfaces, @Override, and generic type parameters (<T>)."
+course: "java-fundamentals"
+module: "Object-Oriented Java"
+order: 4
+durationMinutes: 9
+objectives:
+  - "Define contracts with interface and implement them with implements"
+  - "Always annotate overridden methods with @Override"
+  - "Write type-safe reusable containers and methods with generics (<T>)"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+In Java, a class can extend only one parent class, but it can implement **many interfaces**. Interfaces let you decouple callers from concrete implementations and make unit testing straightforward.
+
+## Generics (`<T>`)
+
+**Generics** let classes like `List<String>` or `Repository<User>` enforce element types at compile time, eliminating unsafe runtime casts.
+
+<Callout type="info" title="Always Use @Override">
+  Putting <code>@Override</code> above interface or superclass methods makes the compiler fail immediately if you misspell a method name or change a parameter type.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Implement an Interface"
+  prompt="Make EmailNotifier implement Notifier and mark send() with @Override."
+  template={`interface Notifier {
+    void send(String msg);
+}
+
+class EmailNotifier {{0}} Notifier {
+    {{1}}
+    public void send(String msg) {
+        System.out.println("Email: " + msg);
+    }
+}`}
+  blanks={[
+    { answer: 'implements', placeholder: 'kw' },
+    { answer: '@Override', placeholder: 'ann' },
+  ]}
+  hint={'Classes use implements for interfaces, and @Override verifies the method signature.'}
+/>
+
+## Interactive Code Lab
+
+<CodeLab
+  client:visible
+  title="GenericsDemo.java"
+  language="java"
+  code={`interface Formatter<T> {
+    String format(T value);
+}
+
+class BadgeFormatter implements Formatter<String> {
+    @Override
+    public String format(String value) {
+        return "[" + value.toUpperCase() + "]";
+    }
+}
+
+public class GenericsDemo {
+    public static void main(String[] args) {
+        Formatter<String> fmt = new BadgeFormatter();
+        System.out.println(fmt.format("java certified"));
+    }
+}`}
+  expectedOutput={`[JAVA CERTIFIED]`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "How many interfaces can a single Java class implement?",
+      options: ["Only one", "As many as needed", "Zero if it has a constructor"],
+      answer: 1,
+      explanation: "Java supports single class inheritance (extends) but multiple interface implementation (implements)."
+    }
+  ]}
+/>

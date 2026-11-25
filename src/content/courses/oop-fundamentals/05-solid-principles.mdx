@@ -1,0 +1,97 @@
+---
+title: "SOLID Design Principles"
+description: "Apply Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, and Dependency Inversion to real classes."
+course: "oop-fundamentals"
+module: "Abstraction & Design"
+order: 5
+durationMinutes: 9
+objectives:
+  - "Recognize and apply all five SOLID principles in practical code"
+  - "Decouple high-level business logic from low-level storage or APIs via Dependency Inversion"
+  - "Spot god-classes that violate the Single Responsibility Principle"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+**SOLID** is an acronym for five time-tested OOP design principles that keep medium and large codebases easy to test and evolve:
+
+- **S (Single Responsibility):** A class should have one focused reason to change.
+- **O (Open/Closed):** Open for extension, closed for modification.
+- **L (Liskov Substitution):** Subclasses must honor their parent class's contract without surprising callers.
+- **I (Interface Segregation):** Prefer small, focused interfaces over bloated mega-interfaces.
+- **D (Dependency Inversion):** Depend on abstractions (injected dependencies), not hardcoded concrete classes.
+
+<Callout type="tip" title="Dependency Injection Makes Testing Effortless">
+  When an <code>OrderService</code> receives its repository via its constructor, production can pass <code>PostgresOrderRepo</code> while unit tests pass a fast in-memory fake.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Dependency Injection"
+  prompt="Inject the storage dependency into the constructor instead of hardcoding a concrete database."
+  template={`class TaskService {
+  constructor({{0}}) {
+    this.repo = repo;
+  }
+  add(title) {
+    this.{{1}}.save(title);
+  }
+}`}
+  blanks={[
+    { answer: 'repo', placeholder: 'param' },
+    { answer: 'repo', placeholder: 'field' },
+  ]}
+  hint={'Pass repo into the constructor and delegate saving to this.repo.'}
+/>
+
+## Try It Yourself (Live OOP Playground)
+
+<Playground
+  client:visible
+  title="Open/Closed Discount Engine"
+  defaultTab="js"
+  showConsole={true}
+  html={`<p>Add new discount strategies without modifying PriceCalculator.</p>`}
+  js={`class PercentDiscount {
+  constructor(pct) { this.pct = pct; }
+  apply(price) { return price * (1 - this.pct / 100); }
+}
+
+class FlatDiscount {
+  constructor(amount) { this.amount = amount; }
+  apply(price) { return Math.max(0, price - this.amount); }
+}
+
+class PriceCalculator {
+  constructor(discountStrategy) {
+    this.discountStrategy = discountStrategy;
+  }
+  finalPrice(basePrice) {
+    return this.discountStrategy.apply(basePrice);
+  }
+}
+
+console.log("20% off $100:", new PriceCalculator(new PercentDiscount(20)).finalPrice(100));
+console.log("$15 off $100:", new PriceCalculator(new FlatDiscount(15)).finalPrice(100));`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which SOLID principle says high-level business logic should depend on abstractions rather than hardcoded low-level implementations?",
+      options: [
+        "Single Responsibility Principle",
+        "Dependency Inversion Principle",
+        "Liskov Substitution Principle"
+      ],
+      answer: 1,
+      explanation: "Dependency Inversion decouples business logic from concrete databases, HTTP clients, or email senders."
+    }
+  ]}
+/>

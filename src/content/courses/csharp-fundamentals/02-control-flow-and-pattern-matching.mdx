@@ -1,0 +1,81 @@
+---
+title: "Control Flow & Pattern Matching"
+description: "Write expressive C# switch expressions with relational patterns (>= 90), discards (_), and foreach loops."
+course: "csharp-fundamentals"
+module: "C# Foundations"
+order: 2
+durationMinutes: 8
+objectives:
+  - "Use C# switch expressions with => arms and the _ discard default"
+  - "Match numeric ranges directly using relational patterns (>=, <, and)"
+  - "Iterate cleanly over collections with foreach"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+C#'s **pattern matching** turns nested `if / else if` chains into concise, readable expressions. You can match exact values, types, properties, and numeric ranges (`>= 90`, `>= 80 and < 90`) directly inside a `switch` expression.
+
+<Callout type="info" title="The Discard Pattern (_)">
+  In a C# switch expression, <code>_ =&gt; ...</code> acts as the catch-all default arm so every possible input produces a value.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="C# Switch Expression"
+  prompt="Return 'Pass' for scores >= 80 and 'Retry' for all other scores."
+  template={`string status = score {{0}}
+{
+    >= 80 => "Pass",
+    {{1}} => "Retry"
+};`}
+  blanks={[
+    { answer: 'switch', placeholder: 'kw' },
+    { answer: '_', placeholder: 'pat' },
+  ]}
+  hint={'In C#, switch comes after the value (score switch { ... }), and _ is the default arm.'}
+/>
+
+## Interactive Code Lab
+
+<CodeLab
+  client:visible
+  title="PatternMatching.cs"
+  language="csharp"
+  code={`static string Classify(int score) => score switch
+{
+    >= 90 => "Distinction",
+    >= 80 => "Pass",
+    >= 60 => "Review",
+    _ => "Retry"
+};
+
+int[] scores = [96, 84, 70];
+foreach (int s in scores)
+{
+    Console.WriteLine($"{s}: {Classify(s)}");
+}`}
+  expectedOutput={`96: Distinction
+84: Pass
+70: Review`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "In a C# switch expression, what does the underscore (_) pattern match?",
+      options: [
+        "Only zero",
+        "Any value not matched by previous arms (the default case)",
+        "Only null values"
+      ],
+      answer: 1,
+      explanation: "The discard pattern (_) acts as the default catch-all branch in a C# switch expression."
+    }
+  ]}
+/>

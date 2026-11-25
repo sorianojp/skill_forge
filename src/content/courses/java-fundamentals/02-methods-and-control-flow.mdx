@@ -1,0 +1,89 @@
+---
+title: "Methods, Control Flow & Switch Expressions"
+description: "Write typed Java methods, iterate with enhanced for-each loops, and return values directly from modern switch expressions."
+course: "java-fundamentals"
+module: "Java Foundations"
+order: 2
+durationMinutes: 8
+objectives:
+  - "Define static and instance methods with explicit return types"
+  - "Use Java's modern arrow switch expressions (->) with zero fall-through"
+  - "Loop cleanly over arrays with enhanced for-each loops"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+Modern Java (14+) introduced **switch expressions** using arrow syntax (`->`). Unlike legacy `switch` statements, arrow cases never fall through and can return a value directly into a variable.
+
+## Enhanced For-Each Loop
+
+When you do not need the array index, `for (int n : scores)` is cleaner and eliminates index-out-of-bounds bugs.
+
+<Callout type="tip" title="Exhaustive Switch Expressions">
+  When a <code>switch</code> expression returns a value, the Java compiler verifies that every possible case (or a <code>default</code> branch) is handled.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Modern Switch Expression"
+  prompt="Return a grade label using Java's arrow switch expression."
+  template={`String label = {{0}} (tier) {
+    case 1 {{1}} "Gold";
+    case 2 -> "Silver";
+    default -> "Starter";
+};`}
+  blanks={[
+    { answer: 'switch', placeholder: 'kw' },
+    { answer: '->', placeholder: 'op' },
+  ]}
+  hint={'Use switch with -> arrow cases to return values directly without break.'}
+/>
+
+## Interactive Code Lab
+
+<CodeLab
+  client:visible
+  title="ControlFlow.java"
+  language="java"
+  code={`public class ControlFlow {
+    static String gradeLabel(int score) {
+        return switch (score / 10) {
+            case 10, 9 -> "A";
+            case 8 -> "B";
+            case 7 -> "C";
+            default -> "Review";
+        };
+    }
+
+    public static void main(String[] args) {
+        int[] scores = {94, 82, 75};
+        for (int s : scores) {
+            System.out.println(s + " -> " + gradeLabel(s));
+        }
+    }
+}`}
+  expectedOutput={`94 -> A
+82 -> B
+75 -> C`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What is a major advantage of Java's arrow switch expression (->) over the classic switch statement?",
+      options: [
+        "It prevents accidental fall-through and can return a value directly",
+        "It works only with boolean values",
+        "It removes the need for a main method"
+      ],
+      answer: 0,
+      explanation: "Arrow cases never fall through, require no break statements, and evaluate to a value."
+    }
+  ]}
+/>

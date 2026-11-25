@@ -1,0 +1,75 @@
+---
+title: "Classes, Properties & Records"
+description: "Model clean domain types with C# auto-properties, init-only setters, and immutable records with non-destructive 'with' copies."
+course: "csharp-fundamentals"
+module: "Object-Oriented C#"
+order: 3
+durationMinutes: 9
+objectives:
+  - "Use C# properties ({ get; init; } and { get; private set; }) instead of manual getters/setters"
+  - "Define value-equal immutable models in one line with record"
+  - "Create modified copies of records cleanly using the with expression"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+In C#, **properties** (`public decimal Balance { get; private set; }`) give you clean field-like access syntax while keeping full encapsulation. For immutable data models, **`record`** adds built-in value equality and non-destructive copying via **`with`**.
+
+<Callout type="tip" title="Non-Destructive Mutation with 'with'">
+  <code>var updated = user with &#123; Score = 95 &#125;;</code> creates a new record copy with only <code>Score</code> changed, leaving the original untouched.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Record & With Expression"
+  prompt="Declare a Course record and create a copy with Lessons updated to 8."
+  template={`public {{0}} Course(string Title, int Lessons);
+
+var v1 = new Course("C#", 6);
+var v2 = v1 {{1}} { Lessons = 8 };`}
+  blanks={[
+    { answer: 'record', placeholder: 'kw' },
+    { answer: 'with', placeholder: 'kw' },
+  ]}
+  hint={'Use record to declare an immutable model and with to clone it with updated properties.'}
+/>
+
+## Interactive Code Lab
+
+<CodeLab
+  client:visible
+  title="RecordsAndProps.cs"
+  language="csharp"
+  code={`public record Learner(string Name, int Completed);
+
+var l1 = new Learner("Sam", 4);
+var l2 = l1 with { Completed = 6 };
+
+Console.WriteLine(l1);
+Console.WriteLine(l2);
+Console.WriteLine($"Same record? {l1 == l2}");`}
+  expectedOutput={`Learner { Name = Sam, Completed = 4 }
+Learner { Name = Sam, Completed = 6 }
+Same record? False`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does { get; private set; } on a C# property allow?",
+      options: [
+        "Anyone can read the property, but only methods inside the class can modify it",
+        "Neither the class nor callers can read it",
+        "Anyone can modify it without restrictions"
+      ],
+      answer: 0,
+      explanation: "private set encapsulates writes inside the class while keeping reads publicly accessible."
+    }
+  ]}
+/>

@@ -1,0 +1,108 @@
+---
+title: "Encapsulation & Access Control"
+description: "Hide internal state with private fields and expose safe, validated public methods to protect object invariants."
+course: "oop-fundamentals"
+module: "Core OOP Foundations"
+order: 2
+durationMinutes: 8
+objectives:
+  - "Explain why exposing raw mutable fields leads to bugs"
+  - "Use private fields and public methods to enforce invariants"
+  - "Provide controlled read access with getters"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+**Encapsulation** means bundling an object's data with the methods that operate on it, and restricting direct outside access to internal state.
+
+## Why Protect Internal State?
+
+If a `BankAccount` exposes `account.balance` publicly, any caller could set `account.balance = -5000`. By making `#balance` private (or `private double balance` in Java/C#/C++), all changes must go through `deposit()` and `withdraw()`, where validation rules always run.
+
+<Callout type="info" title="Access Modifiers Across Languages">
+  Java, C#, C++, and PHP use keywords like <code>private</code>, <code>protected</code>, and <code>public</code>. Modern JavaScript uses the <code>#field</code> prefix for true runtime privacy.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Private State & Getter"
+  prompt="Hide balance as a private field (#balance) and expose it read-only via a getter."
+  template={`class Wallet {
+  {{0}}balance = 0;
+
+  deposit(amount) {
+    if (amount > 0) this.#balance += amount;
+  }
+
+  {{1}} balance() {
+    return this.#balance;
+  }
+}`}
+  blanks={[
+    { answer: '#', placeholder: 'sym' },
+    { answer: 'get', placeholder: 'kw' },
+  ]}
+  hint={'Prefix private class fields with # in JS, and use get to define a read-only getter.'}
+/>
+
+## Try It Yourself (Live OOP Playground)
+
+<Playground
+  client:visible
+  title="Encapsulated BankAccount"
+  defaultTab="js"
+  showConsole={true}
+  html={`<p>Run the code to see how encapsulation blocks invalid withdrawals.</p>`}
+  js={`class BankAccount {
+  #balance;
+
+  constructor(initialBalance) {
+    this.#balance = Math.max(0, initialBalance);
+  }
+
+  deposit(amount) {
+    if (amount <= 0) throw new Error("Deposit must be positive");
+    this.#balance += amount;
+  }
+
+  withdraw(amount) {
+    if (amount > this.#balance) {
+      console.log("Rejected: insufficient funds");
+      return false;
+    }
+    this.#balance -= amount;
+    return true;
+  }
+
+  get balance() {
+    return this.#balance;
+  }
+}
+
+const acct = new BankAccount(100);
+acct.deposit(50);
+acct.withdraw(200);
+acct.withdraw(40);
+console.log("Final balance:", acct.balance);`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What is the primary benefit of encapsulation?",
+      options: [
+        "It forces every class to inherit from a single parent",
+        "It protects internal state and enforces validation rules through a controlled public API",
+        "It eliminates the need for constructors"
+      ],
+      answer: 1,
+      explanation: "Encapsulation prevents callers from putting an object into an invalid state by hiding internal fields behind validated methods."
+    }
+  ]}
+/>

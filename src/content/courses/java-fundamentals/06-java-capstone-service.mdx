@@ -1,0 +1,86 @@
+---
+title: "Java Capstone: Order Summary Service"
+description: "Combine records, List.of(), and Streams to build a clean, immutable Java order summary service."
+course: "java-fundamentals"
+module: "Capstone"
+order: 6
+durationMinutes: 10
+objectives:
+  - "Model OrderItem using a Java record with a derived subtotal() method"
+  - "Aggregate totals with mapToDouble().sum()"
+  - "Prepare for the Java Final Exam and Certificate"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+In this capstone, you will combine **Java records**, **Streams**, and clean encapsulation to compute an order total with zero mutable state.
+
+## Fill-in-the-Blank Capstone
+
+<Exercise
+  client:visible
+  title="Sum Record Subtotals with Streams"
+  prompt="Map each OrderItem to its subtotal and sum them cleanly."
+  template={`double total = items.stream()
+    .{{0}}(OrderItem::subtotal)
+    .{{1}}();`}
+  blanks={[
+    { answer: 'mapToDouble', placeholder: 'method' },
+    { answer: 'sum', placeholder: 'method' },
+  ]}
+  hint={'Use mapToDouble(OrderItem::subtotal) followed by .sum().'}
+/>
+
+## Capstone Code Lab
+
+<CodeLab
+  client:visible
+  title="OrderService.java"
+  language="java"
+  code={`import java.util.List;
+
+public class OrderService {
+    record OrderItem(String name, double price, int qty) {
+        double subtotal() {
+            return price * qty;
+        }
+    }
+
+    public static void main(String[] args) {
+        var items = List.of(
+            new OrderItem("Mechanical Keyboard", 95.0, 1),
+            new OrderItem("USB-C Cable", 12.5, 2)
+        );
+
+        double total = items.stream()
+            .mapToDouble(OrderItem::subtotal)
+            .sum();
+
+        System.out.printf("Items: %d | Total: $%.2f%n", items.size(), total);
+    }
+}`}
+  expectedOutput={`Items: 2 | Total: $120.00`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does OrderItem::subtotal represent in items.stream().mapToDouble(OrderItem::subtotal)?",
+      options: [
+        "A method reference that calls subtotal() on each OrderItem in the stream",
+        "A static field lookup",
+        "A syntax error because records cannot have methods"
+      ],
+      answer: 0,
+      explanation: "Method references (Type::method) are concise shorthand for lambdas like item -> item.subtotal()."
+    }
+  ]}
+/>
+
+<Callout type="tip" title="Earn Your Java Certificate">
+  Ready to prove your Java skills? Take the <a href="/courses/java-fundamentals/exam">Java 21 Final Exam</a> (score 80% or higher) to unlock your free downloadable certificate.
+</Callout>

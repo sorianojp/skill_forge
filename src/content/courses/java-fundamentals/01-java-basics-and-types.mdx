@@ -1,0 +1,79 @@
+---
+title: "Java Basics, Types & Strings"
+description: "Write your first Java 21 class, distinguish primitives from reference types, and compare Strings safely with .equals()."
+course: "java-fundamentals"
+module: "Java Foundations"
+order: 1
+durationMinutes: 8
+objectives:
+  - "Understand public class, main(String[] args), and System.out.println"
+  - "Distinguish primitive types (int, double, boolean) from reference types (String)"
+  - "Compare Strings by value using .equals() instead of =="
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+**Java** is a strongly typed, object-oriented language that compiles to JVM bytecode and runs everywhere, from high-throughput Spring Boot microservices to Android apps.
+
+## Primitives vs. Reference Types
+
+- **Primitives** (`int`, `long`, `double`, `boolean`, `char`) store values directly.
+- **Reference types** (`String`, `List`, custom classes) store object references. Always compare `String` values with `.equals()`, because `==` compares memory references, not text content.
+
+<Callout type="warning" title="Always Use .equals() for Strings">
+  <code>a.equals(b)</code> checks whether two Strings contain the same characters. Using <code>==</code> on Strings can return <code>false</code> even when the text is identical.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Java Entry Point & String Comparison"
+  prompt="Print output and compare two String values safely."
+  template={`String track = "Java";
+if (track.{{0}}("Java")) {
+    System.out.{{1}}("Matched!");
+}`}
+  blanks={[
+    { answer: 'equals', placeholder: 'method' },
+    { answer: 'println', placeholder: 'method' },
+  ]}
+  hint={'Use .equals() to compare String contents and System.out.println() to print a line.'}
+/>
+
+## Interactive Code Lab
+
+<CodeLab
+  client:visible
+  title="Main.java"
+  language="java"
+  code={`public class Main {
+    public static void main(String[] args) {
+        String track = "Java 21";
+        int lessons = 6;
+        boolean ready = true;
+
+        System.out.printf("Track: %s (%d lessons, ready=%b)%n", track, lessons, ready);
+    }
+}`}
+  expectedOutput={`Track: Java 21 (6 lessons, ready=true)`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why should you compare Java Strings with .equals() instead of ==?",
+      options: [
+        "== compares object references in memory, while .equals() compares character content",
+        "== is a syntax error on Strings",
+        ".equals() converts Strings to lowercase automatically"
+      ],
+      answer: 0,
+      explanation: "In Java, == tests reference identity for objects; .equals() tests logical value equality."
+    }
+  ]}
+/>

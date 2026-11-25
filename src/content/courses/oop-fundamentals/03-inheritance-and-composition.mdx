@@ -1,0 +1,109 @@
+---
+title: "Inheritance vs. Composition"
+description: "Reuse behavior cleanly with extends and super, and learn when composition (has-a) beats deep inheritance trees."
+course: "oop-fundamentals"
+module: "Core OOP Foundations"
+order: 3
+durationMinutes: 9
+objectives:
+  - "Extend a base class using extends and call super() in subclasses"
+  - "Recognize the difference between is-a (inheritance) and has-a (composition)"
+  - "Prefer composition when combining flexible, independent behaviors"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+**Inheritance** allows a subclass to reuse fields and methods from a parent class (`AdminUser extends User`). **Composition** builds complex objects by combining smaller, focused objects (`Car` has an `Engine`).
+
+## Favor Composition Over Deep Inheritance
+
+Deep inheritance hierarchies (4+ levels) become fragile: changing one method in the root class can accidentally break distant subclasses. Use inheritance for true **is-a** relationships, and composition for **has-a** capabilities.
+
+<Callout type="tip" title="Rule of Thumb">
+  If a class only wants to borrow a helper capability (like logging, caching, or billing), inject that helper object via the constructor instead of inheriting from it.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Subclassing with extends & super"
+  prompt="Make Mentor inherit from User and forward name to the parent constructor."
+  template={`class Mentor {{0}} User {
+  constructor(name, specialty) {
+    {{1}}(name);
+    this.specialty = specialty;
+  }
+}`}
+  blanks={[
+    { answer: 'extends', placeholder: 'kw' },
+    { answer: 'super', placeholder: 'fn' },
+  ]}
+  hint={'Use extends to inherit from a parent class and super() to invoke the parent constructor.'}
+/>
+
+## Try It Yourself (Live OOP Playground)
+
+<Playground
+  client:visible
+  title="Inheritance + Composition Together"
+  defaultTab="js"
+  showConsole={true}
+  html={`<p>Inspect how composition lets NotificationService swap channels cleanly.</p>`}
+  js={`class User {
+  constructor(name) {
+    this.name = name;
+  }
+  role() {
+    return "Learner";
+  }
+}
+
+class Instructor extends User {
+  constructor(name, track) {
+    super(name);
+    this.track = track;
+  }
+  role() {
+    return "Instructor (" + this.track + ")";
+  }
+}
+
+// Composition: Notifier is passed in rather than inherited
+class EmailChannel {
+  send(to, msg) {
+    console.log("Email to " + to + ": " + msg);
+  }
+}
+
+class WelcomeService {
+  constructor(channel) {
+    this.channel = channel;
+  }
+  welcome(user) {
+    this.channel.send(user.name, "Welcome as " + user.role());
+  }
+}
+
+const service = new WelcomeService(new EmailChannel());
+service.welcome(new Instructor("Alex", "OOP"));`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which relationship is best modeled with composition rather than inheritance?",
+      options: [
+        "A Dog is an Animal",
+        "An Order has a PaymentProcessor",
+        "A CheckingAccount is a BankAccount"
+      ],
+      answer: 1,
+      explanation: "An Order is not a PaymentProcessor; it uses (has-a) a PaymentProcessor, making composition the right choice."
+    }
+  ]}
+/>

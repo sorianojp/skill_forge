@@ -4,7 +4,20 @@ import TrackIcon from '@/components/ui/TrackIcon.astro';
 import { getCollection } from 'astro:content';
 
 const refs = await getCollection('references');
-const categories = ['HTML', 'CSS', 'JavaScript', 'SQL', 'PHP', 'Python'] as const;
+const categories = [
+  'HTML',
+  'CSS',
+  'JavaScript',
+  'SQL',
+  'PHP',
+  'Python',
+  'Git',
+  'OOP',
+  'C',
+  'C++',
+  'Java',
+  'C#',
+] as const;
 ---
 
 <BaseLayout title="Quick Reference" description="Fast, scannable cheat sheets for HTML, CSS, and JavaScript.">

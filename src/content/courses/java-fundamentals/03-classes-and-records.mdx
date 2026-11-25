@@ -1,0 +1,88 @@
+---
+title: "Classes, Encapsulation & Records"
+description: "Build encapsulated Java classes with private fields, and eliminate boilerplate for immutable data using Java records."
+course: "java-fundamentals"
+module: "Object-Oriented Java"
+order: 3
+durationMinutes: 9
+objectives:
+  - "Encapsulate mutable state with private fields and public methods"
+  - "Model immutable data transfer objects cleanly with Java record"
+  - "Validate inputs inside a compact record constructor"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+Traditional Java classes required dozens of lines for constructors, getters, `equals()`, `hashCode()`, and `toString()`. Modern Java solves this with **`record`**: a single line declares an immutable data carrier with all of those generated automatically.
+
+## Class vs. Record
+
+- Use **`record`** for immutable data (API DTOs, coordinates, configuration, events).
+- Use **`class`** when an entity owns mutable state or complex lifecycle behavior.
+
+<Callout type="tip" title="Compact Constructors for Validation">
+  You can add validation right inside a <code>record</code> without repeating field assignments, throwing <code>IllegalArgumentException</code> if an invariant is broken.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Declare an Immutable Java Record"
+  prompt="Define a Course record with a String title and int lessons."
+  template={`public {{0}} Course(String title, int lessons) {
+    public Course {
+        if (lessons <= 0) throw new IllegalArgumentException("Lessons must be positive");
+    }
+}
+var c = {{1}} Course("Java 21", 6);`}
+  blanks={[
+    { answer: 'record', placeholder: 'kw' },
+    { answer: 'new', placeholder: 'kw' },
+  ]}
+  hint={'Use record for immutable data classes and new to instantiate.'}
+/>
+
+## Interactive Code Lab
+
+<CodeLab
+  client:visible
+  title="RecordsDemo.java"
+  language="java"
+  code={`public class RecordsDemo {
+    public record Course(String title, int lessons) {
+        public Course {
+            if (lessons <= 0) {
+                throw new IllegalArgumentException("lessons must be > 0");
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        var c = new Course("Java 21 Essentials", 6);
+        System.out.println(c);
+        System.out.println("Title: " + c.title());
+    }
+}`}
+  expectedOutput={`Course[title=Java 21 Essentials, lessons=6]
+Title: Java 21 Essentials`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does a Java record automatically generate for you?",
+      options: [
+        "Final fields, constructor, accessor methods, equals(), hashCode(), and toString()",
+        "Mutable setter methods for every field",
+        "A database table schema"
+      ],
+      answer: 0,
+      explanation: "Records are concise, immutable data carriers with constructor, accessors, equals, hashCode, and toString built in."
+    }
+  ]}
+/>

@@ -1,0 +1,70 @@
+---
+title: "Init, Status, Staging & Commits"
+description: "Understand Git's three areas (working tree, staging area, repository) and record your first clean commits."
+course: "git-essentials"
+module: "Core Version Control"
+order: 1
+durationMinutes: 7
+objectives:
+  - "Understand the working directory, staging area (index), and commit history"
+  - "Inspect changes with git status and stage files with git add"
+  - "Write clear, atomic commit messages with git commit -m"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import GitSandbox from '@/components/playground/GitSandbox';
+import Quiz from '@/components/quiz/Quiz';
+
+**Git** is a distributed version control system that records snapshots of your project over time. Instead of saving `final_v2_real.zip`, every change is tracked in a verifiable commit history.
+
+## The Three Areas of Git
+
+1. **Working Directory:** The files you currently edit on disk.
+2. **Staging Area (Index):** The exact changes you select to include in your next snapshot (`git add`).
+3. **Repository (`.git`):** Permanent, hashed snapshots (`git commit`).
+
+<Callout type="tip" title="Keep Commits Atomic">
+  Each commit should represent one logical change (for example, "Add login validation" rather than "Fix stuff"). Small commits make debugging with <code>git log</code> and <code>git revert</code> effortless.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Stage and Commit Workflow"
+  prompt="Stage all modified files and create a commit with a descriptive message."
+  template={`git {{0}} .
+git {{1}} -m "Add landing page hero"`}
+  blanks={[
+    { answer: 'add', placeholder: 'cmd' },
+    { answer: 'commit', placeholder: 'cmd' },
+  ]}
+  hint={'Use git add to move changes to the staging area, then git commit to save the snapshot.'}
+/>
+
+## Try It Yourself (Interactive Git Terminal)
+
+<GitSandbox
+  client:visible
+  title="Stage, Commit & Inspect History"
+  starterHint={'Run git status, stage files with git add ., commit them, and check git log --oneline.'}
+  suggestedCommands={[
+    'git status',
+    'git add .',
+    'git commit -m "Add starter layout"',
+    'git log --oneline',
+  ]}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which command moves modified files from your working directory into the staging area?",
+      options: ["git commit", "git add", "git log"],
+      answer: 1,
+      explanation: "git add stages selected changes so they are included in the next git commit snapshot."
+    }
+  ]}
+/>

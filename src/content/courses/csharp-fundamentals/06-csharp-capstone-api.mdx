@@ -1,0 +1,86 @@
+---
+title: "C# Capstone: Course Catalog Service"
+description: "Combine records, interfaces, LINQ, and async/await to build a clean .NET catalog service."
+course: "csharp-fundamentals"
+module: "Capstone"
+order: 6
+durationMinutes: 10
+objectives:
+  - "Define an async repository contract with an interface"
+  - "Filter and summarize records with LINQ"
+  - "Prepare for the C# & .NET Final Exam and Certificate"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+In this capstone, you will combine **records**, **interfaces**, **LINQ**, and **`async`/`await`** into a clean, testable .NET service pattern used across real ASP.NET Core backends.
+
+## Fill-in-the-Blank Capstone
+
+<Exercise
+  client:visible
+  title="Async LINQ Query"
+  prompt="Await all items from the repository and count those marked Published."
+  template={`var items = {{0}} repo.GetAllAsync();
+int published = items.{{1}}(c => c.Published);`}
+  blanks={[
+    { answer: 'await', placeholder: 'kw' },
+    { answer: 'Count', placeholder: 'method' },
+  ]}
+  hint={'Use await on GetAllAsync() and LINQ Count(predicate) to count matching records.'}
+/>
+
+## Capstone Code Lab
+
+<CodeLab
+  client:visible
+  title="CatalogService.cs"
+  language="csharp"
+  code={`using System.Linq;
+
+public record Track(string Name, int Lessons, bool Published);
+
+public interface ITrackRepo
+{
+    Task<List<Track>> GetAllAsync();
+}
+
+public class InMemoryTrackRepo : ITrackRepo
+{
+    public Task<List<Track>> GetAllAsync() => Task.FromResult(new List<Track>
+    {
+        new("Git", 6, true),
+        new("OOP", 6, true),
+        new("C#", 6, true),
+        new("Draft", 2, false)
+    });
+}
+
+ITrackRepo repo = new InMemoryTrackRepo();
+var live = (await repo.GetAllAsync()).Where(t => t.Published).ToList();
+Console.WriteLine($"Live tracks: {live.Count} | Lessons: {live.Sum(t => t.Lessons)}");`}
+  expectedOutput={`Live tracks: 3 | Lessons: 18`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why does C# convention prefix interface names like ITrackRepo with the letter I?",
+      options: [
+        "It clearly distinguishes interface contracts from concrete classes at a glance",
+        "The C# compiler rejects interfaces that do not start with I",
+        "It makes the interface run asynchronously"
+      ],
+      answer: 0,
+      explanation: "The I-prefix (IEnumerable, ITrackRepo) is a universal .NET naming convention for interfaces."
+    }
+  ]}
+/>
+
+<Callout type="tip" title="Earn Your C# & .NET Certificate">
+  Ready to earn your credential? Take the <a href="/courses/csharp-fundamentals/exam">C# &amp; .NET Final Exam</a> (score 80% or higher) to unlock your free downloadable certificate.
+</Callout>

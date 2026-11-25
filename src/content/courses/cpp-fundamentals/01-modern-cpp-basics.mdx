@@ -1,0 +1,85 @@
+---
+title: "Modern C++ Basics, std::string & auto"
+description: "Write idiomatic Modern C++ with iostream, std::string, type inference via auto, and constexpr constants."
+course: "cpp-fundamentals"
+module: "Modern C++ Foundations"
+order: 1
+durationMinutes: 8
+objectives:
+  - "Print output cleanly using std::cout and <iostream>"
+  - "Prefer std::string over raw char* arrays for text"
+  - "Use auto and const to keep declarations concise and type-safe"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+**Modern C++ (C++17 / C++20)** pairs zero-overhead systems performance with expressive high-level abstractions like `std::string`, `std::vector`, and automatic resource cleanup.
+
+## Modern Habits From Day One
+
+- Use `std::string` instead of raw C-style `char[]` strings.
+- Prefer `const` or `constexpr` for values that should not change.
+- Use `auto` when the right-hand type is obvious or verbose (like iterators).
+
+<Callout type="tip" title="Avoid using namespace std; in Headers">
+  Writing <code>std::cout</code> and <code>std::string</code> explicitly prevents subtle name collisions in larger C++ projects.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Modern C++ Output & String"
+  prompt="Declare a std::string and print it using std::cout."
+  template={`#include <iostream>
+#include <string>
+
+int main() {
+    std::{{0}} track = "C++20";
+    std::{{1}} << "Learning " << track << "\\n";
+}`}
+  blanks={[
+    { answer: 'string', placeholder: 'type' },
+    { answer: 'cout', placeholder: 'stream' },
+  ]}
+  hint={'Use std::string for managed text and std::cout with << for standard output.'}
+/>
+
+## Interactive Code Lab
+
+<CodeLab
+  client:visible
+  title="modern_basics.cpp"
+  language="cpp"
+  code={`#include <iostream>
+#include <string>
+
+int main() {
+    const std::string course = "Modern C++";
+    constexpr int lessons = 6;
+    auto completed = 1;
+
+    std::cout << course << ": " << completed << "/" << lessons << "\\n";
+    return 0;
+}`}
+  expectedOutput={`Modern C++: 1/6`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why is std::string preferred over raw char* arrays in Modern C++?",
+      options: [
+        "It automatically manages memory, tracks length in O(1), and prevents buffer overflows",
+        "It can only hold 16 characters",
+        "It disables type checking"
+      ],
+      answer: 0,
+      explanation: "std::string owns its buffer, resizes safely, and cleans up automatically when it goes out of scope."
+    }
+  ]}
+/>

@@ -1,0 +1,28 @@
+---
+title: "Git & GitHub Quick Reference"
+category: "Git"
+syntax: "git checkout -b feat && git add . && git commit -m 'msg'"
+summary: "Essential Git commands for staging, committing, branching, merging, syncing remotes, and safely undoing changes."
+browserSupport: "Git 2.40+ / GitHub"
+---
+
+## Daily Snapshot Commands
+
+| Command | Purpose | Example |
+| :--- | :--- | :--- |
+| `git init` | Initialize a new Git repository | `git init` |
+| `git status` | Show branch, staged, and unstaged files | `git status` |
+| `git add` | Stage files for the next commit | `git add .` or `git add app.js` |
+| `git commit -m` | Record a snapshot with a message | `git commit -m "Add auth guard"` |
+| `git log --oneline` | Compact commit history | `git log --oneline -n 10` |
+
+## Branching, Remotes & Undo
+
+| Command | Purpose | Example |
+| :--- | :--- | :--- |
+| `git checkout -b` | Create and switch to a branch | `git checkout -b feat/search` |
+| `git merge` | Merge a branch into current branch | `git merge feat/search` |
+| `git fetch` / `git pull` | Download remote updates / download + merge | `git fetch origin` |
+| `git push -u origin` | Publish branch and track upstream | `git push -u origin feat/search` |
+| `git stash` / `pop` | Shelve and restore uncommitted edits | `git stash && git stash pop` |
+| `git revert <hash>` | Safely undo a pushed commit | `git revert a1b2c3d` |

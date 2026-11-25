@@ -1,0 +1,84 @@
+---
+title: "std::vector, Maps & STL Algorithms"
+description: "Replace manual C arrays with std::vector, range-based for loops, and expressive <algorithm> helpers."
+course: "cpp-fundamentals"
+module: "The Standard Library (STL)"
+order: 3
+durationMinutes: 9
+objectives:
+  - "Grow and iterate over dynamic arrays with std::vector and push_back"
+  - "Store key-value pairs in std::unordered_map"
+  - "Sort and transform ranges with std::sort and lambda expressions"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+The **Standard Template Library (STL)** is C++'s superpower. `std::vector<T>` stores elements contiguously in memory (just as fast as a raw C array), while automatically resizing and freeing its own memory.
+
+## Range-Based `for` + `<algorithm>`
+
+Combining range-based `for (const auto& x : items)` with algorithms like `std::sort`, `std::count_if`, and lambdas (`[](int n) { return n >= 80; }`) eliminates off-by-one loop bugs.
+
+<Callout type="info" title="Prefer std::vector by Default">
+  Because <code>std::vector</code> keeps elements contiguous in CPU cache, it outperforms linked lists (<code>std::list</code>) in almost every real-world workload.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Append & Iterate std::vector"
+  prompt="Add 95 to the end of scores and loop over every element."
+  template={`std::vector<int> scores = {80, 90};
+scores.{{0}}(95);
+for (int s {{1}} scores) {
+    std::cout << s << " ";
+}`}
+  blanks={[
+    { answer: 'push_back', placeholder: 'method' },
+    { answer: ':', placeholder: 'sep' },
+  ]}
+  hint={'Use push_back() to append to a vector, and : in a range-based for loop.'}
+/>
+
+## Interactive Code Lab
+
+<CodeLab
+  client:visible
+  title="stl_vector.cpp"
+  language="cpp"
+  code={`#include <algorithm>
+#include <iostream>
+#include <vector>
+
+int main() {
+    std::vector<int> scores = {72, 95, 84, 91};
+    scores.push_back(88);
+
+    std::sort(scores.begin(), scores.end());
+    auto passing = std::count_if(scores.begin(), scores.end(), [](int s) {
+        return s >= 85;
+    });
+
+    std::cout << "Lowest: " << scores.front() << " | Highest: " << scores.back() << "\\n";
+    std::cout << "Scores >= 85: " << passing << "\\n";
+    return 0;
+}`}
+  expectedOutput={`Lowest: 72 | Highest: 95
+Scores >= 85: 3`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which STL container should be your default choice for a dynamic sequence of elements?",
+      options: ["std::vector", "Raw new[] array", "std::list"],
+      answer: 0,
+      explanation: "std::vector provides contiguous cache-friendly memory, automatic resizing, and RAII cleanup."
+    }
+  ]}
+/>

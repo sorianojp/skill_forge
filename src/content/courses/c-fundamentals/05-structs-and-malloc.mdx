@@ -1,0 +1,91 @@
+---
+title: "Structs, typedef & Heap Memory (malloc/free)"
+description: "Group related fields into custom structs, access fields via ->, and allocate dynamic heap memory safely."
+course: "c-fundamentals"
+module: "Memory & Data"
+order: 5
+durationMinutes: 9
+objectives:
+  - "Define clean composite types with typedef struct"
+  - "Use dot (.) on struct values and arrow (->) on struct pointers"
+  - "Allocate heap memory with malloc, check for NULL, and release it with free"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+A **`struct`** groups related fields of different types into one contiguous record. When you need data whose size is determined at runtime or must outlive a function call, allocate it on the **heap** with `malloc()` and always pair it with `free()`.
+
+## Dot (`.`) vs. Arrow (`->`)
+
+- Use `user.age` when you have a `User` value.
+- Use `ptr->age` (shorthand for `(*ptr).age`) when you have a `User *` pointer.
+
+<Callout type="warning" title="Every malloc Needs a Matching free">
+  Forgetting to call <code>free(ptr)</code> leaks memory; calling <code>free</code> twice or using memory after freeing causes undefined behavior. Set <code>ptr = NULL;</code> after freeing as a clean safeguard.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Heap Allocation & Cleanup"
+  prompt="Allocate memory for 4 integers on the heap and free it before returning."
+  template={`int *nums = {{0}}(4 * sizeof(int));
+if (nums != NULL) {
+    nums[0] = 7;
+    {{1}}(nums);
+}`}
+  blanks={[
+    { answer: 'malloc', placeholder: 'fn' },
+    { answer: 'free', placeholder: 'fn' },
+  ]}
+  hint={'malloc allocates heap bytes from stdlib.h, and free releases them.'}
+/>
+
+## Interactive Code Lab
+
+<CodeLab
+  client:visible
+  title="structs_heap.c"
+  language="c"
+  code={`#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    const char *name;
+    int score;
+} Student;
+
+void boost_score(Student *s, int bonus) {
+    s->score += bonus;
+}
+
+int main(void) {
+    Student *s = malloc(sizeof(Student));
+    if (!s) return 1;
+
+    s->name = "Maya";
+    s->score = 88;
+    boost_score(s, 7);
+
+    printf("%s scored %d\\n", s->name, s->score);
+    free(s);
+    return 0;
+}`}
+  expectedOutput={`Maya scored 95`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Given Student *ptr, how do you access the score field cleanly?",
+      options: ["ptr.score", "ptr->score", "ptr::score"],
+      answer: 1,
+      explanation: "The arrow operator (->) dereferences a struct pointer and accesses its member in one step."
+    }
+  ]}
+/>

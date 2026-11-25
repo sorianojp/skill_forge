@@ -18,6 +18,12 @@ const iconDims = {
   lg: 'h-7 w-7',
 }[size];
 
+const textDims = {
+  sm: 'text-xs',
+  md: 'text-sm',
+  lg: 'text-base',
+}[size];
+
 const palette: Record<string, string> = {
   HTML: 'from-[#f97316] to-[#ea580c]',
   CSS: 'from-[#3b82f6] to-[#2563eb]',
@@ -25,6 +31,12 @@ const palette: Record<string, string> = {
   SQL: 'from-[#8b5cf6] to-[#7c3aed]',
   PHP: 'from-[#6366f1] to-[#4f46e5]',
   Python: 'from-[#10b981] to-[#059669]',
+  Git: 'from-[#ef4444] to-[#dc2626]',
+  OOP: 'from-[#0ea5e9] to-[#0284c7]',
+  C: 'from-[#475569] to-[#334155]',
+  'C++': 'from-[#2563eb] to-[#1d4ed8]',
+  Java: 'from-[#f59e0b] to-[#d97706]',
+  'C#': 'from-[#9333ea] to-[#7e22ce]',
 };
 
 const gradient = palette[track] ?? 'from-[#3b82f6] to-[#2563eb]';
@@ -64,6 +76,28 @@ const gradient = palette[track] ?? 'from-[#3b82f6] to-[#2563eb]';
     <svg class={iconDims} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
       <polyline points="4 17 10 11 4 5" />
       <line x1="12" y1="19" x2="20" y2="19" />
+    </svg>
+  ) : track === 'Git' ? (
+    <svg class={iconDims} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="18" cy="18" r="3" />
+      <circle cx="6" cy="6" r="3" />
+      <path d="M13 6h3a2 2 0 0 1 2 2v7" />
+      <line x1="6" y1="9" x2="6" y2="21" />
+    </svg>
+  ) : track === 'OOP' ? (
+    <svg class={iconDims} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+      <path d="m3.3 7 8.7 5 8.7-5" />
+      <path d="M12 22V12" />
+    </svg>
+  ) : track === 'C' || track === 'C++' || track === 'C#' ? (
+    <span class={`font-mono font-black tracking-tighter ${textDims}`}>{track}</span>
+  ) : track === 'Java' ? (
+    <svg class={iconDims} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10 2v2" />
+      <path d="M14 2v2" />
+      <path d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1" />
+      <path d="M6 2v2" />
     </svg>
   ) : (
     <svg class={iconDims} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">

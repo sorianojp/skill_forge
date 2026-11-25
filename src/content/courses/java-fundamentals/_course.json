@@ -1,0 +1,20 @@
+{
+  "slug": "java-fundamentals",
+  "title": "Java 21 Essentials",
+  "shortTitle": "Learn Java",
+  "description": "Master modern Java (Java 17/21) for backend services, Android, and enterprise systems. Learn types, switch expressions, records, interfaces, generics, collections, and Streams.",
+  "track": "Java",
+  "difficulty": "Beginner",
+  "estimatedHours": 6,
+  "accentColor": "#d97706",
+  "prerequisites": ["None, helpful alongside OOP Fundamentals"],
+  "outcomes": [
+    "Write clean Java 21 programs with strong types, var, and text blocks",
+    "Use modern switch expressions, methods, and exception handling",
+    "Model immutable domain data concisely with Java records and classes",
+    "Design extensible APIs using interfaces and type-safe generics",
+    "Transform data declaratively with List, Map, Optional, and the Streams API"
+  ],
+  "featured": true,
+  "order": 11
+}

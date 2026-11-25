@@ -1,0 +1,87 @@
+---
+title: "Hello C, Types & printf"
+description: "Write your first compiled C program, declare strongly typed variables, and format output with printf."
+course: "c-fundamentals"
+module: "C Foundations"
+order: 1
+durationMinutes: 8
+objectives:
+  - "Understand #include <stdio.h>, int main(void), and return 0"
+  - "Declare int, double, and char variables with explicit types"
+  - "Format output cleanly using %d, %.2f, and %s in printf"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+**C** is a compiled, statically typed systems language designed for speed and direct hardware control. Every C program starts executing in `main()`, and returning `0` signals success to the operating system.
+
+## Core Types & Format Specifiers
+
+- `int` -> `%d` (signed integer, typically 32-bit)
+- `double` -> `%f` or `%.2f` (double-precision floating-point)
+- `char` -> `%c` (single ASCII byte)
+- `const char *` -> `%s` (null-terminated string)
+
+<Callout type="tip" title="Always Compile With Warnings Enabled">
+  When compiling locally with GCC or Clang, run <code>cc -std=c11 -Wall -Wextra -Werror main.c -o app</code> so the compiler catches subtle bugs before your program ever runs.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Include stdio & Print an Integer"
+  prompt="Include the standard I/O header and print the integer variable score."
+  template={`#include <{{0}}>
+
+int main(void) {
+    int score = 95;
+    printf("Score: {{1}}\\n", score);
+    return 0;
+}`}
+  blanks={[
+    { answer: 'stdio.h', placeholder: 'header' },
+    { answer: '%d', placeholder: 'fmt' },
+  ]}
+  hint={'printf lives in stdio.h, and %d formats a signed int.'}
+/>
+
+## Interactive Code Lab
+
+<CodeLab
+  client:visible
+  title="hello.c"
+  language="c"
+  code={`#include <stdio.h>
+
+int main(void) {
+    const char *track = "C11";
+    int lessons = 6;
+    double progress = 16.67;
+
+    printf("Track: %s\\n", track);
+    printf("Lessons: %d (%.1f%% done)\\n", lessons, progress);
+    return 0;
+}`}
+  expectedOutput={`Track: C11
+Lessons: 6 (16.7% done)`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does returning 0 from main() signal to the operating system?",
+      options: [
+        "The program crashed with an error",
+        "The program completed successfully",
+        "The program ran out of memory"
+      ],
+      answer: 1,
+      explanation: "By convention on Unix, macOS, and Windows, exit code 0 means success and non-zero means an error."
+    }
+  ]}
+/>

@@ -41,4 +41,27 @@ export const CAREER_PATHS: CareerPath[] = [
     accentColor: '#059669',
     courseSlugs: ['sql-essentials', 'python-fundamentals'],
   },
+  {
+    slug: 'systems-programming',
+    title: 'Systems Programming Engineer',
+    tagline: 'Git → C → C++',
+    description:
+      'Master version control, low-level memory and pointers in C, and zero-overhead Modern C++ abstractions with RAII and the STL.',
+    accentColor: '#1d4ed8',
+    courseSlugs: ['git-essentials', 'c-fundamentals', 'cpp-fundamentals'],
+  },
+  {
+    slug: 'enterprise-oop-engineer',
+    title: 'Enterprise & OOP Engineer',
+    tagline: 'Git → OOP → Java → C#',
+    description:
+      'Build scalable, testable enterprise architectures using Git workflows, SOLID object-oriented design, Java 21, and C# / .NET.',
+    accentColor: '#7e22ce',
+    courseSlugs: [
+      'git-essentials',
+      'oop-fundamentals',
+      'java-fundamentals',
+      'csharp-fundamentals',
+    ],
+  },
 ];

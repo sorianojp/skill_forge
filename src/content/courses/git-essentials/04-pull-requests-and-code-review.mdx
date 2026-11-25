@@ -1,0 +1,75 @@
+---
+title: "Pull Requests & Code Review"
+description: "Ship production code with feature branches, focused Pull Requests, squash merges, and constructive code reviews."
+course: "git-essentials"
+module: "Collaboration & GitHub"
+order: 4
+durationMinutes: 7
+objectives:
+  - "Follow the standard GitHub Flow from branch to Pull Request"
+  - "Write clear PR descriptions with context, screenshots, and test notes"
+  - "Choose between merge commit, squash-and-merge, and rebase"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import GitSandbox from '@/components/playground/GitSandbox';
+import Quiz from '@/components/quiz/Quiz';
+
+In professional engineering teams, developers rarely push directly to `main`. Instead, changes go through a **Pull Request (PR)** so automated CI checks and teammates can review the diff first.
+
+## The GitHub Flow
+
+1. Pull the latest `main`.
+2. Create a short-lived feature branch (`git checkout -b fix/navbar-gap`).
+3. Make small, tested commits and push your branch.
+4. Open a Pull Request describing **what** changed, **why**, and **how you tested it**.
+5. Address review feedback, pass CI checks, and merge (often via **Squash and Merge** to keep `main` history tidy).
+
+<Callout type="tip" title="Keep Pull Requests Small">
+  A 150-line PR gets reviewed carefully in 10 minutes. A 2,000-line PR gets skimmed or stalled for days. Split large features into smaller, shippable PRs.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Reviewing Changes Before Opening a PR"
+  prompt="Create a fix branch and inspect your commit summary before opening a Pull Request."
+  template={`git checkout -b fix/button-icon
+git {{0}} --oneline`}
+  blanks={[
+    { answer: 'log', placeholder: 'cmd' },
+  ]}
+  hint={'git log --oneline prints a compact one-line summary of each commit.'}
+/>
+
+## Try It Yourself (Interactive Git Terminal)
+
+<GitSandbox
+  client:visible
+  title="Feature Branch for Pull Request"
+  starterHint={'Simulate opening a clean fix branch and verifying your commit history.'}
+  suggestedCommands={[
+    'git checkout -b fix/header-spacing',
+    'git add .',
+    'git commit -m "Fix header spacing on mobile"',
+    'git log --oneline',
+  ]}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why do many teams use Squash and Merge on GitHub Pull Requests?",
+      options: [
+        "It deletes the repository after merging",
+        "It combines messy work-in-progress commits into one clean commit on main",
+        "It skips all automated CI checks"
+      ],
+      answer: 1,
+      explanation: "Squash and Merge turns a branch's intermediate WIP commits into a single, readable commit on main."
+    }
+  ]}
+/>

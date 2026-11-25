@@ -1,0 +1,81 @@
+---
+title: "Arrays & Null-Terminated Strings"
+description: "Work with contiguous fixed-size arrays, compute array lengths with sizeof, and handle C strings ending in '\\0'."
+course: "c-fundamentals"
+module: "Memory & Data"
+order: 3
+durationMinutes: 9
+objectives:
+  - "Declare and iterate over fixed-size contiguous arrays"
+  - "Understand why C strings end with the null terminator '\\0'"
+  - "Avoid buffer overflows by passing explicit lengths and using snprintf"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+An **array** in C is a contiguous block of elements in memory with zero hidden metadata: C does not store the array's length next to it, and it does not perform automatic bounds checking.
+
+## C Strings Are `char` Arrays Ending in `'\0'`
+
+The literal `"Hi"` occupies **3 bytes**: `'H'`, `'i'`, and `'\0'` (the null byte). Functions like `strlen()` scan forward until they hit `'\0'`.
+
+<Callout type="warning" title="Always Pass Length Alongside Arrays">
+  When an array is passed to a function, it decays to a pointer to its first element. Always pass a <code>size_t len</code> parameter alongside it so loops never read past the end.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Compute Array Element Count"
+  prompt="Compute the number of elements in a local fixed array using sizeof."
+  template={`int scores[] = {80, 90, 100};
+size_t count = {{0}}(scores) / sizeof(scores[{{1}}]);`}
+  blanks={[
+    { answer: 'sizeof', placeholder: 'op' },
+    { answer: '0', placeholder: 'idx' },
+  ]}
+  hint={'Divide total byte size sizeof(scores) by the byte size of one element sizeof(scores[0]).'}
+/>
+
+## Interactive Code Lab
+
+<CodeLab
+  client:visible
+  title="arrays_strings.c"
+  language="c"
+  code={`#include <stdio.h>
+#include <string.h>
+
+int main(void) {
+    int scores[] = {84, 92, 88, 96};
+    size_t n = sizeof(scores) / sizeof(scores[0]);
+    int sum = 0;
+
+    for (size_t i = 0; i < n; i++) {
+        sum += scores[i];
+    }
+
+    char name[] = "SkillForge";
+    printf("Name: %s (len=%zu)\\n", name, strlen(name));
+    printf("Average: %.1f\\n", (double)sum / n);
+    return 0;
+}`}
+  expectedOutput={`Name: SkillForge (len=10)
+Average: 90.0`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "How many bytes does the C string literal \"Cat\" occupy in memory?",
+      options: ["3 bytes", "4 bytes (including the null terminator '\\0')", "8 bytes"],
+      answer: 1,
+      explanation: "Every C string literal ends with an extra '\\0' null byte, so \"Cat\" uses 4 bytes."
+    }
+  ]}
+/>

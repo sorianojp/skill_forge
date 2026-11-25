@@ -1,0 +1,87 @@
+---
+title: "Async/Await & Task<T>"
+description: "Write scalable, non-blocking .NET code using async, await, Task<T>, and Task.WhenAll for concurrent work."
+course: "csharp-fundamentals"
+module: "Modern .NET APIs"
+order: 5
+durationMinutes: 9
+objectives:
+  - "Return Task or Task<T> from asynchronous methods"
+  - "Await non-blocking I/O cleanly without freezing threads"
+  - "Run independent async operations concurrently with Task.WhenAll"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+Modern .NET servers handle thousands of concurrent requests because **`async` / `await`** releases the worker thread while waiting on database queries, HTTP calls, or disk I/O.
+
+## Golden Rules of Async C#
+
+1. Return `Task` (void-like) or `Task<T>` (value-returning); avoid `async void` except for UI event handlers.
+2. Never block on tasks with `.Result` or `.Wait()` (this can deadlock). Always `await` instead.
+3. Use `await Task.WhenAll(t1, t2)` to run independent async calls in parallel.
+
+<Callout type="warning" title="Avoid .Result and .Wait()">
+  Calling <code>task.Result</code> synchronously blocks a thread pool worker and can cause deadlocks in ASP.NET or UI apps. Propagate <code>async</code> / <code>await</code> all the way up.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Async Method Signature"
+  prompt="Mark FetchScoreAsync as async returning Task<int> and await a simulated delay."
+  template={`static {{0}} Task<int> FetchScoreAsync()
+{
+    {{1}} Task.Delay(50);
+    return 95;
+}`}
+  blanks={[
+    { answer: 'async', placeholder: 'kw' },
+    { answer: 'await', placeholder: 'kw' },
+  ]}
+  hint={'Use async in the method signature and await before Task.Delay(50).'}
+/>
+
+## Interactive Code Lab
+
+<CodeLab
+  client:visible
+  title="AsyncDemo.cs"
+  language="csharp"
+  code={`static async Task<int> FetchCountAsync(string label, int count)
+{
+    await Task.Delay(20);
+    Console.WriteLine($"Loaded {label}: {count}");
+    return count;
+}
+
+var results = await Task.WhenAll(
+    FetchCountAsync("Courses", 12),
+    FetchCountAsync("Lessons", 120)
+);
+
+Console.WriteLine($"Combined total: {results.Sum()}");`}
+  expectedOutput={`Loaded Courses: 12
+Loaded Lessons: 120
+Combined total: 132`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "How should you run two independent Task<string> calls concurrently and wait for both?",
+      options: [
+        "await Task.WhenAll(taskA, taskB)",
+        "taskA.Wait(); taskB.Wait();",
+        "Call them inside an async void method"
+      ],
+      answer: 0,
+      explanation: "Task.WhenAll starts and awaits multiple tasks concurrently without blocking threads."
+    }
+  ]}
+/>

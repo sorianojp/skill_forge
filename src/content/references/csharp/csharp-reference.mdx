@@ -1,0 +1,26 @@
+---
+title: "C# & .NET Quick Reference"
+category: "C#"
+syntax: "var top = items.Where(x => x.Score >= 80).ToList();"
+summary: "Essential C# 12 / .NET syntax: string interpolation, nullable operators, pattern matching, records, LINQ, and async/await."
+browserSupport: "C# 12 / .NET 8+"
+---
+
+## Core Syntax, Records & Pattern Matching
+
+| Feature | Purpose | Example |
+| :--- | :--- | :--- |
+| `$"Hi {name}"` | String interpolation | `Console.WriteLine($"Score: {n}");` |
+| `x ?? fallback` | Null-coalescing default | `string u = input ?? "Guest";` |
+| `val switch { ... }` | Switch expression + patterns | `n switch { >= 80 => "Pass", _ => "Retry" }` |
+| `record` + `with` | Immutable value-equal model | `record User(string Name); var u2 = u1 with { Name = "Bo" };` |
+| `{ get; private set; }` | Encapsulated auto-property | `public int Count { get; private set; }` |
+
+## LINQ & Async/Await
+
+| API | Purpose | Example |
+| :--- | :--- | :--- |
+| `.Where(p)` / `.Select(f)` | Filter and project collections | `xs.Where(x => x > 0).Select(x => x * 2)` |
+| `.OrderBy()` / `.Sum()` | Sort and aggregate | `items.Sum(i => i.Price)` |
+| `async Task<T>` | Non-blocking async method | `async Task<string> FetchAsync()` |
+| `await Task.WhenAll(...)` | Run independent tasks concurrently | `var res = await Task.WhenAll(t1, t2);` |

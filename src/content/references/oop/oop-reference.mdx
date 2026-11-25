@@ -1,0 +1,26 @@
+---
+title: "OOP & SOLID Quick Reference"
+category: "OOP"
+syntax: "class Service { constructor(repo) { this.repo = repo; } }"
+summary: "The four pillars of Object-Oriented Programming, inheritance vs. composition, and the five SOLID design principles."
+browserSupport: "Language-Agnostic (Java, C#, C++, JS, Python, PHP)"
+---
+
+## The Four Pillars of OOP
+
+| Pillar | Meaning | Practical Goal |
+| :--- | :--- | :--- |
+| **Encapsulation** | Hide internal state behind public methods | Protect invariants and prevent invalid mutations |
+| **Abstraction** | Expose essential operations, hide complexity | Keep callers simple and decoupled |
+| **Inheritance** | Subclass extends a base class (`is-a`) | Share common structure when a true subtype exists |
+| **Polymorphism** | Different classes share one method contract | Plug in new behavior without `if/else` chains |
+
+## The Five SOLID Principles
+
+| Letter | Principle | Summary |
+| :--- | :--- | :--- |
+| **S** | Single Responsibility | One class, one focused reason to change |
+| **O** | Open / Closed | Extend behavior with new classes instead of editing stable ones |
+| **L** | Liskov Substitution | Any subclass must work safely wherever its parent is expected |
+| **I** | Interface Segregation | Prefer small, role-specific interfaces over huge ones |
+| **D** | Dependency Inversion | Inject abstractions via constructors rather than hardcoding concretions |

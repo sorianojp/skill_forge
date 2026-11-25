@@ -1,0 +1,114 @@
+---
+title: "OOP Capstone: Modular Library System"
+description: "Combine encapsulation, composition, polymorphism, and SOLID principles to build a clean Library checkout system."
+course: "oop-fundamentals"
+module: "Capstone"
+order: 6
+durationMinutes: 10
+objectives:
+  - "Design collaborating classes with clear single responsibilities"
+  - "Protect item availability with encapsulation"
+  - "Prepare for the OOP Final Exam and Certificate"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+In this capstone, you will combine all four pillars of OOP into a clean, extensible **Library System**:
+
+1. **Encapsulation:** `Book` protects `#checkedOut` so books cannot be double-borrowed.
+2. **Polymorphism:** Different `FinePolicy` classes compute late fees differently.
+3. **Composition & DI:** `Library` composes a catalog and a `FinePolicy`.
+
+## Fill-in-the-Blank Capstone
+
+<Exercise
+  client:visible
+  title="Encapsulated Checkout Guard"
+  prompt="Prevent borrowing a book that is already checked out."
+  template={`class Book {
+  #checkedOut = false;
+  borrow() {
+    if (this.{{0}}) return false;
+    this.#checkedOut = {{1}};
+    return true;
+  }
+}`}
+  blanks={[
+    { answer: '#checkedOut', placeholder: 'field' },
+    { answer: 'true', placeholder: 'bool' },
+  ]}
+  hint={'Check this.#checkedOut first, then set it to true when borrowed.'}
+/>
+
+## Capstone Playground
+
+<Playground
+  client:visible
+  title="Modular OOP Library System"
+  defaultTab="js"
+  showConsole={true}
+  html={`<p>Run and experiment with the Library, Book, and FinePolicy classes.</p>`}
+  js={`class Book {
+  #checkedOut = false;
+  constructor(title) {
+    this.title = title;
+  }
+  borrow() {
+    if (this.#checkedOut) return false;
+    this.#checkedOut = true;
+    return true;
+  }
+  get available() {
+    return !this.#checkedOut;
+  }
+}
+
+class StandardFinePolicy {
+  calculate(daysLate) {
+    return daysLate * 0.5;
+  }
+}
+
+class Library {
+  constructor(finePolicy) {
+    this.books = [];
+    this.finePolicy = finePolicy;
+  }
+  add(book) { this.books.push(book); }
+  report() {
+    return this.books.map((b) => b.title + " (" + (b.available ? "Available" : "Borrowed") + ")");
+  }
+}
+
+const lib = new Library(new StandardFinePolicy());
+const b1 = new Book("Design Patterns");
+const b2 = new Book("Clean Architecture");
+lib.add(b1);
+lib.add(b2);
+b1.borrow();
+console.log(lib.report());
+console.log("4 days late fine: $" + lib.finePolicy.calculate(4));`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "In the Library capstone, why is FinePolicy passed into Library's constructor instead of hardcoded?",
+      options: [
+        "So you can swap fine rules (e.g., StudentFinePolicy) without modifying Library",
+        "Because constructors cannot create objects",
+        "To prevent Book from having private fields"
+      ],
+      answer: 0,
+      explanation: "Injecting FinePolicy follows Open/Closed and Dependency Inversion, making policies swappable and testable."
+    }
+  ]}
+/>
+
+<Callout type="tip" title="Earn Your OOP Certificate">
+  Ready to lock in your design skills? Take the <a href="/courses/oop-fundamentals/exam">OOP Final Exam</a> (score 80% or higher) to unlock your free downloadable certificate.
+</Callout>

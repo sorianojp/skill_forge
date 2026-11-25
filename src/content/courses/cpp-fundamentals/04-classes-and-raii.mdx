@@ -1,0 +1,92 @@
+---
+title: "Classes, Constructors & RAII"
+description: "Encapsulate state with C++ classes, member initializer lists, and deterministic RAII resource cleanup."
+course: "cpp-fundamentals"
+module: "OOP & Resource Safety"
+order: 4
+durationMinutes: 9
+objectives:
+  - "Initialize class members cleanly with a member initializer list"
+  - "Mark read-only member functions const"
+  - "Understand RAII (Resource Acquisition Is Initialization) and destructors"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+**RAII (Resource Acquisition Is Initialization)** is the most important idiom in C++: tie every resource (memory, file handles, mutex locks) to an object's lifetime. The constructor acquires the resource, and the destructor (`~ClassName()`) releases it automatically the instant the object leaves scope, even if an exception is thrown.
+
+## `const` Member Functions
+
+Adding `const` after a method signature (for example, `double balance() const`) promises the compiler that calling the method will not mutate the object, allowing it to be called on `const` references.
+
+<Callout type="tip" title="Always Use Member Initializer Lists">
+  Initializing fields after a colon in the constructor (<code>: name_(name), hp_(hp)</code>) constructs them directly instead of default-constructing and then reassigning them.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Member Initializer & Const Method"
+  prompt="Initialize balance_ in the initializer list and mark balance() as const."
+  template={`class Account {
+    double balance_;
+public:
+    Account(double start) {{0}} balance_(start) {}
+    double balance() {{1}} { return balance_; }
+};`}
+  blanks={[
+    { answer: ':', placeholder: 'sym' },
+    { answer: 'const', placeholder: 'kw' },
+  ]}
+  hint={'Use : to start a member initializer list, and trailing const on read-only methods.'}
+/>
+
+## Interactive Code Lab
+
+<CodeLab
+  client:visible
+  title="raii_class.cpp"
+  language="cpp"
+  code={`#include <iostream>
+#include <string>
+
+class ScopedTimer {
+    std::string label_;
+public:
+    explicit ScopedTimer(std::string label) : label_(std::move(label)) {
+        std::cout << "[START] " << label_ << "\\n";
+    }
+    ~ScopedTimer() {
+        std::cout << "[END]   " << label_ << "\\n";
+    }
+};
+
+int main() {
+    ScopedTimer t("Build Step");
+    std::cout << "Running work...\\n";
+    return 0;
+}`}
+  expectedOutput={`[START] Build Step
+Running work...
+[END]   Build Step`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "When does a C++ stack object's destructor run under RAII?",
+      options: [
+        "Only when you manually call delete",
+        "Deterministically the moment the object goes out of scope",
+        "Whenever a garbage collector pauses the program"
+      ],
+      answer: 1,
+      explanation: "C++ runs destructors deterministically when local objects leave scope, guaranteeing leak-free cleanup."
+    }
+  ]}
+/>

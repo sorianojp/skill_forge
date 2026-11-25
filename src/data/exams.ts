@@ -459,4 +459,512 @@ export const COURSE_EXAMS: Record<string, ExamQuestion[]> = {
       explanation: 'enumerate(items) yields (index, item) pairs cleanly in a for loop.',
     },
   ],
+  'git-essentials': [
+    {
+      question: 'Which command moves modified files from your working tree into the staging area?',
+      options: ['git commit', 'git add', 'git status'],
+      answer: 1,
+      explanation: 'git add stages changes so they are included in the next commit snapshot.',
+    },
+    {
+      question: 'What does git status display?',
+      options: [
+        'The current branch plus staged, unstaged, and untracked files',
+        'Every commit ever pushed to GitHub',
+        'Only deleted branches',
+      ],
+      answer: 0,
+      explanation: 'git status summarizes your current branch and working tree state.',
+    },
+    {
+      question: 'Which command creates a new branch named feat/auth and switches to it immediately?',
+      options: ['git branch feat/auth', 'git checkout -b feat/auth', 'git merge feat/auth'],
+      answer: 1,
+      explanation: 'git checkout -b (or git switch -c) creates and switches to the new branch in one step.',
+    },
+    {
+      question: 'Before running git merge feat/nav to bring changes into main, which branch should be active?',
+      options: ['feat/nav', 'main', 'Any detached HEAD'],
+      answer: 1,
+      explanation: 'git merge integrates the specified branch into your currently checked-out branch.',
+    },
+    {
+      question: 'How does git fetch differ from git pull?',
+      options: [
+        'git fetch downloads remote commits without modifying your current working branch',
+        'git fetch automatically pushes local commits',
+        'git fetch deletes untracked files',
+      ],
+      answer: 0,
+      explanation: 'git fetch updates remote-tracking refs safely; git pull runs fetch followed by merge or rebase.',
+    },
+    {
+      question: 'What does the -u flag do in git push -u origin feat/cards?',
+      options: [
+        'Forces an overwrite of main',
+        'Sets upstream tracking so future pushes only need git push',
+        'Undoes the last commit before pushing',
+      ],
+      answer: 1,
+      explanation: '-u (--set-upstream) links your local branch to its remote counterpart.',
+    },
+    {
+      question: 'Which command temporarily shelves uncommitted edits so you can switch branches cleanly?',
+      options: ['git stash', 'git revert', 'git tag'],
+      answer: 0,
+      explanation: 'git stash saves dirty working tree changes on a stack; git stash pop restores them later.',
+    },
+    {
+      question: 'Which command safely undoes a buggy commit that was already pushed to main?',
+      options: ['git reset --hard HEAD~1', 'git revert <hash>', 'git push --force'],
+      answer: 1,
+      explanation: 'git revert creates a new inverse commit without rewriting shared history.',
+    },
+    {
+      question: 'Why do teams often choose Squash and Merge on GitHub Pull Requests?',
+      options: [
+        'It combines intermediate WIP commits into one clean commit on main',
+        'It bypasses all CI checks',
+        'It deletes the repository history',
+      ],
+      answer: 0,
+      explanation: 'Squashing keeps main history linear and easy to read or revert.',
+    },
+    {
+      question: 'What does git log --oneline output?',
+      options: [
+        'A compact one-line summary (short hash + subject) per commit',
+        'Only uncommitted files',
+        'The full diff of every binary file',
+      ],
+      answer: 0,
+      explanation: 'git log --oneline displays each commit on a single readable line.',
+    },
+  ],
+  'oop-fundamentals': [
+    {
+      question: 'What is the difference between a class and an object?',
+      options: [
+        'A class is a blueprint; an object is a concrete instance created from that blueprint',
+        'A class holds runtime data; an object holds only static functions',
+        'They are identical terms in OOP',
+      ],
+      answer: 0,
+      explanation: 'Classes define structure and behavior, while objects are individual instances with their own state.',
+    },
+    {
+      question: 'What is the main goal of encapsulation?',
+      options: [
+        'To make every field globally mutable',
+        'To hide internal state and enforce invariants through controlled public methods',
+        'To force every class to inherit from three parents',
+      ],
+      answer: 1,
+      explanation: 'Encapsulation protects object state from invalid external mutations.',
+    },
+    {
+      question: 'Which relationship is best modeled with composition rather than inheritance?',
+      options: ['A Car has an Engine', 'A Dog is an Animal', 'A SavingsAccount is a BankAccount'],
+      answer: 0,
+      explanation: 'Composition models has-a relationships cleanly and avoids brittle inheritance hierarchies.',
+    },
+    {
+      question: 'What does calling super() inside a subclass constructor do?',
+      options: [
+        'Deletes the parent class',
+        'Invokes the parent class constructor to initialize inherited state',
+        'Marks the method as private',
+      ],
+      answer: 1,
+      explanation: 'super() runs the superclass constructor before the subclass finishes initializing.',
+    },
+    {
+      question: 'How does polymorphism help eliminate long if/else or switch chains?',
+      options: [
+        'Callers invoke a shared method contract and each concrete class runs its own implementation',
+        'It automatically removes all classes at compile time',
+        'It forces all objects to share one static variable',
+      ],
+      answer: 0,
+      explanation: 'Polymorphism dispatches the same method call to the right implementation for each object type.',
+    },
+    {
+      question: 'What does the S in SOLID (Single Responsibility Principle) state?',
+      options: [
+        'A class should have only one focused reason to change',
+        'A program should have only a single class',
+        'Every method should accept only a single parameter',
+      ],
+      answer: 0,
+      explanation: 'Single Responsibility keeps classes cohesive and easier to maintain.',
+    },
+    {
+      question: 'What does the Open/Closed Principle encourage?',
+      options: [
+        'Open for extension, closed for modification',
+        'Keep all fields open (public) and close all constructors',
+        'Never add new classes to a project',
+      ],
+      answer: 0,
+      explanation: 'You should be able to add new behavior via new classes/implementations without editing stable code.',
+    },
+    {
+      question: 'Which SOLID principle is violated if a subclass throws an unexpected error when used in place of its parent?',
+      options: ['Liskov Substitution Principle', 'Interface Segregation Principle', 'Single Responsibility Principle'],
+      answer: 0,
+      explanation: 'Liskov Substitution requires subclasses to honor their parent contract seamlessly.',
+    },
+    {
+      question: 'Why is Dependency Injection (passing a repository into a constructor) valuable?',
+      options: [
+        'It decouples business logic from concrete storage and makes unit testing easy with fakes',
+        'It prevents classes from having methods',
+        'It forces code to connect directly to production databases during tests',
+      ],
+      answer: 0,
+      explanation: 'Constructor injection applies Dependency Inversion so dependencies can be swapped cleanly.',
+    },
+    {
+      question: 'What does the Interface Segregation Principle recommend?',
+      options: [
+        'Prefer small, focused interfaces over large bloated interfaces',
+        'Put every method in the application into one giant interface',
+        'Avoid interfaces altogether',
+      ],
+      answer: 0,
+      explanation: 'Clients should not be forced to implement methods they do not use.',
+    },
+  ],
+  'c-fundamentals': [
+    {
+      question: 'What does returning 0 from int main(void) indicate to the operating system?',
+      options: ['Execution succeeded without error', 'An out-of-memory error', 'A syntax warning'],
+      answer: 0,
+      explanation: 'Exit status 0 signals normal, successful termination.',
+    },
+    {
+      question: 'Which printf format specifier prints a signed int?',
+      options: ['%s', '%d', '%c'],
+      answer: 1,
+      explanation: '%d formats signed decimal integers in printf.',
+    },
+    {
+      question: 'How many bytes does the C string literal "Go" occupy in memory?',
+      options: ['2 bytes', '3 bytes (including the null terminator \\0)', '4 bytes'],
+      answer: 1,
+      explanation: 'C strings end with a null byte \\0, so "Go" uses 3 bytes.',
+    },
+    {
+      question: 'Given int x = 10; int *p = &x;, what does &x produce?',
+      options: ['The memory address of x', 'The value 10 doubled', 'A copy of x on the heap'],
+      answer: 0,
+      explanation: 'The & operator takes the memory address of a variable.',
+    },
+    {
+      question: 'Given int x = 10; int *p = &x;, what does *p = 20; do?',
+      options: ['Changes x to 20 by writing through the pointer', 'Changes the address stored in p to 20', 'Causes a compile error'],
+      answer: 0,
+      explanation: 'Dereferencing p (*p) accesses the integer stored at the address p points to.',
+    },
+    {
+      question: 'Why should you pass a length parameter alongside an array to a C function?',
+      options: [
+        'Arrays decay to pointers when passed to functions and do not carry their length',
+        'C arrays cannot hold more than 4 elements without a length parameter',
+        'Otherwise printf will not compile',
+      ],
+      answer: 0,
+      explanation: 'Inside a function, sizeof(arr) returns the pointer size, not the array byte size.',
+    },
+    {
+      question: 'Given Student *s, how do you access the score member of the struct?',
+      options: ['s.score', 's->score', 's::score'],
+      answer: 1,
+      explanation: 'The arrow operator (->) dereferences a struct pointer and accesses its field.',
+    },
+    {
+      question: 'Which pair of stdlib.h functions allocates and releases dynamic heap memory in C?',
+      options: ['alloc / delete', 'malloc / free', 'new / drop'],
+      answer: 1,
+      explanation: 'malloc() allocates heap bytes and free() releases them to prevent memory leaks.',
+    },
+    {
+      question: 'What happens if you omit break at the end of a C switch case?',
+      options: [
+        'Execution falls through into the next case automatically',
+        'The compiler rejects the program',
+        'The function returns 0 immediately',
+      ],
+      answer: 0,
+      explanation: 'C switch cases fall through unless terminated with break or return.',
+    },
+    {
+      question: 'Why do C functions mark read-only pointer parameters as const int *arr?',
+      options: [
+        'To prevent accidental mutation of the caller array and document read-only intent',
+        'To allocate the array on the heap',
+        'To enable garbage collection',
+      ],
+      answer: 0,
+      explanation: 'const pointers enforce immutability at compile time.',
+    },
+  ],
+  'cpp-fundamentals': [
+    {
+      question: 'Why is std::string preferred over raw char* arrays in Modern C++?',
+      options: [
+        'It manages memory automatically, tracks length in O(1), and avoids buffer overflows',
+        'It is only for ASCII single characters',
+        'It disables type checking',
+      ],
+      answer: 0,
+      explanation: 'std::string owns its buffer via RAII and resizes safely.',
+    },
+    {
+      question: 'How should you pass a large std::vector to a function that only reads it?',
+      options: ['By value (std::vector<int> v)', 'By const reference (const std::vector<int>& v)', 'As void*'],
+      answer: 1,
+      explanation: 'const T& avoids copying the entire container while preventing mutation.',
+    },
+    {
+      question: 'How does a C++ reference (int&) differ from a raw pointer (int*)?',
+      options: [
+        'A reference cannot be null and cannot be reseated to another variable',
+        'A reference requires manual free()',
+        'A reference can only point to heap memory',
+      ],
+      answer: 0,
+      explanation: 'References are non-null aliases bound once at initialization.',
+    },
+    {
+      question: 'Which STL container should be your default choice for a dynamic sequence?',
+      options: ['std::vector', 'std::list', 'Raw new[] array'],
+      answer: 0,
+      explanation: 'std::vector stores elements contiguously for optimal CPU cache performance and RAII safety.',
+    },
+    {
+      question: 'What does RAII (Resource Acquisition Is Initialization) guarantee in C++?',
+      options: [
+        'Resources acquired in a constructor are released deterministically in the destructor when leaving scope',
+        'A background garbage collector frees memory periodically',
+        'All objects must be allocated with malloc',
+      ],
+      answer: 0,
+      explanation: 'RAII ties resource lifetime to object scope, guaranteeing cleanup even when exceptions occur.',
+    },
+    {
+      question: 'What does a trailing const on a member function (double balance() const) promise?',
+      options: [
+        'Calling the method will not modify the object state',
+        'The return value is always zero',
+        'The method can only be called once',
+      ],
+      answer: 0,
+      explanation: 'const member functions can be safely called on const objects and const references.',
+    },
+    {
+      question: 'Which smart pointer provides exclusive ownership of a heap object with zero overhead?',
+      options: ['std::unique_ptr', 'std::raw_ptr', 'std::auto_free'],
+      answer: 0,
+      explanation: 'std::unique_ptr owns a single heap object and deletes it automatically on destruction.',
+    },
+    {
+      question: 'Why should you initialize class fields in a constructor member initializer list?',
+      options: [
+        'Fields are constructed directly instead of default-constructed and reassigned',
+        'It makes all fields public',
+        'It disables destructors',
+      ],
+      answer: 0,
+      explanation: 'Initializer lists avoid redundant work and are required for const or reference members.',
+    },
+    {
+      question: 'What does template <typename T> enable in C++?',
+      options: [
+        'Zero-cost generic functions and classes that compile to specialized code for any type T',
+        'Dynamic JavaScript-style typing at runtime',
+        'Automatic SQL table generation',
+      ],
+      answer: 0,
+      explanation: 'C++ templates generate type-safe specialized code at compile time.',
+    },
+    {
+      question: 'Which <algorithm> helper counts elements matching a lambda predicate?',
+      options: ['std::count_if', 'std::push_back', 'std::make_unique'],
+      answer: 0,
+      explanation: 'std::count_if(begin, end, predicate) returns the number of elements satisfying the lambda.',
+    },
+  ],
+  'java-fundamentals': [
+    {
+      question: 'How should you compare two Java String values for equal character content?',
+      options: ['a == b', 'a.equals(b)', 'a === b'],
+      answer: 1,
+      explanation: '.equals() compares character content; == compares object references in memory.',
+    },
+    {
+      question: 'What is a key benefit of Java arrow switch expressions (->)?',
+      options: [
+        'No accidental fall-through and the switch can directly return a value',
+        'They only accept boolean inputs',
+        'They replace constructors',
+      ],
+      answer: 0,
+      explanation: 'Modern switch expressions eliminate break boilerplate and check exhaustiveness.',
+    },
+    {
+      question: 'What does a Java record automatically generate?',
+      options: [
+        'Final fields, constructor, accessors, equals(), hashCode(), and toString()',
+        'Public mutable setters for every field',
+        'A REST controller',
+      ],
+      answer: 0,
+      explanation: 'Java records provide concise, immutable data carriers with minimal boilerplate.',
+    },
+    {
+      question: 'How many interfaces can a single Java class implement?',
+      options: ['At most one', 'Multiple interfaces (comma-separated after implements)', 'Zero'],
+      answer: 1,
+      explanation: 'Java supports single class inheritance (extends) and multiple interface implementation (implements).',
+    },
+    {
+      question: 'Why should you place @Override above methods that implement an interface or override a superclass method?',
+      options: [
+        'The compiler verifies the signature matches and catches typos at compile time',
+        'It makes the method private',
+        'It disables garbage collection for that class',
+      ],
+      answer: 0,
+      explanation: '@Override protects against accidental signature mismatches.',
+    },
+    {
+      question: 'What problem do Java Generics (like List<String>) solve?',
+      options: [
+        'They enforce element type safety at compile time without unsafe runtime casts',
+        'They convert lists into arrays automatically',
+        'They allow null primitives',
+      ],
+      answer: 0,
+      explanation: 'Generics catch type mismatches during compilation rather than throwing ClassCastException at runtime.',
+    },
+    {
+      question: 'What kind of list does List.of("a", "b") return?',
+      options: ['An unmodifiable (immutable) list', 'A thread-unsafe mutable ArrayList', 'A linked list of bytes'],
+      answer: 0,
+      explanation: 'List.of() creates a compact unmodifiable list; attempting to add() throws UnsupportedOperationException.',
+    },
+    {
+      question: 'What does Optional<T> represent in modern Java?',
+      options: [
+        'A container that may or may not hold a non-null value, helping prevent NullPointerException',
+        'An optional method parameter with a default value',
+        'A lazy database connection',
+      ],
+      answer: 0,
+      explanation: 'Optional makes absent values explicit and encourages safe handling with .orElse().',
+    },
+    {
+      question: 'In the Java Streams API, which operation keeps only elements matching a predicate?',
+      options: ['.map()', '.filter()', '.sorted()'],
+      answer: 1,
+      explanation: '.filter(predicate) retains only elements for which the predicate returns true.',
+    },
+    {
+      question: 'What is OrderItem::subtotal in items.stream().mapToDouble(OrderItem::subtotal)?',
+      options: [
+        'A method reference shorthand for item -> item.subtotal()',
+        'A static field import',
+        'A bitwise operator',
+      ],
+      answer: 0,
+      explanation: 'Method references cleanly pass an existing method as a functional interface implementation.',
+    },
+  ],
+  'csharp-fundamentals': [
+    {
+      question: 'How do you write an interpolated string in C#?',
+      options: ['$"Hello, {name}!"', 'f"Hello, {name}!"', '`Hello, ${name}!`'],
+      answer: 0,
+      explanation: 'Prefixing a C# string literal with $ enables {expression} interpolation.',
+    },
+    {
+      question: 'What does the null-coalescing operator (??) return in C#?',
+      options: [
+        'The left operand if non-null, otherwise the right fallback operand',
+        'True if both operands are null',
+        'Always throws NullReferenceException',
+      ],
+      answer: 0,
+      explanation: 'a ?? b returns a when a is not null, and b otherwise.',
+    },
+    {
+      question: 'How does == behave on two C# string values?',
+      options: [
+        'It compares the text content by value',
+        'It only compares memory addresses',
+        'It is a compile-time error',
+      ],
+      answer: 0,
+      explanation: 'C# overloads == for string to compare character content directly.',
+    },
+    {
+      question: 'In a C# switch expression, what does the discard pattern (_) represent?',
+      options: ['The catch-all default arm', 'Only negative integers', 'A null check only'],
+      answer: 0,
+      explanation: '_ matches any value not matched by earlier pattern arms.',
+    },
+    {
+      question: 'What does public int Count { get; private set; } enforce?',
+      options: [
+        'Callers can read Count publicly, but only the class itself can modify it',
+        'Anyone can read and write Count freely',
+        'Count cannot be read outside the class',
+      ],
+      answer: 0,
+      explanation: 'private set restricts mutation to the owning class while keeping reads public.',
+    },
+    {
+      question: 'What does var updated = user with { Score = 95 }; do on a C# record?',
+      options: [
+        'Creates a new record copy with Score updated to 95, leaving user unchanged',
+        'Mutates user in place',
+        'Deletes the Score property',
+      ],
+      answer: 0,
+      explanation: 'The with expression performs non-destructive mutation on records.',
+    },
+    {
+      question: 'Which LINQ method filters a collection by a boolean condition?',
+      options: ['.Select()', '.Where()', '.OrderBy()'],
+      answer: 1,
+      explanation: '.Where(predicate) filters elements matching the condition; .Select() transforms them.',
+    },
+    {
+      question: 'When does a LINQ query like items.Where(x => x > 10) actually execute?',
+      options: [
+        'Lazily when iterated (foreach) or materialized (.ToList(), .Count(), .Sum())',
+        'Immediately on the line where Where() is called',
+        'Only after the program exits',
+      ],
+      answer: 0,
+      explanation: 'LINQ uses deferred execution until results are enumerated or materialized.',
+    },
+    {
+      question: 'Why should async C# code avoid calling .Result or .Wait() on a Task?',
+      options: [
+        'Blocking synchronously wastes threads and can cause deadlocks; use await instead',
+        '.Result deletes the task result',
+        'They only work on integers',
+      ],
+      answer: 0,
+      explanation: 'Always propagate async/await instead of blocking synchronously on Tasks.',
+    },
+    {
+      question: 'How do you run two independent async Tasks concurrently and wait for both to finish?',
+      options: ['await Task.WhenAll(t1, t2)', 't1.Wait(); t2.Wait();', 'new Thread(t1)'],
+      answer: 0,
+      explanation: 'Task.WhenAll awaits multiple concurrent tasks cleanly without blocking threads.',
+    },
+  ],
 };

@@ -1,0 +1,85 @@
+---
+title: "LINQ & Collections"
+description: "Query, filter, sort, and project in-memory collections declaratively using C#'s LINQ extension methods."
+course: "csharp-fundamentals"
+module: "Modern .NET APIs"
+order: 4
+durationMinutes: 9
+objectives:
+  - "Filter collections with .Where() and project values with .Select()"
+  - "Sort and aggregate cleanly using .OrderByDescending(), .Sum(), and .Average()"
+  - "Understand deferred execution and when to materialize with .ToList()"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+**LINQ (Language Integrated Query)** is one of C#'s signature features. It brings SQL-like querying (`Where`, `Select`, `OrderBy`, `GroupBy`, `Sum`) directly into C# with full compile-time type safety and autocomplete.
+
+## Deferred Execution
+
+LINQ queries like `items.Where(...)` are **lazy**: they do not execute until you iterate over them (with `foreach`) or materialize them with `.ToList()`, `.Count()`, or `.Sum()`.
+
+<Callout type="tip" title="Method Syntax Is the Everyday Standard">
+  Chaining <code>.Where(x =&gt; ...).OrderBy(x =&gt; ...).Select(x =&gt; ...)</code> composes cleanly and works identically for in-memory lists and Entity Framework Core SQL queries.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Filter & Project with LINQ"
+  prompt="Keep scores of 80+ and format each as a string label."
+  template={`var labels = scores
+    .{{0}}(s => s >= 80)
+    .{{1}}(s => $"Pass ({s})")
+    .ToList();`}
+  blanks={[
+    { answer: 'Where', placeholder: 'method' },
+    { answer: 'Select', placeholder: 'method' },
+  ]}
+  hint={'LINQ uses Where() to filter items and Select() to transform (map) each item.'}
+/>
+
+## Interactive Code Lab
+
+<CodeLab
+  client:visible
+  title="LinqDemo.cs"
+  language="csharp"
+  code={`using System.Linq;
+
+record Course(string Name, int Hours);
+
+var courses = new List<Course>
+{
+    new("Git", 4),
+    new("OOP", 5),
+    new("C#", 6),
+    new("Java", 6)
+};
+
+var names = courses
+    .Where(c => c.Hours >= 5)
+    .OrderBy(c => c.Name)
+    .Select(c => c.Name);
+
+Console.WriteLine(string.Join(", ", names));
+Console.WriteLine($"Total hours: {courses.Sum(c => c.Hours)}");`}
+  expectedOutput={`C#, Java, OOP
+Total hours: 21`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which LINQ method transforms (maps) every element in a sequence into a new shape?",
+      options: ["Where()", "Select()", "Any()"],
+      answer: 1,
+      explanation: "Select() projects each element into a new value or type, just like map() in JavaScript or Python."
+    }
+  ]}
+/>

@@ -1,0 +1,85 @@
+---
+title: "Control Flow & Functions"
+description: "Write reusable C functions with prototypes, branch with if/switch, and iterate cleanly with for and while loops."
+course: "c-fundamentals"
+module: "C Foundations"
+order: 2
+durationMinutes: 8
+objectives:
+  - "Declare function prototypes before main() so the compiler validates calls"
+  - "Use if/else, switch, and for loops cleanly"
+  - "Understand pass-by-value behavior for primitive parameters"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+C reads source files top-to-bottom. Placing a **function prototype** (declaration) above `main()` lets the compiler check argument types even when the full implementation is placed below `main()`.
+
+## Pass-by-Value by Default
+
+When you pass an `int` to a C function, C copies the value. Modifying the parameter inside the function does **not** change the caller's original variable (unless you pass a pointer, which we cover in Lesson 4).
+
+<Callout type="info" title="Don't Forget break in switch">
+  In C, <code>switch</code> cases fall through to the next case automatically unless you end each case with <code>break;</code> or <code>return</code>.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Function Prototype & Return"
+  prompt="Declare a function that returns the square of an integer."
+  template={`{{0}} square(int n) {
+    {{1}} n * n;
+}`}
+  blanks={[
+    { answer: 'int', placeholder: 'type' },
+    { answer: 'return', placeholder: 'kw' },
+  ]}
+  hint={'Specify the return type int before the function name, then use return.'}
+/>
+
+## Interactive Code Lab
+
+<CodeLab
+  client:visible
+  title="functions.c"
+  language="c"
+  code={`#include <stdio.h>
+
+int sum_range(int start, int end);
+
+int main(void) {
+    int total = sum_range(1, 5);
+    printf("Sum 1..5 = %d\\n", total);
+    return 0;
+}
+
+int sum_range(int start, int end) {
+    int sum = 0;
+    for (int i = start; i <= end; i++) {
+        sum += i;
+    }
+    return sum;
+}`}
+  expectedOutput={`Sum 1..5 = 15`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why do C programs declare function prototypes near the top of a file or in a .h header?",
+      options: [
+        "So the compiler knows the function's parameter and return types before it is called",
+        "To make functions run twice as fast at runtime",
+        "Because C does not allow functions to return values otherwise"
+      ],
+      answer: 0,
+      explanation: "Prototypes let the compiler type-check calls before seeing the full function body."
+    }
+  ]}
+/>

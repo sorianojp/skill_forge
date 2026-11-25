@@ -1,0 +1,94 @@
+---
+title: "C Capstone: Score Analyzer CLI"
+description: "Combine structs, arrays, pointers, and clean functions to build a compact C score analyzer utility."
+course: "c-fundamentals"
+module: "Capstone"
+order: 6
+durationMinutes: 10
+objectives:
+  - "Pass an array of structs by const pointer to compute summary statistics"
+  - "Return multiple results cleanly via output pointer parameters"
+  - "Prepare for the C Programming Final Exam and Certificate"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+In real C codebases, functions frequently take a `const` pointer to read an array safely and use output pointers (like `int *out_max`) to return multiple computed values without extra heap allocations.
+
+## Fill-in-the-Blank Capstone
+
+<Exercise
+  client:visible
+  title="Output Pointer Parameter"
+  prompt="Write the maximum value back to the caller through out_max."
+  template={`void find_max(const int *arr, size_t n, int *out_max) {
+    int best = arr[0];
+    for (size_t i = 1; i < n; i++) {
+        if (arr[i] > best) best = arr[i];
+    }
+    {{0}}out_max = best;
+}`}
+  blanks={[
+    { answer: '*', placeholder: 'op' },
+  ]}
+  hint={'Dereference out_max with * to store the result at the caller address.'}
+/>
+
+## Capstone Code Lab
+
+<CodeLab
+  client:visible
+  title="analyzer.c"
+  language="c"
+  code={`#include <stdio.h>
+
+typedef struct {
+    const char *label;
+    int score;
+} Entry;
+
+void summarize(const Entry *items, size_t n, double *avg, int *top) {
+    int sum = 0;
+    int best = items[0].score;
+    for (size_t i = 0; i < n; i++) {
+        sum += items[i].score;
+        if (items[i].score > best) best = items[i].score;
+    }
+    *avg = (double)sum / n;
+    *top = best;
+}
+
+int main(void) {
+    Entry data[] = { {"Quiz 1", 85}, {"Quiz 2", 94}, {"Exam", 91} };
+    double avg = 0.0;
+    int top = 0;
+
+    summarize(data, 3, &avg, &top);
+    printf("Average: %.1f | Top: %d\\n", avg, top);
+    return 0;
+}`}
+  expectedOutput={`Average: 90.0 | Top: 94`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why is const Entry *items used in the summarize() function signature?",
+      options: [
+        "It tells the compiler summarize() will not modify the caller's array elements",
+        "It forces the array to be allocated on the heap",
+        "It automatically frees the array when summarize() returns"
+      ],
+      answer: 0,
+      explanation: "Marking read-only pointer parameters const documents intent and lets the compiler catch accidental mutations."
+    }
+  ]}
+/>
+
+<Callout type="tip" title="Earn Your C Programming Certificate">
+  Ready to test your systems mastery? Take the <a href="/courses/c-fundamentals/exam">C Programming Final Exam</a> (score 80% or higher) to unlock your free downloadable certificate.
+</Callout>

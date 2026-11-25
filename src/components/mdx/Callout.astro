@@ -1,13 +1,19 @@
 ---
 interface Props {
-  type?: 'note' | 'tip' | 'warning';
+  type?: 'note' | 'info' | 'tip' | 'warning';
   title?: string;
 }
 
 const { type = 'note', title } = Astro.props;
 
-const config = {
+const STYLES = {
   note: {
+    defaultTitle: 'Note',
+    border: 'border-[var(--accent)]',
+    bg: 'bg-[var(--accent-soft)]',
+    titleColor: 'text-[var(--accent)]',
+  },
+  info: {
     defaultTitle: 'Note',
     border: 'border-[var(--accent)]',
     bg: 'bg-[var(--accent-soft)]',
@@ -25,7 +31,9 @@ const config = {
     bg: 'bg-[var(--warning-soft)]',
     titleColor: 'text-[var(--warning)]',
   },
-}[type];
+} as const;
+
+const config = STYLES[type] ?? STYLES.note;
 ---
 
 <aside class={`not-prose my-6 rounded-2xl ${config.bg} p-5`}>

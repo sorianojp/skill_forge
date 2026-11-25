@@ -1,0 +1,20 @@
+{
+  "slug": "csharp-fundamentals",
+  "title": "C# & .NET Essentials",
+  "shortTitle": "Learn C#",
+  "description": "Build modern .NET applications, ASP.NET Core APIs, and Unity games with C# 12. Master types, pattern matching, properties, records, LINQ, and async/await.",
+  "track": "C#",
+  "difficulty": "Beginner",
+  "estimatedHours": 6,
+  "accentColor": "#7e22ce",
+  "prerequisites": ["None, helpful alongside OOP Fundamentals"],
+  "outcomes": [
+    "Write concise modern C# with string interpolation, var, and nullable reference types",
+    "Simplify branching using switch expressions and relational pattern matching",
+    "Model domain objects cleanly with auto-properties, init-only setters, and records",
+    "Query and transform collections expressively using LINQ (Where, Select, OrderBy)",
+    "Write non-blocking I/O code using async, await, and Task<T>"
+  ],
+  "featured": true,
+  "order": 12
+}

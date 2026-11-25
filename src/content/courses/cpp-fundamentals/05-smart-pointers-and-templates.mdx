@@ -1,0 +1,89 @@
+---
+title: "Smart Pointers & Generic Templates"
+description: "Eliminate manual new/delete with std::unique_ptr and write zero-cost generic functions with C++ templates."
+course: "cpp-fundamentals"
+module: "OOP & Resource Safety"
+order: 5
+durationMinutes: 9
+objectives:
+  - "Own heap objects safely with std::unique_ptr and std::make_unique"
+  - "Know when to use std::shared_ptr vs. std::unique_ptr"
+  - "Write reusable, type-safe generic functions with template <typename T>"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+In Modern C++, you almost never write raw `new` or `delete`. Instead, **`std::unique_ptr<T>`** enforces single ownership of a heap object and automatically deletes it when the pointer leaves scope, with zero runtime overhead compared to a raw pointer.
+
+## Generic Templates
+
+A C++ **template** lets you write one algorithm that compiles to specialized, native machine code for any type `T` (`int`, `double`, `std::string`).
+
+<Callout type="tip" title="Default to std::unique_ptr">
+  Use <code>std::make_unique&lt;T&gt;(...)</code> by default. Reach for <code>std::shared_ptr&lt;T&gt;</code> only when multiple owners genuinely share lifetime responsibility.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Generic Template Function"
+  prompt="Write a generic max_of function that works for any comparable type T."
+  template={`{{0}} <typename T>
+T max_of(const T& a, const T& b) {
+    return (a > b) ? a : {{1}};
+}`}
+  blanks={[
+    { answer: 'template', placeholder: 'kw' },
+    { answer: 'b', placeholder: 'var' },
+  ]}
+  hint={'Declare templates with template <typename T>, and return b when a is not greater.'}
+/>
+
+## Interactive Code Lab
+
+<CodeLab
+  client:visible
+  title="smart_ptr_templates.cpp"
+  language="cpp"
+  code={`#include <iostream>
+#include <memory>
+#include <string>
+
+template <typename T>
+T clamp_val(const T& val, const T& lo, const T& hi) {
+    if (val < lo) return lo;
+    if (val > hi) return hi;
+    return val;
+}
+
+struct Task {
+    std::string title;
+};
+
+int main() {
+    auto task = std::make_unique<Task>(Task{"Ship C++ Track"});
+    std::cout << task->title << " | Clamped: " << clamp_val(120, 0, 100) << "\\n";
+    return 0;
+}`}
+  expectedOutput={`Ship C++ Track | Clamped: 100`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why should Modern C++ code prefer std::make_unique<T>() over raw new and delete?",
+      options: [
+        "It prevents memory leaks automatically via RAII with zero overhead",
+        "It disables constructors",
+        "It converts heap memory into global variables"
+      ],
+      answer: 0,
+      explanation: "std::unique_ptr frees its managed object deterministically when destroyed, eliminating manual delete leaks."
+    }
+  ]}
+/>

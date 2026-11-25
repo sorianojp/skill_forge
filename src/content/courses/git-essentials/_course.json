@@ -1,0 +1,20 @@
+{
+  "slug": "git-essentials",
+  "title": "Git & GitHub Essentials",
+  "shortTitle": "Learn Git",
+  "description": "Master version control from day one. Practice commits, branching, merging, pull requests, stashing, and safe undo workflows in an interactive Git terminal.",
+  "track": "Git",
+  "difficulty": "Beginner",
+  "estimatedHours": 4,
+  "accentColor": "#dc2626",
+  "prerequisites": ["None, essential for every developer"],
+  "outcomes": [
+    "Track files cleanly with git init, git status, git add, and atomic commits",
+    "Create, switch, and merge feature branches without losing work",
+    "Collaborate with remotes using git push, git pull, and Pull Requests",
+    "Recover safely from mistakes using git stash, git restore, and git revert",
+    "Follow a production team workflow from branch creation to merged PR"
+  ],
+  "featured": true,
+  "order": 7
+}

@@ -1,0 +1,74 @@
+---
+title: "Branches & Merging"
+description: "Isolate new features on lightweight branches and merge them back into main cleanly."
+course: "git-essentials"
+module: "Core Version Control"
+order: 2
+durationMinutes: 8
+objectives:
+  - "Create and switch to feature branches with git checkout -b or git switch -c"
+  - "List local branches and identify the active branch"
+  - "Combine work back into main using git merge"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import GitSandbox from '@/components/playground/GitSandbox';
+import Quiz from '@/components/quiz/Quiz';
+
+In Git, a **branch** is simply a lightweight movable pointer to a commit. Creating a branch takes milliseconds and lets you build a feature or fix a bug without breaking `main`.
+
+## Everyday Branch Commands
+
+- `git branch` lists local branches (`*` marks the active one).
+- `git checkout -b feat/search` (or `git switch -c feat/search`) creates and switches to a new branch.
+- `git checkout main` switches back to `main`.
+- `git merge feat/search` integrates commits from `feat/search` into your current branch.
+
+<Callout type="info" title="Handling Merge Conflicts">
+  A merge conflict happens when two branches edit the exact same lines of a file. Git marks both versions with <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code>, <code>=======</code>, and <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code> so you can keep the right code, run <code>git add</code>, and commit the resolution.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Create and Merge a Feature Branch"
+  prompt="Create a branch named feat-nav, then later merge it into main."
+  template={`git checkout {{0}} feat-nav
+git checkout main
+git {{1}} feat-nav`}
+  blanks={[
+    { answer: '-b', placeholder: 'flag' },
+    { answer: 'merge', placeholder: 'cmd' },
+  ]}
+  hint={'Pass -b to git checkout to create a new branch, and use git merge to combine it into main.'}
+/>
+
+## Try It Yourself (Interactive Git Terminal)
+
+<GitSandbox
+  client:visible
+  title="Branching & Merging Lab"
+  starterHint={'Create a feature branch, commit work on it, switch back to main, and merge it.'}
+  suggestedCommands={[
+    'git checkout -b feat-hero',
+    'git add .',
+    'git commit -m "Build hero section"',
+    'git checkout main',
+    'git merge feat-hero',
+    'git log --oneline',
+  ]}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Before running git merge feat-login to merge into main, which branch should you be checked out on?",
+      options: ["feat-login", "main", "It does not matter"],
+      answer: 1,
+      explanation: "git merge pulls changes from the named branch INTO your currently checked-out branch."
+    }
+  ]}
+/>

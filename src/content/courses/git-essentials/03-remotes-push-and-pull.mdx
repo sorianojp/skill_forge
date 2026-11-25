@@ -1,0 +1,74 @@
+---
+title: "Remotes, Push, Fetch & Pull"
+description: "Sync your local repository with GitHub using origin, git push, git fetch, and git pull."
+course: "git-essentials"
+module: "Collaboration & GitHub"
+order: 3
+durationMinutes: 8
+objectives:
+  - "Connect a local repository to a remote named origin"
+  - "Understand the difference between git fetch and git pull"
+  - "Publish local branches safely with git push -u origin"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import GitSandbox from '@/components/playground/GitSandbox';
+import Quiz from '@/components/quiz/Quiz';
+
+A **remote** is a hosted copy of your repository (such as on GitHub or GitLab). By convention, your primary remote is named `origin`.
+
+## Fetch vs. Pull
+
+- **`git fetch origin`** downloads new commits and branches from GitHub without touching your working files. It is always safe to run.
+- **`git pull origin main`** runs `git fetch` and immediately merges (or rebases) remote changes into your current branch.
+- **`git push -u origin feat/cards`** uploads your local branch and sets up upstream tracking so future pushes only need `git push`.
+
+<Callout type="warning" title="Never Force-Push Shared Branches">
+  Running <code>git push --force</code> on <code>main</code> rewrites shared history and can wipe out teammates' commits. If you must update a private feature branch after a rebase, prefer <code>git push --force-with-lease</code>.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Sync with Origin"
+  prompt="Download remote changes without merging, then publish a new branch with upstream tracking."
+  template={`git {{0}} origin
+git {{1}} -u origin feat-profile`}
+  blanks={[
+    { answer: 'fetch', placeholder: 'cmd' },
+    { answer: 'push', placeholder: 'cmd' },
+  ]}
+  hint={'git fetch downloads remote metadata safely, and git push -u publishes your branch.'}
+/>
+
+## Try It Yourself (Interactive Git Terminal)
+
+<GitSandbox
+  client:visible
+  title="Prepare Commits for Remote Push"
+  starterHint={'Inspect your branch state, create a clean commit, and verify the log before pushing.'}
+  suggestedCommands={[
+    'git branch',
+    'git add .',
+    'git commit -m "Configure origin workflow"',
+    'git log --oneline',
+  ]}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does git fetch do compared to git pull?",
+      options: [
+        "git fetch downloads remote commits without modifying your current working branch",
+        "git fetch deletes local untracked files",
+        "git fetch automatically pushes your local commits to GitHub"
+      ],
+      answer: 0,
+      explanation: "git fetch updates your remote-tracking refs safely without merging into your working tree."
+    }
+  ]}
+/>
