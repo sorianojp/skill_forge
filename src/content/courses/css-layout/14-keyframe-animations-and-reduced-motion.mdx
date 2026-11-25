@@ -1,0 +1,124 @@
+---
+title: "@keyframes Animations & Reduced Motion"
+description: "Build multi-step CSS animations like loading spinners and pulsing badges while respecting users' prefers-reduced-motion accessibility settings."
+course: "css-layout"
+module: "Visual Polish & Motion"
+order: 14
+durationMinutes: 8
+objectives:
+  - "Define multi-step animations with @keyframes and animation"
+  - "Build lightweight CSS-only loading indicators and live status pulses"
+  - "Respect prefers-reduced-motion: reduce for vestibular accessibility"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+While `transition` animates between two states (e.g., default → hover), **`@keyframes`** lets you choreograph multi-step or looping animations automatically.
+
+## Respecting `prefers-reduced-motion`
+
+Motion that feels playful to some users can trigger dizziness or nausea for people with vestibular disorders. Always guard decorative or looping motion with a media query:
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  .pulse, .spinner {
+    animation: none;
+  }
+}
+```
+
+<Callout type="warning" title="Accessibility Requirement">
+  Treating <code>prefers-reduced-motion: reduce</code> as a standard part of every animation guarantees a comfortable experience for all learners.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Accessible Keyframe Animation"
+  prompt="Define a spin animation and disable it when the user prefers reduced motion."
+  template={`@{{0}} spin {
+  to { transform: rotate(360deg); }
+}
+@media ({{1}}: reduce) {
+  .spinner { animation: none; }
+}`}
+  blanks={[
+    { answer: 'keyframes', placeholder: 'rule' },
+    { answer: 'prefers-reduced-motion', placeholder: 'media-feature' },
+  ]}
+  hint={'Use @keyframes to declare animation steps and prefers-reduced-motion to honor OS motion preferences.'}
+/>
+
+## Try It Yourself
+
+Adjust the spinner speed or pulse keyframes below:
+
+<Playground
+  client:visible
+  title="CSS Spinner & Live Status Dot"
+  defaultTab="css"
+  height={240}
+  html={`<div class="demo">
+  <div class="pill">
+    <span class="dot"></span>
+    <span>Live Sandbox Ready</span>
+  </div>
+  <div class="spinner" aria-label="Loading"></div>
+</div>`}
+  css={`.demo { display: flex; align-items: center; gap: 20px; padding: 16px; }
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #166534;
+}
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #16a34a;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+.spinner {
+  width: 26px;
+  height: 26px;
+  border: 3px solid #dbeafe;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.45); opacity: 0.45; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dot, .spinner { animation: none; }
+}`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which CSS media query detects when a user has turned on 'Reduce Motion' in their OS settings?",
+      options: [
+        "@media (motion: off)",
+        "@media (prefers-reduced-motion: reduce)",
+        "@media (disable-animations: true)"
+      ],
+      answer: 1,
+      explanation: "@media (prefers-reduced-motion: reduce) lets you tone down or disable animations for users who prefer minimal motion."
+    }
+  ]}
+/>

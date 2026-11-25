@@ -1,0 +1,44 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ProgressDashboard from '@/components/progress/ProgressDashboard';
+import { getAllCoursesSorted, getCourseLessons, getLessonKey, getLessonSlug } from '@/lib/courses';
+
+const courses = await getAllCoursesSorted();
+const summaries = await Promise.all(
+  courses.map(async (c) => {
+    const lessons = await getCourseLessons(c.data.slug);
+    return {
+      slug: c.data.slug,
+      title: c.data.title,
+      track: c.data.track,
+      accentColor: c.data.accentColor,
+      lessons: lessons.map((l) => {
+        const slug = getLessonSlug(l);
+        return {
+          key: getLessonKey(c.data.slug, slug),
+          title: l.data.title,
+          href: `/courses/${c.data.slug}/${slug}`,
+        };
+      }),
+    };
+  })
+);
+---
+
+<BaseLayout
+  title="My Progress & Certificates"
+  description="Track your completed lessons, exam scores, and download your earned SkillForge certificates."
+>
+  <div class="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+    <header class="mb-10">
+      <h1 class="text-3xl font-extrabold tracking-tight text-[var(--text)] sm:text-4xl">
+        My Learning &amp; Certificates
+      </h1>
+      <p class="mt-2 text-base text-[var(--text-muted)]">
+        View your progress across every track and download your free completion certificates, no account required.
+      </p>
+    </header>
+
+    <ProgressDashboard client:load courses={summaries} />
+  </div>
+</BaseLayout>

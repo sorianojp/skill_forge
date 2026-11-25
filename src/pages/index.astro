@@ -1,0 +1,230 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ContinueBanner from '@/components/progress/ContinueBanner';
+import CourseCardFooter from '@/components/progress/CourseCardFooter';
+import Playground from '@/components/playground/Playground';
+import TrackIcon from '@/components/ui/TrackIcon.astro';
+import { getAllCoursesSorted, getCourseLessons, getLessonKey, getLessonSlug } from '@/lib/courses';
+import { getCollection } from 'astro:content';
+
+const courses = await getAllCoursesSorted();
+const courseCards = await Promise.all(
+  courses.map(async (course) => {
+    const lessons = await getCourseLessons(course.data.slug);
+    return {
+      course,
+      lessonRefs: lessons.map((l) => {
+        const slug = getLessonSlug(l);
+        return {
+          key: getLessonKey(course.data.slug, slug),
+          href: `/courses/${course.data.slug}/${slug}`,
+        };
+      }),
+    };
+  })
+);
+
+const references = await getCollection('references');
+---
+
+<BaseLayout
+  title="Free Interactive Web Development Courses"
+  description="Learn HTML, CSS, and JavaScript with modern editorial guides, live Try-It-Yourself sandboxes, and interactive quizzes, 100% free."
+>
+  <!-- Hero -->
+  <section>
+    <div class="mx-auto max-w-[82rem] px-5 pt-8 pb-8 sm:px-6 sm:pt-10 sm:pb-10 lg:px-8">
+      <div class="max-w-3xl">
+        <span class="inline-flex items-center rounded-full bg-[var(--bg-elevated)] px-3.5 py-1.5 text-xs font-semibold text-[var(--accent)]">
+          100% Free · No Login Required · Interactive Playgrounds
+        </span>
+        <h1 class="mt-6 text-4xl font-extrabold tracking-tight text-[var(--text)] sm:text-6xl">
+          <span class="font-normal text-[var(--text-muted)]">Learn modern</span> web development{' '}
+          <span class="font-normal text-[var(--text-muted)]">by</span>{' '}
+          <span class="text-[var(--accent)]">building live</span>.
+        </h1>
+        <p class="mt-5 max-w-2xl text-lg leading-relaxed text-[var(--text-muted)]">
+          Clear, structured learning paths inspired by <strong>web.dev</strong> combined with instant
+          <strong> Try It Yourself</strong> sandboxes and bite-sized references inspired by <strong>W3Schools</strong>.
+        </p>
+
+        <div class="mt-8 flex flex-wrap items-center gap-3">
+          <a
+            href="/courses"
+            class="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[var(--accent)] px-7 py-3.5 text-base font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[var(--accent-strong)] active:scale-[0.98]"
+          >
+            <span>Browse All Courses</span>
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+            </svg>
+          </a>
+          <a
+            href="/playground"
+            class="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[var(--bg-muted)] px-7 py-3.5 text-base font-semibold text-[var(--text)] transition hover:-translate-y-0.5 hover:bg-[var(--bg-elevated)] active:scale-[0.98]"
+          >
+            <svg class="h-4 w-4 opacity-75" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="4 17 10 11 4 5" />
+              <line x1="12" y1="19" x2="20" y2="19" />
+            </svg>
+            <span>Open Live Playground</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <div class="mx-auto max-w-[82rem] px-5 py-10 sm:px-6 lg:px-8">
+    <ContinueBanner client:load />
+
+    <!-- Featured Courses -->
+    <section aria-labelledby="courses-heading">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h2 id="courses-heading" class="text-2xl font-extrabold tracking-tight text-[var(--text)] sm:text-3xl">
+            Structured Learning Paths
+          </h2>
+          <p class="mt-1.5 text-sm text-[var(--text-muted)]">
+            Pick a track and start coding right in your browser. Progress saves automatically.
+          </p>
+        </div>
+        <a href="/courses" class="text-sm font-semibold text-[var(--accent)] hover:underline">
+          View all courses →
+        </a>
+      </div>
+
+      <div class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {courseCards.map(({ course, lessonRefs }) => (
+          <article class="flex flex-col justify-between rounded-3xl bg-[var(--bg-elevated)] p-7 transition hover:-translate-y-0.5">
+            <div>
+              <div class="flex items-start justify-between gap-3">
+                <TrackIcon track={course.data.track} size="md" />
+                <span class="inline-flex items-center gap-1 rounded-full bg-[var(--bg-muted)] px-2.5 py-1 text-xs font-medium text-[var(--text-muted)]">
+                  <svg class="h-3.5 w-3.5 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
+                  {course.data.difficulty} · ~{course.data.estimatedHours}h
+                </span>
+              </div>
+
+              <h3 class="mt-4 text-xl font-bold text-[var(--text)]">
+                <a href={`/courses/${course.data.slug}`} class="hover:text-[var(--accent)]">
+                  {course.data.title}
+                </a>
+              </h3>
+              <p class="mt-2 text-sm leading-relaxed text-[var(--text-muted)]">
+                {course.data.description}
+              </p>
+            </div>
+
+            <CourseCardFooter
+              client:load
+              courseSlug={course.data.slug}
+              lessons={lessonRefs}
+              secondaryLabel="Syllabus"
+            />
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- Live Interactive Teaser -->
+    <section class="mt-20" aria-labelledby="try-heading">
+      <div class="max-w-2xl">
+        <h2 id="try-heading" class="text-2xl font-extrabold tracking-tight text-[var(--text)] sm:text-3xl">
+          Try It Yourself: Right Inside Every Lesson
+        </h2>
+        <p class="mt-2 text-sm text-[var(--text-muted)]">
+          Edit the HTML, CSS, or JavaScript below and watch the preview update live. No setup or installs required.
+        </p>
+      </div>
+
+      <Playground
+        client:visible
+        title="Interactive Demo: Edit Me!"
+        height={270}
+        html={`<div class="card">
+  <span class="badge">Live Sandbox</span>
+  <h2>Hello, SkillForge!</h2>
+  <p>Edit this text or click the button below.</p>
+  <button id="btn">Clicked 0 times</button>
+</div>`}
+        css={`.card {
+  max-width: 360px;
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #1d4ed8;
+  background: #dbeafe;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+h2 { margin: 10px 0 6px; font-size: 20px; }
+p { margin: 0 0 14px; color: #475569; font-size: 14px; }
+button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+button:hover { background: #1d4ed8; }`}
+        js={`let count = 0;
+const btn = document.getElementById('btn');
+btn.addEventListener('click', () => {
+  count += 1;
+  btn.textContent = 'Clicked ' + count + ' times';
+  console.log('Button clicked:', count);
+});`}
+      />
+    </section>
+
+    <!-- Quick Reference Strip -->
+    {references.length > 0 && (
+      <section class="mt-20" aria-labelledby="ref-heading">
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h2 id="ref-heading" class="text-2xl font-extrabold tracking-tight text-[var(--text)]">
+              Quick References
+            </h2>
+            <p class="mt-1 text-sm text-[var(--text-muted)]">
+              Fast lookup sheets for tags, CSS properties, and JavaScript APIs.
+            </p>
+          </div>
+          <a href="/reference" class="text-sm font-semibold text-[var(--accent)] hover:underline">
+            All references →
+          </a>
+        </div>
+
+        <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {references.slice(0, 6).map((ref) => (
+            <a
+              href={`/reference/${ref.id.replace(/\.mdx$/, '')}`}
+              class="flex items-start gap-3.5 rounded-2xl bg-[var(--bg-elevated)] p-5 transition hover:-translate-y-0.5"
+            >
+              <TrackIcon track={ref.data.category} size="sm" />
+              <div class="min-w-0">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-[var(--text-subtle)]">
+                  {ref.data.category}
+                </span>
+                <h3 class="mt-0.5 font-mono text-sm font-bold text-[var(--text)]">{ref.data.title}</h3>
+                <p class="mt-1 line-clamp-2 text-xs leading-relaxed text-[var(--text-muted)]">{ref.data.summary}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+  </div>
+</BaseLayout>

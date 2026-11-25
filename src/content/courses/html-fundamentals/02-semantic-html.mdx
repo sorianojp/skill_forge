@@ -1,0 +1,102 @@
+---
+title: "Semantic HTML & Landmarks"
+description: "Replace generic div soup with meaningful elements like header, nav, main, article, and footer for better accessibility and SEO."
+course: "html-fundamentals"
+module: "Foundations"
+order: 3
+durationMinutes: 8
+objectives:
+  - "Choose semantic landmarks instead of generic <div> wrappers"
+  - "Understand how screen readers and search engines use landmarks"
+  - "Structure a complete article layout semantically"
+---
+
+import Playground from '@/components/playground/Playground';
+import DoDont from '@/components/mdx/DoDont.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+**Semantic HTML** means choosing the HTML element that accurately describes *what the content is*, not just how it looks.
+
+## Why Semantics Matter
+
+- **Accessibility:** Screen readers let users jump directly to `<main>`, `<nav>`, or `<article>` landmarks.
+- **SEO:** Search engines understand which part of your page is the primary content vs. navigation or footer boilerplate.
+- **Maintainability:** Reading `<header>` and `<article>` is far clearer than reading ten nested `<div>` tags.
+
+<DoDont
+  doTitle="Use Semantic Landmarks"
+  dontTitle="Avoid Div Soup"
+  doCode={`<header>
+  <nav>...</nav>
+</header>
+<main>
+  <article>
+    <h1>Lesson Title</h1>
+    <p>Readable content...</p>
+  </article>
+</main>
+<footer>© SkillForge</footer>`}
+  dontCode={`<div class="top">
+  <div class="links">...</div>
+</div>
+<div class="content">
+  <div class="post">
+    <div class="big-text">Lesson Title</div>
+    <div>Readable content...</div>
+  </div>
+</div>
+<div class="bottom">© SkillForge</div>`}
+  note="Prefer native interactive elements too: use <button> for actions and <a> for navigation, never clickable <div> elements."
+/>
+
+## Try It Yourself
+
+Explore how semantic elements create a clean, readable document skeleton:
+
+<Playground
+  client:visible
+  title="Semantic Page Layout"
+  height={280}
+  html={`<header class="site-header">
+  <strong>SkillForge Blog</strong>
+  <nav aria-label="Main">
+    <a href="#article">Article</a>
+    <a href="#footer">Footer</a>
+  </nav>
+</header>
+
+<main id="article">
+  <article>
+    <h1>Why Semantic HTML Wins</h1>
+    <p>Browsers, assistive tech, and search engines all benefit from clear HTML landmarks.</p>
+  </article>
+</main>
+
+<footer id="footer">
+  <small>Built with semantic HTML.</small>
+</footer>`}
+  css={`.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: #eff6ff;
+  border-radius: 10px;
+}
+nav { display: flex; gap: 12px; }
+nav a { color: #1d4ed8; font-weight: 600; text-decoration: none; }
+main { margin: 16px 0; }
+footer { border-top: 1px solid #e2e8f0; padding-top: 10px; color: #64748b; }`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which element should wrap the dominant, unique content of a page?",
+      options: ["<section>", "<main>", "<div id='main'>"],
+      answer: 1,
+      explanation: "The <main> landmark identifies the primary content of the document and enables skip-to-content navigation."
+    }
+  ]}
+/>

@@ -1,0 +1,102 @@
+---
+title: "Inline SVG, Canvas & Sandboxed Iframes"
+description: "Choose between scalable SVG graphics and pixel-based Canvas, and embed external content securely with sandboxed iframes."
+course: "html-fundamentals"
+module: "Media, Graphics & Data"
+order: 9
+durationMinutes: 9
+objectives:
+  - "Draw crisp, resolution-independent icons and charts with inline <svg>"
+  - "Understand when to choose <svg> vs. <canvas>"
+  - "Embed external content safely using <iframe title=\"...\" sandbox=\"...\">"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+HTML gives you two native graphics engines (**`<svg>`** and **`<canvas>`**)plus **`<iframe>`** for embedding isolated documents (like the live code previews on SkillForge!).
+
+## `<svg>` vs. `<canvas>`
+
+| Feature | `<svg>` (Vector) | `<canvas>` (Raster / Pixels) |
+| :--- | :--- | :--- |
+| Scaling | Infinitely sharp at any zoom | Pixelates if stretched without HiDPI scaling |
+| DOM & CSS | Each shape is a DOM node (styleable & accessible) | Single bitmap element drawn via JS |
+| Best for | Icons, logos, UI diagrams, simple charts | Games, photo editors, thousands of animated particles |
+
+## Safe `<iframe>` Embeds
+
+Always give every `<iframe>` two things:
+1. **`title="..."`**: Required so screen-reader users know what the embedded frame contains.
+2. **`sandbox`**: Restricts scripts, popups, and top-level navigation unless explicitly opted in (e.g., `sandbox="allow-scripts"`).
+
+<Callout type="warning" title="Iframe Security">
+  Never combine <code>allow-scripts</code> and <code>allow-same-origin</code> on untrusted third-party content, that lets the embedded script remove its own sandbox attribute!
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Accessible & Sandboxed Embed"
+  prompt="Add an accessible title, lazy loading, and a restrictive sandbox attribute to the iframe."
+  template={`<iframe
+  src="https://example.com/widget"
+  {{0}}="Interactive weather widget"
+  loading="{{1}}"
+  {{2}}="allow-scripts"
+></iframe>`}
+  blanks={[
+    { answer: 'title', placeholder: 'attr' },
+    { answer: 'lazy', placeholder: 'value' },
+    { answer: 'sandbox', placeholder: 'attr' },
+  ]}
+  hint={'Use title for accessibility, loading="lazy" for performance, and sandbox for security.'}
+/>
+
+## Try It Yourself: Inline SVG + Canvas Side-by-Side
+
+<Playground
+  client:visible
+  title="Live Inline SVG & HTML5 Canvas"
+  height={270}
+  html={`<div class="row">
+  <figure>
+    <svg width="120" height="120" viewBox="0 0 120 120" role="img" aria-label="Blue circle with checkmark">
+      <circle cx="60" cy="60" r="52" fill="#2563eb" />
+      <path d="M38 62 L53 77 L84 44" fill="none" stroke="white" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+    <figcaption>Inline SVG (Vector)</figcaption>
+  </figure>
+
+  <figure>
+    <canvas id="chart" width="140" height="120"></canvas>
+    <figcaption>HTML5 Canvas (JS)</figcaption>
+  </figure>
+</div>`}
+  css={`.row { display: flex; gap: 20px; align-items: flex-end; flex-wrap: wrap; }
+figure { margin: 0; text-align: center; }
+figcaption { margin-top: 6px; font-size: 12px; font-weight: 600; color: #475569; }
+canvas { border: 1px solid #cbd5e1; border-radius: 10px; background: #f8fafc; }`}
+  js={`const canvas = document.getElementById('chart');
+const ctx = canvas.getContext('2d');
+const bars = [45, 85, 65, 100];
+bars.forEach((h, i) => {
+  ctx.fillStyle = i === 3 ? '#16a34a' : '#2563eb';
+  ctx.fillRect(14 + i * 30, 110 - h, 20, h);
+});`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which graphics element is best for crisp UI icons and logos that scale cleanly on any display?",
+      options: ["<canvas>", "<svg>", "<iframe>"],
+      answer: 1,
+      explanation: "SVG is vector-based, stays razor-sharp at any resolution, and can be styled directly with CSS."
+    }
+  ]}
+/>

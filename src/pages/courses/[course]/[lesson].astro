@@ -1,0 +1,81 @@
+---
+import { render } from 'astro:content';
+import LessonLayout from '@/layouts/LessonLayout.astro';
+import {
+  getAllCoursesSorted,
+  getCourseLessons,
+  getLessonKey,
+  getLessonSlug,
+  groupLessonsByModule,
+} from '@/lib/courses';
+
+export async function getStaticPaths() {
+  const courses = await getAllCoursesSorted();
+  const paths = [];
+
+  for (const course of courses) {
+    const lessons = await getCourseLessons(course.data.slug);
+    const modules = groupLessonsByModule(course.data.slug, lessons);
+
+    for (let i = 0; i < lessons.length; i++) {
+      const lesson = lessons[i];
+      const slug = getLessonSlug(lesson);
+      const prev = lessons[i - 1];
+      const next = lessons[i + 1];
+
+      paths.push({
+        params: { course: course.data.slug, lesson: slug },
+        props: {
+          course,
+          lesson,
+          lessonSlug: slug,
+          lessonKey: getLessonKey(course.data.slug, slug),
+          modules,
+          totalLessons: lessons.length,
+          prevLesson: prev
+            ? {
+                title: prev.data.title,
+                href: `/courses/${course.data.slug}/${getLessonSlug(prev)}`,
+              }
+            : undefined,
+          nextLesson: next
+            ? {
+                title: next.data.title,
+                href: `/courses/${course.data.slug}/${getLessonSlug(next)}`,
+              }
+            : undefined,
+        },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const {
+  course,
+  lesson,
+  lessonSlug,
+  lessonKey,
+  modules,
+  totalLessons,
+  prevLesson,
+  nextLesson,
+} = Astro.props;
+
+const { Content, headings } = await render(lesson);
+---
+
+<LessonLayout
+  course={course}
+  lesson={lesson}
+  lessonSlug={lessonSlug}
+  lessonKey={lessonKey}
+  modules={modules}
+  totalLessons={totalLessons}
+  headings={headings}
+  prevLesson={prevLesson}
+  nextLesson={nextLesson}
+>
+  <Content />
+</LessonLayout>

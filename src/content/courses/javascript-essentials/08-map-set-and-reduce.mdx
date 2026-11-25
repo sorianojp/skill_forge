@@ -1,0 +1,98 @@
+---
+title: "Map, Set & .reduce() Aggregations"
+description: "Deduplicate values instantly with Set, store fast key-value lookups in Map, and compute totals or grouped summaries with .reduce()."
+course: "javascript-essentials"
+module: "Data Structures & Modern Syntax"
+order: 8
+durationMinutes: 9
+objectives:
+  - "Remove duplicates and check membership in O(1) time with Set"
+  - "Use Map for dynamic key-value collections with clean .get()/.set()/.size APIs"
+  - "Summarize arrays into totals or grouped objects with .reduce()"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+Plain arrays and objects are great, but JavaScript also includes built-in **`Set`** and **`Map`** collections plus **`.reduce()`** for clean data transformations.
+
+## Instant Deduplication with `Set`
+
+```js
+const tags = ['html', 'css', 'html', 'js', 'css'];
+const unique = [...new Set(tags)]; // ['html', 'css', 'js']
+```
+
+## Computing Totals with `.reduce()`
+
+```js
+const minutes = [6, 8, 9, 12];
+const total = minutes.reduce((sum, m) => sum + m, 0); // 35
+```
+
+<Callout type="tip" title="Modern Object.groupBy()">
+  Need to group an array of objects by category? Modern browsers support <code>Object.groupBy(items, (item) =&gt; item.track)</code> natively!
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Set Deduplication & .reduce()"
+  prompt="Create a Set of unique tags and sum lesson durations with .reduce()."
+  template={`const unique = [...new {{0}}(tags)];
+const totalMins = lessons.{{1}}((acc, l) => acc + l.mins, 0);`}
+  blanks={[
+    { answer: 'Set', placeholder: 'Class' },
+    { answer: 'reduce', placeholder: 'method' },
+  ]}
+  hint={'Use new Set(...) for unique values and .reduce((acc, item) => ..., 0) to accumulate a total.'}
+/>
+
+## Try It Yourself
+
+<Playground
+  client:visible
+  title="Set, Map & .reduce() in Action"
+  defaultTab="js"
+  showConsole={true}
+  height={260}
+  html={`<div id="stats" class="stats"></div>`}
+  css={`.stats { padding: 14px; border-radius: 10px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 13px; line-height: 1.7; }`}
+  js={`const lessons = [
+  { track: 'HTML', mins: 8 },
+  { track: 'CSS', mins: 10 },
+  { track: 'HTML', mins: 9 },
+  { track: 'JS', mins: 12 },
+];
+
+const uniqueTracks = [...new Set(lessons.map((l) => l.track))];
+const totalMinutes = lessons.reduce((sum, l) => sum + l.mins, 0);
+
+const minsByTrack = new Map();
+for (const l of lessons) {
+  minsByTrack.set(l.track, (minsByTrack.get(l.track) ?? 0) + l.mins);
+}
+
+console.log('Unique tracks:', uniqueTracks);
+console.log('Map entries:', [...minsByTrack.entries()]);
+
+document.querySelector('#stats').innerHTML =
+  \`<strong>Tracks:</strong> \${uniqueTracks.join(', ')}<br>\` +
+  \`<strong>Total Duration:</strong> \${totalMinutes} mins<br>\` +
+  \`<strong>HTML Mins:</strong> \${minsByTrack.get('HTML')} mins\`;`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does `new Set([1, 2, 2, 3, 3]).size` return?",
+      options: ["5", "3", "undefined"],
+      answer: 1,
+      explanation: "A Set automatically stores only unique values, so 1, 2, and 3 give a size of 3."
+    }
+  ]}
+/>

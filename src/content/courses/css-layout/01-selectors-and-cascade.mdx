@@ -1,0 +1,94 @@
+---
+title: "Selectors, Specificity & the Cascade"
+description: "Understand how browsers resolve conflicting CSS rules using origin, specificity, source order, inheritance, and @layer."
+course: "css-layout"
+module: "Core Foundations"
+order: 1
+durationMinutes: 9
+objectives:
+  - "Predict which CSS rule wins using specificity (ID > Class > Element)"
+  - "Understand which properties inherit (like color and font-family) vs. which don't"
+  - "Avoid !important wars by keeping selector specificity low"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import DoDont from '@/components/mdx/DoDont.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+CSS stands for **Cascading Style Sheets**. The **Cascade** is the exact algorithm browsers use to decide which style wins when multiple rules target the same element.
+
+## Specificity Hierarchy
+
+Think of specificity as a three-column score `(IDs, Classes/Attributes/Pseudo-classes, Elements)`:
+
+| Selector | Score | Example |
+| :--- | :--- | :--- |
+| Element | `(0, 0, 1)` | `p`, `h1`, `button` |
+| Class / Attribute / Pseudo-class | `(0, 1, 0)` | `.btn`, `[type="email"]`, `:hover` |
+| ID | `(1, 0, 0)` | `#hero` |
+
+When two rules have the **exact same specificity**, the **last rule in the stylesheet wins**.
+
+<DoDont
+  doTitle="Flat, Reusable Class Selectors"
+  dontTitle="Over-Specific Chains & !important"
+  doCode={`.card-title {
+  color: #1d4ed8;
+}`}
+  dontCode={`#main div.wrapper ul li a.card-title {
+  color: #1d4ed8 !important;
+}`}
+  note="Low-specificity class selectors are easy to override later without resorting to !important."
+/>
+
+<Callout type="tip" title="Inheritance Saves Code">
+  Text properties like <code>color</code>, <code>font-family</code>, and <code>line-height</code> inherit down from parents to children. Box properties like <code>border</code>, <code>padding</code>, and <code>margin</code> do not.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Selector Syntax Practice"
+  prompt="Target all elements with class 'badge', an element with id 'banner', and a button when hovered."
+  template={`{{0}}badge { font-weight: 700; }
+{{1}}banner { padding: 16px; }
+button{{2}} { opacity: 0.9; }`}
+  blanks={[
+    { answer: '.', placeholder: '.' },
+    { answer: '#', placeholder: '#' },
+    { answer: ':hover', placeholder: ':state' },
+  ]}
+  hint={'Classes start with a dot (.), IDs start with a hash (#), and hover uses :hover.'}
+/>
+
+## Try It Yourself
+
+Notice how `.highlight` beats `p`, and `#winner` beats `.highlight`, even though `#winner` is written *earlier* in the CSS!
+
+<Playground
+  client:visible
+  title="Specificity Battleground"
+  defaultTab="css"
+  height={250}
+  html={`<p>Plain paragraph (element selector)</p>
+<p class="highlight">Class selector beats element</p>
+<p id="winner" class="highlight">ID selector beats class (even when written first!)</p>`}
+  css={`#winner { color: #15803d; font-weight: 800; }
+.highlight { color: #2563eb; font-weight: 600; }
+p { color: #64748b; margin: 8px 0; font-size: 15px; }`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which selector has the highest specificity?",
+      options: ["article p.intro", "#sidebar a", ".nav .link:hover"],
+      answer: 1,
+      explanation: "#sidebar a has an ID selector (1,0,1), which outranks any number of class or element selectors."
+    }
+  ]}
+/>

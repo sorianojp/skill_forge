@@ -1,0 +1,92 @@
+---
+title: "Accessible HTML Forms"
+description: "Build user-friendly forms with explicit labels, appropriate input types, and native browser validation."
+course: "html-fundamentals"
+module: "Forms & User Input"
+order: 11
+durationMinutes: 9
+objectives:
+  - "Connect <label> elements to inputs using for and id"
+  - "Use semantic input types (email, url, number) for better mobile keyboards"
+  - "Leverage native HTML validation attributes like required and minlength"
+---
+
+import Playground from '@/components/playground/Playground';
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+Forms are how users sign up, search, and interact with your site. Well-built HTML forms give you **accessibility, mobile keyboard optimization, and validation for free**.
+
+## Always Pair `<label>` with `<input>`
+
+Never rely on `placeholder` text as a replacement for a `<label>`. Placeholders disappear as soon as the user starts typing and are harder to read.
+
+<Callout type="warning" title="Click-Target Bonus">
+  When a <code>&lt;label for="email"&gt;</code> is linked to <code>&lt;input id="email"&gt;</code>, clicking the label automatically focuses the input, making forms much easier to use on touchscreens.
+</Callout>
+
+## Try It Yourself
+
+Try submitting the form empty or with an invalid email to see native browser validation in action:
+
+<Playground
+  client:visible
+  title="Accessible Signup Form"
+  height={300}
+  html={`<form id="signup" class="form">
+  <div class="field">
+    <label for="name">Full Name</label>
+    <input id="name" name="name" type="text" required minlength="2" placeholder="Ada Lovelace" />
+  </div>
+
+  <div class="field">
+    <label for="email">Email Address</label>
+    <input id="email" name="email" type="email" required placeholder="ada@example.com" />
+  </div>
+
+  <button type="submit">Join Free Course</button>
+  <p id="status" role="status"></p>
+</form>`}
+  css={`.form { max-width: 340px; display: grid; gap: 12px; }
+.field { display: grid; gap: 4px; }
+label { font-size: 13px; font-weight: 600; color: #334155; }
+input {
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+}
+button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+#status { margin: 0; font-size: 13px; color: #15803d; font-weight: 600; }`}
+  js={`const form = document.getElementById('signup');
+const status = document.getElementById('status');
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const data = new FormData(form);
+  status.textContent = 'Welcome, ' + data.get('name') + '!';
+});`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "How do you explicitly associate a <label> with an <input>?",
+      options: [
+        "Give both the same CSS class",
+        "Match the label's for attribute to the input's id attribute",
+        "Put them inside the same <div>"
+      ],
+      answer: 1,
+      explanation: "Matching for=\"...\" on the <label> with id=\"...\" on the <input> links them for screen readers and click-to-focus behavior."
+    }
+  ]}
+/>

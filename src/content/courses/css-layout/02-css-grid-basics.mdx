@@ -1,0 +1,79 @@
+---
+title: "CSS Grid Basics"
+description: "Build responsive two-dimensional layouts with CSS Grid, fr units, and auto-fit without writing media queries."
+course: "css-layout"
+module: "Layout Systems"
+order: 6
+durationMinutes: 9
+objectives:
+  - "Create multi-column grids using grid-template-columns and fr units"
+  - "Build an auto-responsive card grid using repeat(auto-fit, minmax(...))"
+---
+
+import Playground from '@/components/playground/Playground';
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+While Flexbox excels at a single row or column, **CSS Grid** (`display: grid`) lets you control **rows and columns simultaneously**.
+
+## The Magic Responsive One-Liner
+
+```css
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+```
+
+<Callout type="tip" title="Zero Media Queries">
+  <code>repeat(auto-fit, minmax(140px, 1fr))</code> automatically fits as many columns as possible that are at least <code>140px</code> wide, and stretches them evenly to fill the container.
+</Callout>
+
+## Try It Yourself
+
+Try changing `140px` to `100px` or `220px` and see how the cards reflow!
+
+<Playground
+  client:visible
+  title="Responsive CSS Grid"
+  defaultTab="css"
+  height={270}
+  html={`<div class="grid">
+  <div class="card">1. HTML</div>
+  <div class="card">2. CSS</div>
+  <div class="card">3. JS</div>
+  <div class="card">4. A11y</div>
+</div>`}
+  css={`.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.card {
+  padding: 20px;
+  border-radius: 12px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e3a8a;
+  font-weight: 700;
+  text-align: center;
+}`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does the 1fr unit represent in CSS Grid?",
+      options: [
+        "1 fixed pixel",
+        "1 fraction of the available free space",
+        "1 full viewport width"
+      ],
+      answer: 1,
+      explanation: "The fr unit distributes remaining space proportionally across grid tracks."
+    }
+  ]}
+/>

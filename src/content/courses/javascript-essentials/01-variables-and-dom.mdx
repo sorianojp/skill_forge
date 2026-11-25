@@ -1,0 +1,81 @@
+---
+title: "Variables, Events & the DOM"
+description: "Select HTML elements, react to clicks with addEventListener, and log state to the live console."
+course: "javascript-essentials"
+module: "Language Foundations"
+order: 1
+durationMinutes: 10
+objectives:
+  - "Declare variables cleanly with const and let"
+  - "Query elements using document.querySelector"
+  - "Respond to user clicks with addEventListener and update textContent"
+---
+
+import Playground from '@/components/playground/Playground';
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+JavaScript turns static HTML and CSS into **interactive experiences**. The browser exposes your HTML page as the **DOM (Document Object Model)**, a tree of objects your script can read and update.
+
+## `const` vs. `let`
+
+- Use `const` by default for values you will not reassign (including DOM references like `const button = ...`).
+- Use `let` when a value changes over time (like a counter or score).
+
+<Callout type="note" title="Prefer textContent over innerHTML">
+  When inserting plain text into the DOM, always use <code>element.textContent</code>. It is faster and prevents Cross-Site Scripting (XSS) vulnerabilities.
+</Callout>
+
+## Try It Yourself
+
+Click **+1** or **Reset** in the preview, and watch both the UI and the **Console Output** update live!
+
+<Playground
+  client:visible
+  title="Interactive Counter + Console"
+  defaultTab="js"
+  showConsole={true}
+  height={280}
+  html={`<div class="counter-box">
+  <p class="label">Lessons Completed Today</p>
+  <p id="count" class="value">0</p>
+  <div class="actions">
+    <button id="inc">+1 Lesson</button>
+    <button id="reset" class="secondary">Reset</button>
+  </div>
+</div>`}
+  css={`.counter-box { max-width: 280px; padding: 18px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; text-align: center; }
+.label { margin: 0; font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 700; }
+.value { margin: 8px 0 14px; font-size: 40px; font-weight: 800; color: #0f172a; }
+.actions { display: flex; gap: 8px; justify-content: center; }
+button { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 8px 14px; font-weight: 600; cursor: pointer; }
+button.secondary { background: #e2e8f0; color: #334155; }`}
+  js={`let count = 0;
+const countEl = document.querySelector('#count');
+const incBtn = document.querySelector('#inc');
+const resetBtn = document.querySelector('#reset');
+
+incBtn.addEventListener('click', () => {
+  count += 1;
+  countEl.textContent = String(count);
+  console.log('Updated count to:', count);
+});
+
+resetBtn.addEventListener('click', () => {
+  count = 0;
+  countEl.textContent = '0';
+  console.warn('Counter reset to 0');
+});`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which property is safest for setting plain text inside a DOM element?",
+      options: ["element.innerHTML", "element.textContent", "element.outerHTML"],
+      answer: 1,
+      explanation: "textContent treats the value strictly as text, preventing accidental HTML injection (XSS)."
+    }
+  ]}
+/>

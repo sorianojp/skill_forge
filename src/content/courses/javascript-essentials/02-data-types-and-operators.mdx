@@ -1,0 +1,86 @@
+---
+title: "Data Types, Strict Equality & Nullish Coalescing"
+description: "Understand JavaScript's primitive types, why === beats ==, how truthy/falsy values work, and how ?? sets safe defaults."
+course: "javascript-essentials"
+module: "Language Foundations"
+order: 2
+durationMinutes: 8
+objectives:
+  - "Recognize primitive types: string, number, boolean, null, undefined, bigint, symbol"
+  - "Always prefer strict equality (===) over loose equality (==)"
+  - "Use nullish coalescing (??) to handle default values safely without breaking 0 or empty strings"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import DoDont from '@/components/mdx/DoDont.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+JavaScript values fall into **primitives** (`string`, `number`, `boolean`, `null`, `undefined`, `symbol`, `bigint`) and **objects** (plain objects, arrays, functions, dates).
+
+## Always Use Strict Equality (`===`)
+
+Loose equality (`==`) silently coerces types (`"5" == 5` is `true`, `"" == 0` is `true`), causing subtle bugs. Strict equality (`===`) checks **both type and value**.
+
+<DoDont
+  doTitle="Strict Equality & Nullish Defaults"
+  dontTitle="Surprising Type Coercion"
+  doCode={`const score = 0;
+const display = score ?? 100; // 0!
+if (score === 0) { ... }`}
+  dontCode={`const score = 0;
+const display = score || 100; // 100 (bug!)
+if ("0" == 0) { ... } // true!`}
+  note="Use ?? when 0, false, or '' are valid values and you only want a fallback for null or undefined."
+/>
+
+<Callout type="note" title="The 6 Falsy Values">
+  Only <code>false</code>, <code>0</code>, <code>""</code>, <code>null</code>, <code>undefined</code>, and <code>NaN</code> are falsy in JavaScript. Everything else (including empty arrays <code>[]</code> and objects <code>&#123;&#125;</code>)is truthy!
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Strict Comparison & Safe Default"
+  prompt="Check strict equality and fall back to 'Guest' only when username is null or undefined."
+  template={`const isAdmin = role {{0}} 'admin';
+const label = username {{1}} 'Guest';`}
+  blanks={[
+    { answer: '===', placeholder: 'op' },
+    { answer: '??', placeholder: 'op' },
+  ]}
+  hint={'Use === for strict equality and ?? for nullish coalescing.'}
+/>
+
+## Try It Yourself
+
+<Playground
+  client:visible
+  title="Explore === vs == and ?? vs ||"
+  defaultTab="js"
+  showConsole={true}
+  height={240}
+  html={`<p>Check the <strong>Console Output</strong> below to compare operators.</p>`}
+  js={`console.log('"5" == 5  ->', '5' == 5);
+console.log('"5" === 5 ->', '5' === 5);
+
+const retries = 0;
+console.log('retries || 3 ->', retries || 3);
+console.log('retries ?? 3 ->', retries ?? 3);
+
+console.log('typeof null  ->', typeof null, '(historic JS quirk!)');`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does `0 ?? 42` evaluate to in JavaScript?",
+      options: ["42", "0", "undefined"],
+      answer: 1,
+      explanation: "Nullish coalescing (??) only falls back for null or undefined, so 0 is preserved."
+    }
+  ]}
+/>

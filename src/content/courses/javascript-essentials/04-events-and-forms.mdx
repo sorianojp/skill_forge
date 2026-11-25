@@ -1,0 +1,86 @@
+---
+title: "Live Search, Forms & Event Delegation"
+description: "Respond to real-time typing with the input event and handle clicks on dynamically created elements with event delegation."
+course: "javascript-essentials"
+module: "DOM & Browser APIs"
+order: 10
+durationMinutes: 9
+objectives:
+  - "Filter UI results live as the user types using the input event"
+  - "Use event delegation on a parent container instead of attaching dozens of listeners"
+  - "Read element metadata cleanly via data-* attributes and dataset"
+---
+
+import Playground from '@/components/playground/Playground';
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+When your page has a list of 50 interactive items (or items added dynamically after page load)attaching a separate click listener to every button is messy. **Event delegation** solves this by putting **one listener on the parent element** and checking `event.target.closest(...)`.
+
+<Callout type="tip" title="Why event.target.closest() Wins">
+  If a user clicks an icon or <code>&lt;span&gt;</code> nested inside a <code>&lt;button&gt;</code>, <code>event.target</code> is the inner span. Calling <code>event.target.closest('button')</code> reliably finds the button every time!
+</Callout>
+
+## Try It Yourself
+
+Type in the search box to filter tags in real time, and click any tag to select it via a single delegated listener:
+
+<Playground
+  client:visible
+  title="Live Filter + Event Delegation"
+  defaultTab="js"
+  showConsole={true}
+  height={290}
+  html={`<input id="search" type="search" placeholder="Filter topics (e.g. grid, form)..." />
+<div id="topics" class="grid"></div>
+<p id="picked" class="picked">Click any topic card above.</p>`}
+  css={`#search { width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 12px; font-size: 14px; }
+.grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.topic { padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; background: #f8fafc; cursor: pointer; font-weight: 600; font-size: 13px; }
+.topic:hover { border-color: #2563eb; color: #2563eb; }
+.picked { margin-top: 12px; font-size: 13px; color: #15803d; font-weight: 600; }`}
+  js={`const topics = ['Semantic HTML', 'Accessible Forms', 'CSS Flexbox', 'CSS Grid', 'Container Queries', 'Async/Await'];
+const search = document.querySelector('#search');
+const container = document.querySelector('#topics');
+const picked = document.querySelector('#picked');
+
+function draw(query = '') {
+  const q = query.trim().toLowerCase();
+  const matches = topics.filter((t) => t.toLowerCase().includes(q));
+  container.replaceChildren(...matches.map((topic) => {
+    const btn = document.createElement('button');
+    btn.className = 'topic';
+    btn.dataset.topic = topic;
+    btn.textContent = topic;
+    return btn;
+  }));
+}
+
+search.addEventListener('input', (e) => draw(e.target.value));
+
+// Single delegated click listener for all topic buttons
+container.addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-topic]');
+  if (!btn) return;
+  picked.textContent = 'Selected topic: ' + btn.dataset.topic;
+  console.log('Delegated click:', btn.dataset.topic);
+});
+
+draw();`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What is the main advantage of event delegation on a parent container?",
+      options: [
+        "It blocks all keyboard events",
+        "One listener handles both existing and newly added child elements efficiently",
+        "It replaces the need for HTML attributes"
+      ],
+      answer: 1,
+      explanation: "Because DOM events bubble up to parent elements, a single delegated listener works automatically even when child elements are added or re-rendered."
+    }
+  ]}
+/>

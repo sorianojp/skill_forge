@@ -1,0 +1,173 @@
+---
+title: "Mini Project: Semantic Portfolio Page"
+description: "Put everything from Modern HTML Fundamentals together by customizing a complete, accessible personal portfolio page."
+course: "html-fundamentals"
+module: "Capstone Project"
+order: 16
+durationMinutes: 12
+objectives:
+  - "Combine landmarks (<header>, <nav>, <main>, <section>, <footer>) in one page"
+  - "Include a semantic project list, skills table, and accessible contact form"
+  - "Customize the template into your own personal starter page"
+---
+
+import Playground from '@/components/playground/Playground';
+import Challenge from '@/components/playground/Challenge';
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+Congratulations on reaching the end of **Modern HTML Fundamentals**! In this mini project, you'll bring together landmarks, headings, lists, `<details>`, and an accessible `<form>` into a clean personal portfolio page.
+
+## Project Checklist
+
+Customize the sandbox below to make it yours:
+1. Update the name, role, and bio inside `<header>` and `<main>`.
+2. Add a third project inside the **Projects** `<section>`.
+3. Test the **Contact** form with invalid vs. valid email addresses.
+
+<Callout type="tip" title="Challenge Yourself">
+  Try adding a <code>&lt;figure&gt;</code> avatar or a <code>&lt;details&gt;</code> "Resume Highlights" toggle inside the About section!
+</Callout>
+
+## Try It Yourself: Portfolio Starter
+
+<Playground
+  client:visible
+  title="HTML Capstone: Developer Portfolio"
+  height={360}
+  html={`<header class="hero">
+  <div>
+    <h1>Alex Rivera</h1>
+    <p>Frontend Developer &amp; Accessibility Advocate</p>
+  </div>
+  <nav aria-label="Portfolio sections">
+    <a href="#projects">Projects</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<main>
+  <section id="projects">
+    <h2>Featured Projects</h2>
+    <article class="project">
+      <h3>SkillForge Docs</h3>
+      <p>Fast, semantic learning site built with modern HTML and CSS.</p>
+      <details>
+        <summary>Tech stack</summary>
+        <ul>
+          <li>Semantic HTML5</li>
+          <li>Accessible Forms</li>
+        </ul>
+      </details>
+    </article>
+
+    <article class="project">
+      <h3>Weather Pulse</h3>
+      <p>Lightweight forecast dashboard with keyboard-first navigation.</p>
+    </article>
+  </section>
+
+  <section id="contact">
+    <h2>Get in Touch</h2>
+    <form id="contactForm">
+      <label for="sender">Your Email</label>
+      <input id="sender" type="email" required placeholder="you@example.com" />
+      <button type="submit">Send Message</button>
+      <p id="msg" role="status"></p>
+    </form>
+  </section>
+</main>
+
+<footer>
+  <small>Built with semantic HTML.</small>
+</footer>`}
+  css={`.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+h1 { margin: 0; font-size: 22px; }
+.hero p { margin: 2px 0 0; font-size: 13px; color: #475569; }
+nav { display: flex; gap: 12px; }
+nav a { color: #2563eb; font-weight: 600; font-size: 13px; text-decoration: none; }
+section { margin: 18px 0; }
+h2 { font-size: 16px; margin: 0 0 10px; }
+.project { padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 10px; background: #f8fafc; }
+.project h3 { margin: 0 0 4px; font-size: 14px; }
+.project p { margin: 0 0 8px; font-size: 13px; color: #475569; }
+form { display: grid; gap: 8px; max-width: 300px; }
+label { font-size: 12px; font-weight: 600; }
+input { padding: 8px; border: 1px solid #cbd5e1; border-radius: 8px; }
+button { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font-weight: 600; cursor: pointer; }
+#msg { margin: 0; font-size: 12px; color: #15803d; font-weight: 600; }
+footer { border-top: 1px solid #e2e8f0; padding-top: 10px; color: #64748b; }`}
+  js={`const form = document.getElementById('contactForm');
+const msg = document.getElementById('msg');
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  msg.textContent = 'Thanks! Message sent from ' + document.getElementById('sender').value;
+});`}
+/>
+
+<Quiz
+  client:visible
+  title="HTML Fundamentals Final Check"
+  questions={[
+    {
+      question: "In a portfolio page with multiple <article> project cards, which element should wrap the entire primary content area?",
+      options: ["<main>", "<section>", "<header>"],
+      answer: 0,
+      explanation: "<main> wraps the unique primary content of the document, while <section> and <article> organize content inside it."
+    },
+    {
+      question: "Why is role=\"status\" helpful on the #msg element after form submission?",
+      options: [
+        "It styles the text green automatically",
+        "It announces the status message to screen readers without stealing keyboard focus",
+        "It prevents the page from reloading"
+      ],
+      answer: 1,
+      explanation: "role=\"status\" creates a polite ARIA live region so assistive technologies announce confirmation updates."
+    }
+  ]}
+/>
+
+## Auto-Graded Capstone Challenge
+
+Complete the missing semantic tags below and click **Run Tests** until all 4 automated checks turn green!
+
+<Challenge
+  client:visible
+  id="html-capstone-1"
+  title="HTML Capstone Challenge: Fix the Semantic Landmarks"
+  instructions="Replace the generic divs with semantic <header>, <main>, <article>, and an accessible email <form> with a linked <label>."
+  height={270}
+  html={`<!-- Fix this markup so all 4 automated tests pass! -->
+<div class="top">
+  <h1>My Portfolio</h1>
+</div>
+
+<div class="content">
+  <div class="project">
+    <h2>SkillForge Project</h2>
+  </div>
+  <form>
+    <input id="email" type="text" />
+    <button type="submit">Contact</button>
+  </form>
+</div>`}
+  tests={[
+    { label: 'Wrap the <h1> inside a semantic <header> landmark', test: "return Boolean(document.querySelector('header h1'));" },
+    { label: 'Include a <main> landmark containing at least one <article>', test: "return Boolean(document.querySelector('main article'));" },
+    { label: 'Link a <label for=\"email\"> to the email input', test: "return Boolean(document.querySelector('label[for=\"email\"]') && document.getElementById('email'));" },
+    { label: 'Set the email input to type=\"email\"', test: "return document.getElementById('email')?.getAttribute('type') === 'email';" },
+  ]}
+/>
+
+<Callout type="tip" title="Ready for Your Free Certificate?">
+  Take the <a href="/courses/html-fundamentals/exam"><strong>Modern HTML Final Exam</strong></a> (score 80% or higher) to unlock your free downloadable Completion Certificate!
+</Callout>

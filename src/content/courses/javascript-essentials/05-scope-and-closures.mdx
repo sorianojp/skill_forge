@@ -1,0 +1,104 @@
+---
+title: "Scope & Closures"
+description: "Understand block scope with const/let, lexical scope, and how closures let functions remember private state safely."
+course: "javascript-essentials"
+module: "Data Structures & Modern Syntax"
+order: 5
+durationMinutes: 9
+objectives:
+  - "Distinguish global, function, and block scope ({ ... })"
+  - "Understand how closures capture variables from their outer function"
+  - "Build factory functions with encapsulated private state"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+**Scope** controls where a variable can be accessed. `const` and `let` are **block-scoped**, they only exist inside the nearest `{ ... }` block (like an `if` statement or `for` loop).
+
+## What Is a Closure?
+
+A **closure** is created whenever an inner function references variables from its outer function, even *after* the outer function has finished running!
+
+```js
+function createCounter(start = 0) {
+  let count = start; // private to this closure!
+  return () => {
+    count += 1;
+    return count;
+  };
+}
+
+const nextId = createCounter(100);
+nextId(); // 101
+nextId(); // 102
+```
+
+<Callout type="tip" title="Why Closures Matter">
+  Closures power event handlers, React hooks, debouncers, and private state, without polluting the global scope with shared variables.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Closure Factory Function"
+  prompt="Return an inner arrow function that remembers the multiplier parameter."
+  template={`function makeMultiplier(factor) {
+  {{0}} (value) => value * {{1}};
+}
+const double = makeMultiplier(2);`}
+  blanks={[
+    { answer: 'return', placeholder: 'kw' },
+    { answer: 'factor', placeholder: 'var' },
+  ]}
+  hint={'Return the inner arrow function that closes over the outer factor parameter.'}
+/>
+
+## Try It Yourself
+
+Notice how each counter button maintains its own completely independent private `count` via a closure:
+
+<Playground
+  client:visible
+  title="Independent Closure Counters"
+  defaultTab="js"
+  showConsole={true}
+  height={240}
+  html={`<div class="row">
+  <button id="htmlBtn">HTML Votes: 0</button>
+  <button id="cssBtn">CSS Votes: 0</button>
+</div>`}
+  css={`.row { display: flex; gap: 10px; }
+button { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 10px 14px; font-weight: 600; cursor: pointer; }`}
+  js={`function wireVoteButton(selector, label) {
+  let votes = 0; // private state per button!
+  const btn = document.querySelector(selector);
+  btn.addEventListener('click', () => {
+    votes += 1;
+    btn.textContent = \`\${label} Votes: \${votes}\`;
+    console.log(label, 'now has', votes);
+  });
+}
+
+wireVoteButton('#htmlBtn', 'HTML');
+wireVoteButton('#cssBtn', 'CSS');`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What makes a closure special in JavaScript?",
+      options: [
+        "It runs code on a separate CPU thread",
+        "An inner function retains access to variables from its outer lexical scope even after the outer function returns",
+        "It freezes all objects in memory"
+      ],
+      answer: 1,
+      explanation: "Closures preserve access to outer-scope variables, enabling private state and function factories."
+    }
+  ]}
+/>

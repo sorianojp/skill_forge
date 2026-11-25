@@ -1,0 +1,154 @@
+---
+title: "Mini Project: Interactive Task Tracker"
+description: "Combine state arrays, form handling, event delegation, and DOM rendering to build a working Task Tracker app."
+course: "javascript-essentials"
+module: "Capstone Project"
+order: 16
+durationMinutes: 12
+objectives:
+  - "Manage application state in a JavaScript array of task objects"
+  - "Add new tasks via form submit and toggle/delete them via event delegation"
+  - "Keep a live remaining-tasks counter synchronized with state"
+---
+
+import Playground from '@/components/playground/Playground';
+import Challenge from '@/components/playground/Challenge';
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+You've made it to the **JavaScript & DOM Essentials** capstone! This Task Tracker uses the exact pattern behind modern web apps: **single source of truth (`tasks` array) → state update → `render()`**.
+
+<Callout type="tip" title="Bonus Challenge">
+  Try adding a <strong>Clear Completed</strong> button that filters out finished tasks with <code>tasks = tasks.filter((t) =&gt; !t.done)</code> and calls <code>render()</code>!
+</Callout>
+
+## Try It Yourself: Task Tracker
+
+Add a task, click a task to toggle completion, or click `×` to remove it:
+
+<Playground
+  client:visible
+  title="JavaScript Capstone: Task Tracker"
+  defaultTab="js"
+  showConsole={true}
+  height={350}
+  html={`<div class="tracker">
+  <form id="taskForm" class="row">
+    <input id="taskInput" type="text" placeholder="Add a study goal..." required />
+    <button type="submit">Add</button>
+  </form>
+  <p id="summary" class="summary"></p>
+  <ul id="taskList" class="list"></ul>
+</div>`}
+  css={`.tracker { max-width: 380px; }
+.row { display: flex; gap: 8px; }
+input { flex: 1; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; }
+button { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 8px 14px; font-weight: 600; cursor: pointer; }
+.summary { font-size: 12px; color: #64748b; margin: 10px 0; font-weight: 600; }
+.list { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.task { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc; font-size: 13px; }
+.task.done span { text-decoration: line-through; color: #94a3b8; }
+.toggle { background: none; color: inherit; padding: 0; text-align: left; flex: 1; font-weight: 500; }
+.del { background: #fee2e2; color: #b91c1c; padding: 2px 8px; font-size: 12px; }`}
+  js={`let tasks = [
+  { id: 1, text: 'Finish HTML Fundamentals', done: true },
+  { id: 2, text: 'Build CSS Grid dashboard', done: false },
+];
+
+const form = document.querySelector('#taskForm');
+const input = document.querySelector('#taskInput');
+const list = document.querySelector('#taskList');
+const summary = document.querySelector('#summary');
+
+function render() {
+  const remaining = tasks.filter((t) => !t.done).length;
+  summary.textContent = \`\${remaining} of \${tasks.length} tasks remaining\`;
+
+  list.replaceChildren(...tasks.map((t) => {
+    const li = document.createElement('li');
+    li.className = 'task' + (t.done ? ' done' : '');
+    li.innerHTML = \`
+      <button type="button" class="toggle" data-action="toggle" data-id="\${t.id}">
+        <span>\${t.done ? '✓ ' : '○ '}\${t.text}</span>
+      </button>
+      <button type="button" class="del" data-action="delete" data-id="\${t.id}" aria-label="Delete">×</button>
+    \`;
+    return li;
+  }));
+}
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const text = input.value.trim();
+  if (!text) return;
+  tasks.push({ id: Date.now(), text, done: false });
+  input.value = '';
+  console.log('Added task:', text);
+  render();
+});
+
+list.addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-action]');
+  if (!btn) return;
+  const id = Number(btn.dataset.id);
+  if (btn.dataset.action === 'toggle') {
+    tasks = tasks.map((t) => (t.id === id ? { ...t, done: !t.done } : t));
+  } else if (btn.dataset.action === 'delete') {
+    tasks = tasks.filter((t) => t.id !== id);
+  }
+  render();
+});
+
+render();`}
+/>
+
+<Quiz
+  client:visible
+  title="JavaScript Essentials Final Check"
+  questions={[
+    {
+      question: "Why do we call e.preventDefault() inside the form's submit event handler?",
+      options: [
+        "To stop the browser from reloading the page and handle the submission in JavaScript",
+        "To clear the input field automatically",
+        "To disable the submit button"
+      ],
+      answer: 0,
+      explanation: "By default, submitting an HTML form triggers a full-page navigation/reload. e.preventDefault() lets JavaScript handle it seamlessly."
+    }
+  ]}
+/>
+
+## Auto-Graded Capstone Challenge
+
+Wire up the `#incBtn` button so clicking it increments `#counter` from `0` to `1`, `2`, `3`, and passes all 3 live behavioral tests!
+
+<Challenge
+  client:visible
+  id="js-capstone-1"
+  title="JavaScript Capstone Challenge: Interactive Counter"
+  instructions="Select #incBtn and #counter, listen for click events on #incBtn, and increment the numeric textContent of #counter by 1 on each click."
+  defaultTab="js"
+  height={260}
+  html={`<div class="box">
+  <p>Count: <strong id="counter">0</strong></p>
+  <button id="incBtn" type="button">+1</button>
+</div>`}
+  css={`.box { display: flex; align-items: center; gap: 14px; padding: 14px; border-radius: 10px; border: 1px solid #cbd5e1; background: #f8fafc; }
+button { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 7px 14px; font-weight: 700; cursor: pointer; }`}
+  js={`let count = 0;
+const counter = document.querySelector('#counter');
+const incBtn = document.querySelector('#incBtn');
+
+// TODO: add a click listener to incBtn that increments count and updates counter.textContent
+`}
+  tests={[
+    { label: '#counter starts at "0"', test: "return document.querySelector('#counter')?.textContent.trim() === '0';" },
+    { label: 'Clicking #incBtn once updates #counter to "1"', test: "document.querySelector('#incBtn').click(); return document.querySelector('#counter')?.textContent.trim() === '1';" },
+    { label: 'Clicking #incBtn a second time updates #counter to "2"', test: "document.querySelector('#incBtn').click(); return document.querySelector('#counter')?.textContent.trim() === '2';" },
+  ]}
+/>
+
+<Callout type="tip" title="Ready for Your Free Certificate?">
+  Take the <a href="/courses/javascript-essentials/exam"><strong>Modern JavaScript Final Exam</strong></a> (score 80% or higher) to unlock your free downloadable Completion Certificate!
+</Callout>

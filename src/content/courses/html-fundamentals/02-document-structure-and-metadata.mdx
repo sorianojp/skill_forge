@@ -1,0 +1,103 @@
+---
+title: "Document Structure & Metadata"
+description: "Build a rock-solid HTML document boilerplate with DOCTYPE, lang, charset, viewport, title, and social Open Graph metadata."
+course: "html-fundamentals"
+module: "Foundations"
+order: 2
+durationMinutes: 9
+objectives:
+  - "Understand why <!DOCTYPE html> and <html lang=\"en\"> are required on every page"
+  - "Configure essential <head> metadata: charset, viewport, title, and description"
+  - "Add favicons and Open Graph tags for rich social sharing previews"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+Every valid HTML page starts with a small, predictable skeleton. Getting `<head>` metadata right ensures your site renders crisply on mobile screens, displays emoji and accents cleanly, and looks great in search results and social shares.
+
+## The Modern HTML5 Boilerplate
+
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Page Title | SkillForge</title>
+    <meta name="description" content="A concise 150-character summary for search engines." />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <!-- Visible page content goes here -->
+  </body>
+</html>
+```
+
+### What Each Line Does
+- **`<!doctype html>`**: Puts the browser into **standards mode** (avoiding legacy quirks mode).
+- **`<html lang="en">`**: Tells screen readers which voice/accent to use and helps search engines and browser translation tools.
+- **`<meta charset="UTF-8">`**: Enables full Unicode support (international scripts, punctuation, emoji). Place it as the **first** tag in `<head>`.
+- **`<meta name="viewport" ...>`**: Prevents mobile browsers from zooming out your page like a tiny desktop screen.
+
+<Callout type="warning" title="Never Disable Pinch-to-Zoom">
+  Avoid adding <code>user-scalable=no</code> or <code>maximum-scale=1</code> to your viewport meta tag, it blocks users with low vision from zooming in and fails WCAG accessibility checks.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Complete the HTML Head"
+  prompt="Fill in the missing DOCTYPE, character encoding, and page title tag."
+  template={`<!{{0}} html>
+<html lang="en">
+  <head>
+    <meta {{1}}="UTF-8" />
+    <{{2}}>My First Page</title>
+  </head>
+</html>`}
+  blanks={[
+    { answer: 'doctype', placeholder: 'doctype' },
+    { answer: 'charset', placeholder: 'attr' },
+    { answer: 'title', placeholder: 'tag' },
+  ]}
+  hint="HTML5 uses <!doctype html>, UTF-8 is set with the charset attribute, and the browser tab name uses <title>."
+/>
+
+## Try It Yourself: Inspecting Document Metadata
+
+<Playground
+  client:visible
+  title="Read Document Metadata via JS"
+  height={230}
+  showConsole={true}
+  html={`<article class="card">
+  <h1>Document Metadata Demo</h1>
+  <p>Open the Console below to inspect <code>document.doctype</code> and <code>document.characterSet</code>.</p>
+</article>`}
+  css={`.card { padding: 16px; border-radius: 12px; border: 1px solid #cbd5e1; background: #f8fafc; }
+h1 { margin: 0 0 8px; font-size: 20px; }
+p { margin: 0; font-size: 14px; color: #475569; }`}
+  js={`console.log('DOCTYPE:', document.doctype?.name);
+console.log('Charset:', document.characterSet);
+console.log('Language:', document.documentElement.lang);`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why should <html lang=\"en\"> (or your page's language code) always be declared?",
+      options: [
+        "It is required for CSS Flexbox to work",
+        "It helps screen readers choose the right pronunciation and assists search/translation tools",
+        "It automatically translates your text into English"
+      ],
+      answer: 1,
+      explanation: "The lang attribute informs assistive technology, spellcheckers, and search engines of the document's primary language."
+    }
+  ]}
+/>

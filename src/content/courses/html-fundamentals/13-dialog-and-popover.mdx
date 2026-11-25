@@ -1,0 +1,109 @@
+---
+title: "Native <dialog> Modals & Popover API"
+description: "Build accessible modals, backdrops, and lightweight popovers natively in HTML, with automatic top-layer rendering, Escape dismissal, and focus return."
+course: "html-fundamentals"
+module: "Modern Interactive HTML"
+order: 13
+durationMinutes: 9
+objectives:
+  - "Open and close accessible modal dialogs with <dialog>, showModal(), and <form method=\"dialog\">"
+  - "Style the modal overlay with ::backdrop and prevent background scroll chaining"
+  - "Create zero-JS menus and tooltips with the native popover attribute"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+For years, building an accessible modal required heavy JavaScript libraries to trap focus, dim the background, and handle `Esc`. Today, HTML's native **`<dialog>`** and **`popover`** handle it automatically in the browser's **top layer**!
+
+## Modal `<dialog>` vs. `popover`
+
+- **Use `<dialog>` with `showModal()`** when the overlay **blocks** the rest of the page (confirmations, forms, search palettes). The browser automatically makes the background inert, handles `Esc`, renders `::backdrop`, and returns focus to the button when closed.
+- **Use `popover` + `popovertarget`** for non-blocking overlays (dropdown menus, quick info cards, toasts). Clicking outside automatically light-dismisses it, with **zero JavaScript**!
+
+<Callout type="tip" title="Zero-JS Dialog Closing">
+  Putting a <code>&lt;form method="dialog"&gt;</code> inside a <code>&lt;dialog&gt;</code> closes the modal automatically when any submit button inside it is clicked, and stores the button's <code>value</code> in <code>dialog.returnValue</code>.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Native Popover & Modal Form"
+  prompt="Connect the button to the popover without JavaScript, and make the dialog form close the modal natively."
+  template={`<button {{0}}="helpTip">Quick Tip</button>
+<div id="helpTip" {{1}}>Popovers light-dismiss when you click outside!</div>
+
+<dialog id="confirm">
+  <form method="{{2}}">
+    <button value="ok">Close</button>
+  </form>
+</dialog>`}
+  blanks={[
+    { answer: 'popovertarget', placeholder: 'attr' },
+    { answer: 'popover', placeholder: 'attr' },
+    { answer: 'dialog', placeholder: 'method' },
+  ]}
+  hint={'Use popovertarget + popover for the zero-JS popover, and method="dialog" on the modal\'s form.'}
+/>
+
+## Try It Yourself
+
+Test both a native **Modal `<dialog>`** (press `Esc` to close!) and a zero-JS **`popover`** below:
+
+<Playground
+  client:visible
+  title="Native <dialog> Modal + Zero-JS Popover"
+  height={270}
+  showConsole={true}
+  html={`<div class="actions">
+  <button id="openModal">Open Modal Dialog</button>
+  <button popovertarget="infoPop" class="secondary">Toggle Popover (No JS)</button>
+</div>
+
+<div id="infoPop" popover class="pop">
+  <strong>Native Popover</strong>
+  <p>Click anywhere outside or press Esc to dismiss me!</p>
+</div>
+
+<dialog id="myDialog" aria-labelledby="dlgTitle">
+  <h2 id="dlgTitle">Reset course progress?</h2>
+  <p>This modal renders in the browser top layer and traps focus natively.</p>
+  <form method="dialog" class="dlg-actions">
+    <button value="cancel" class="secondary" autofocus>Cancel</button>
+    <button value="confirm">Confirm</button>
+  </form>
+</dialog>`}
+  css={`.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+button { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 8px 14px; font-weight: 600; cursor: pointer; font-size: 13px; }
+button.secondary { background: #e2e8f0; color: #0f172a; }
+.pop { padding: 12px 16px; border-radius: 12px; border: 1px solid #cbd5e1; box-shadow: 0 10px 25px rgba(0,0,0,0.12); max-width: 260px; font-size: 13px; }
+.pop p { margin: 4px 0 0; color: #475569; }
+dialog { border: 1px solid #cbd5e1; border-radius: 14px; padding: 20px; max-width: 340px; }
+dialog::backdrop { background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(3px); }
+dialog h2 { margin: 0 0 6px; font-size: 17px; }
+dialog p { margin: 0 0 16px; font-size: 13px; color: #475569; }
+.dlg-actions { display: flex; justify-content: flex-end; gap: 8px; }`}
+  js={`const dialog = document.getElementById('myDialog');
+document.getElementById('openModal').addEventListener('click', () => {
+  dialog.showModal();
+});
+dialog.addEventListener('close', () => {
+  console.log('Dialog closed with value:', dialog.returnValue || '(dismissed)');
+  dialog.returnValue = '';
+});`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which JavaScript method opens a <dialog> as a true blocking modal with a ::backdrop and automatic Escape handling?",
+      options: ["dialog.open()", "dialog.show()", "dialog.showModal()"],
+      answer: 2,
+      explanation: "showModal() promotes the dialog to the top layer, renders ::backdrop, makes the rest of the page inert, and enables Escape dismissal."
+    }
+  ]}
+/>

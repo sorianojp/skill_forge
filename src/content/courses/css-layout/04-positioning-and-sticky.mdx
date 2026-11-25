@@ -1,0 +1,107 @@
+---
+title: "Positioning, Sticky Headers & Layering"
+description: "Master relative, absolute, and sticky positioning to pin navbars, overlay badges, and control stacking order cleanly."
+course: "css-layout"
+module: "Layout Systems"
+order: 8
+durationMinutes: 8
+objectives:
+  - "Anchor an absolute badge inside a relative parent container"
+  - "Pin a header inside a scrollable region using position: sticky"
+  - "Avoid common pitfalls that break sticky positioning"
+---
+
+import Playground from '@/components/playground/Playground';
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+CSS `position` lets you take elements out of normal document flow or keep them pinned while scrolling.
+
+| Value | Behavior | Best Use Case |
+| :--- | :--- | :--- |
+| `relative` | Stays in flow; creates an anchor for `absolute` children | Card containers holding corner badges |
+| `absolute` | Positioned relative to the nearest positioned ancestor | Notification dots, close buttons, tags |
+| `sticky` | Scrolls normally until hitting an edge (`top: 0`), then sticks | Navigation bars, table headers, TOC sidebars |
+| `fixed` | Pinned to the viewport regardless of scroll | Floating help buttons, persistent banners |
+
+<Callout type="warning" title="Why isn't my position: sticky working?">
+  Two classic causes: (1) You forgot to set a threshold like <code>top: 0</code>, or (2) an ancestor element has <code>overflow: hidden</code> instead of <code>overflow: clip</code>.
+</Callout>
+
+## Try It Yourself
+
+Scroll inside the preview box to see the **sticky header** pin to the top while the **absolute badge** stays anchored to its card:
+
+<Playground
+  client:visible
+  title="Sticky Header & Absolute Badge"
+  defaultTab="css"
+  height={280}
+  html={`<div class="scroller">
+  <header class="sticky-bar">Sticky Course Header</header>
+  <div class="content">
+    <article class="card">
+      <span class="badge">NEW</span>
+      <h4>Lesson 1: Positioning</h4>
+      <p>Scroll down to watch the top bar stick in place.</p>
+    </article>
+    <article class="card">
+      <h4>Lesson 2: Layering</h4>
+      <p>Notice how z-index keeps the sticky header above scrolling cards.</p>
+    </article>
+    <article class="card">
+      <h4>Lesson 3: Scroll Containers</h4>
+      <p>Sticky elements stay pinned within their scrolling parent.</p>
+    </article>
+  </div>
+</div>`}
+  css={`.scroller {
+  height: 220px;
+  overflow-y: auto;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+}
+.sticky-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #0f172a;
+  color: white;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.content { padding: 14px; display: grid; gap: 12px; }
+.card {
+  position: relative;
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+.badge {
+  position: absolute;
+  top: -8px;
+  right: 12px;
+  background: #2563eb;
+  color: white;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+h4 { margin: 0 0 4px; }
+p { margin: 0; font-size: 13px; color: #475569; }`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "To anchor an absolute badge to the top-right corner of a card, what position should the card itself have?",
+      options: ["position: static", "position: relative", "position: fixed"],
+      answer: 1,
+      explanation: "Setting position: relative on the parent card establishes the positioning context for its absolute children."
+    }
+  ]}
+/>

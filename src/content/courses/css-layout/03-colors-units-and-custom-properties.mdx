@@ -1,0 +1,129 @@
+---
+title: "Modern Colors, Units & Custom Properties"
+description: "Build flexible design systems using CSS custom properties (--vars), rem/ch/dvh units, color-mix(), and light-dark()."
+course: "css-layout"
+module: "Core Foundations"
+order: 3
+durationMinutes: 9
+objectives:
+  - "Define and reuse theme tokens with CSS Custom Properties (--accent)"
+  - "Choose accessible relative units (rem, ch, %) over rigid pixels"
+  - "Mix and adapt colors dynamically with color-mix() and light-dark()"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+Modern CSS gives you built-in design-token variables and dynamic color functions, no preprocessor required.
+
+## CSS Custom Properties (`--vars`)
+
+Declare variables on `:root` and read them anywhere with `var(--name, fallback)`:
+
+```css
+:root {
+  --brand: #2563eb;
+  --radius: 0.75rem;
+}
+.button {
+  background: var(--brand);
+  border-radius: var(--radius);
+}
+```
+
+## Choosing the Right CSS Units
+
+| Unit | Relative To | Best Used For |
+| :--- | :--- | :--- |
+| `rem` | Root `<html>` font size (usually 16px) | Font sizes, spacing (respects user zoom settings!) |
+| `ch` | Width of the `"0"` character | Comfortable paragraph line lengths (`max-width: 65ch`) |
+| `dvh` | Dynamic mobile viewport height | Full-screen heroes without mobile address-bar cutoff |
+| `%` | Parent container dimension | Fluid widths |
+
+<Callout type="tip" title="Dynamic Tints with color-mix()">
+  Generate a soft hover background from a single brand variable using <code>color-mix(in srgb, var(--brand) 15%, white)</code>!
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="CSS Custom Properties"
+  prompt="Define a custom property named --accent on :root and apply it to the button background."
+  template={`:root {
+  {{0}}: #2563eb;
+}
+.btn {
+  background: {{1}}(--accent);
+}`}
+  blanks={[
+    { answer: '--accent', placeholder: '--name' },
+    { answer: 'var', placeholder: 'fn' },
+  ]}
+  hint={'Custom properties always start with two hyphens (--) and are read using var(...).'}
+/>
+
+## Try It Yourself
+
+Change `--brand` in `:root` from `#2563eb` to `#7c3aed` or `#059669` and watch the entire card theme update automatically!
+
+<Playground
+  client:visible
+  title="One-Token Theme with color-mix()"
+  defaultTab="css"
+  height={260}
+  html={`<div class="card">
+  <span class="tag">Design Token</span>
+  <h3>Change --brand to re-theme!</h3>
+  <p>Borders, soft backgrounds, and buttons all derive from one CSS variable.</p>
+  <button>Get Started</button>
+</div>`}
+  css={`:root {
+  --brand: #2563eb;
+}
+.card {
+  max-width: 42ch;
+  padding: 1.25rem;
+  border-radius: 0.85rem;
+  border: 1px solid color-mix(in srgb, var(--brand) 30%, white);
+  background: color-mix(in srgb, var(--brand) 7%, white);
+}
+.tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--brand);
+  background: color-mix(in srgb, var(--brand) 16%, white);
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+}
+h3 { margin: 0.6rem 0 0.35rem; }
+p { margin: 0 0 1rem; font-size: 0.9rem; color: #475569; }
+button {
+  background: var(--brand);
+  color: white;
+  border: none;
+  padding: 0.55rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+}`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why is rem preferred over px for font sizes?",
+      options: [
+        "rem loads faster than px",
+        "rem scales automatically when a user changes their browser's default font size for readability",
+        "px is deprecated in CSS"
+      ],
+      answer: 1,
+      explanation: "Using rem respects browser-level accessibility font-size preferences, whereas fixed px values override them."
+    }
+  ]}
+/>

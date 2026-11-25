@@ -1,0 +1,72 @@
+---
+title: "Flexbox Essentials"
+description: "Align, space, and wrap items along a single axis using modern CSS Flexbox and gap."
+course: "css-layout"
+module: "Layout Systems"
+order: 5
+durationMinutes: 8
+objectives:
+  - "Understand the main axis vs. cross axis in Flexbox"
+  - "Control spacing with justify-content, align-items, and gap"
+  - "Build a responsive navigation bar and card row"
+---
+
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+**Flexbox** (`display: flex`) is designed for laying out items in **one dimension**, either a horizontal row or a vertical column.
+
+## The Three Properties You'll Use Daily
+
+| Property | What it controls | Common values |
+| :--- | :--- | :--- |
+| `justify-content` | Alignment along the **main axis** | `flex-start`, `center`, `space-between` |
+| `align-items` | Alignment along the **cross axis** | `stretch`, `center`, `flex-start` |
+| `gap` | Space between flex items | `8px`, `1rem`, `16px` |
+
+## Try It Yourself
+
+Change `justify-content` from `space-between` to `center` or `flex-end`, or switch `flex-direction` to `column`!
+
+<Playground
+  client:visible
+  title="Interactive Flexbox Playground"
+  defaultTab="css"
+  height={270}
+  html={`<div class="toolbar">
+  <div class="pill">HTML</div>
+  <div class="pill">CSS</div>
+  <div class="pill">JavaScript</div>
+</div>`}
+  css={`.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #f1f5f9;
+  min-height: 120px;
+}
+
+.pill {
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: #2563eb;
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+}`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which property adds consistent spacing between flex items without extra outer margins?",
+      options: ["margin-between", "gap", "spacing"],
+      answer: 1,
+      explanation: "The gap property works in both Flexbox and CSS Grid and adds space strictly between items."
+    }
+  ]}
+/>

@@ -1,0 +1,208 @@
+---
+import { getCollection } from 'astro:content';
+import { getLessonSlug } from '@/lib/courses';
+
+// Lightweight fallback index for dev mode (Pagefind powers production builds)
+const allCourses = await getCollection('courses');
+const allLessons = await getCollection('lessons');
+const allRefs = await getCollection('references');
+
+const fallbackItems = [
+  ...allCourses.map((c) => ({
+    title: c.data.title,
+    subtitle: `${c.data.track} Course · ${c.data.difficulty}`,
+    url: `/courses/${c.data.slug}`,
+    excerpt: c.data.description,
+    kind: 'Course',
+  })),
+  ...allLessons.map((l) => ({
+    title: l.data.title,
+    subtitle: `${l.data.module} · ${l.data.durationMinutes} min`,
+    url: `/courses/${l.data.course}/${getLessonSlug(l)}`,
+    excerpt: l.data.description,
+    kind: 'Lesson',
+  })),
+  ...allRefs.map((r) => ({
+    title: r.data.title,
+    subtitle: `${r.data.category} Reference`,
+    url: `/reference/${r.id.replace(/\.mdx$/, '')}`,
+    excerpt: r.data.summary,
+    kind: 'Reference',
+  })),
+];
+---
+
+<dialog
+  id="site-search-dialog"
+  closedby="any"
+  aria-labelledby="site-search-title"
+  class="m-auto mt-16 w-[min(92vw,40rem)] rounded-3xl bg-[var(--bg-elevated)] p-0 text-[var(--text)] shadow-2xl"
+>
+  <div class="flex items-center gap-3 border-b border-[var(--border)] px-4 py-3">
+    <svg class="h-5 w-5 shrink-0 text-[var(--text-subtle)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.3-4.3" />
+    </svg>
+    <h1 id="site-search-title" class="sr-only">Search courses, lessons, and references</h1>
+    <input
+      id="site-search-input"
+      type="search"
+      autofocus
+      placeholder="Search courses, lessons, HTML tags, CSS..."
+      autocomplete="off"
+      class="w-full bg-transparent text-base text-[var(--text)] placeholder:text-[var(--text-subtle)] focus:outline-none"
+    />
+    <form method="dialog">
+      <button
+        type="submit"
+        aria-label="Close search"
+        class="rounded-md border border-[var(--border)] px-2 py-1 text-xs font-medium text-[var(--text-muted)] hover:bg-[var(--bg-muted)]"
+      >
+        ESC
+      </button>
+    </form>
+  </div>
+
+  <div id="site-search-results" class="max-h-[60vh] overflow-y-auto p-3">
+    <p class="px-3 py-6 text-center text-sm text-[var(--text-subtle)]">
+      Type to search across all courses, lessons, and quick references.
+    </p>
+  </div>
+
+  <div class="flex items-center justify-between border-t border-[var(--border)] bg-[var(--bg-subtle)] px-4 py-2 text-xs text-[var(--text-subtle)]">
+    <span>Press <kbd class="rounded border border-[var(--border)] px-1.5 py-0.5">Esc</kbd> to close</span>
+    <span>Powered by Pagefind</span>
+  </div>
+</dialog>
+
+<script define:vars={{ fallbackItems }}>
+  const dialog = document.getElementById('site-search-dialog');
+  const input = document.getElementById('site-search-input');
+  const resultsEl = document.getElementById('site-search-results');
+
+  let pagefindModule = null;
+  let pagefindAttempted = false;
+
+  async function loadPagefind() {
+    if (pagefindAttempted) return pagefindModule;
+    pagefindAttempted = true;
+    try {
+      const pfPath = '/pagefind/pagefind.js';
+      pagefindModule = await import(/* @vite-ignore */ pfPath);
+      if (pagefindModule?.init) await pagefindModule.init();
+    } catch {
+      pagefindModule = null;
+    }
+    return pagefindModule;
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function renderResults(items, query) {
+    if (!resultsEl) return;
+    if (!query.trim()) {
+      resultsEl.innerHTML =
+        '<p class="px-3 py-6 text-center text-sm text-[var(--text-subtle)]">Type to search across all courses, lessons, and quick references.</p>';
+      return;
+    }
+    if (items.length === 0) {
+      resultsEl.innerHTML = `<p class="px-3 py-6 text-center text-sm text-[var(--text-subtle)]">No results found for <strong>${escapeHtml(query)}</strong>.</p>`;
+      return;
+    }
+    resultsEl.innerHTML = items
+      .map(
+        (item) => `
+        <a href="${escapeHtml(item.url)}" class="block rounded-xl px-3.5 py-2.5 transition hover:bg-[var(--bg-muted)] focus:bg-[var(--bg-muted)] focus:outline-none">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-semibold text-sm text-[var(--text)]">${escapeHtml(item.title)}</span>
+            ${item.kind ? `<span class="rounded-full bg-[var(--accent-soft)] px-2 py-0.5 text-[11px] font-medium text-[var(--accent)]">${escapeHtml(item.kind)}</span>` : ''}
+          </div>
+          ${item.subtitle ? `<div class="mt-0.5 text-xs text-[var(--text-subtle)]">${escapeHtml(item.subtitle)}</div>` : ''}
+          ${item.excerpt ? `<p class="mt-1 line-clamp-2 text-xs text-[var(--text-muted)]">${item.isHtmlExcerpt ? item.excerpt : escapeHtml(item.excerpt)}</p>` : ''}
+        </a>`
+      )
+      .join('');
+  }
+
+  async function runSearch(query) {
+    const trimmed = query.trim();
+    if (!trimmed) {
+      renderResults([], '');
+      return;
+    }
+    const pf = await loadPagefind();
+    if (pf?.search) {
+      const search = await pf.search(trimmed);
+      const top = await Promise.all(search.results.slice(0, 8).map((r) => r.data()));
+      renderResults(
+        top.map((d) => ({
+          title: d.meta?.title || d.url,
+          url: d.url,
+          excerpt: d.excerpt,
+          isHtmlExcerpt: true,
+          kind: d.url.includes('/reference/') ? 'Reference' : d.url.includes('/courses/') ? 'Course' : 'Page',
+        })),
+        trimmed
+      );
+      return;
+    }
+
+    const q = trimmed.toLowerCase();
+    const matched = fallbackItems
+      .filter(
+        (item) =>
+          item.title.toLowerCase().includes(q) ||
+          item.subtitle.toLowerCase().includes(q) ||
+          item.excerpt.toLowerCase().includes(q)
+      )
+      .slice(0, 8);
+    renderResults(matched, trimmed);
+  }
+
+  function openSearch() {
+    if (!dialog || dialog.open) return;
+    dialog.showModal();
+    input?.focus();
+    loadPagefind();
+  }
+
+  document.querySelectorAll('[data-open-search]').forEach((btn) => {
+    btn.addEventListener('click', openSearch);
+  });
+
+  window.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      if (dialog?.open) {
+        dialog.close();
+      } else {
+        openSearch();
+      }
+    }
+  });
+
+  input?.addEventListener('input', (e) => {
+    runSearch(e.target.value || '');
+  });
+
+  // Progressive enhancement fallback for browsers without native closedby="any"
+  if (dialog && !('closedBy' in HTMLDialogElement.prototype)) {
+    const outside = (e) => {
+      const r = dialog.getBoundingClientRect();
+      return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+    };
+    let pressedOutside = false;
+    dialog.addEventListener('pointerdown', (e) => {
+      pressedOutside = outside(e);
+    });
+    dialog.addEventListener('pointerup', (e) => {
+      if (pressedOutside && outside(e)) dialog.close();
+    });
+  }
+</script>

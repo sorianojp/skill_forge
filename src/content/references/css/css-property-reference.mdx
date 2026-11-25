@@ -1,0 +1,49 @@
+---
+title: "Modern CSS Property Reference"
+category: "CSS"
+syntax: "display: grid | flex; clamp(); :has(); @container; @layer;"
+summary: "Scannable quick reference of essential modern CSS properties, functions, selectors, and at-rules."
+browserSupport: "Baseline Widely Available"
+---
+
+## Box Model & Sizing
+
+| Property / Function | Purpose | Example |
+| :--- | :--- | :--- |
+| `box-sizing` | Include padding/border in width | `box-sizing: border-box;` |
+| `margin-inline` / `padding-block` | Flow-relative logical spacing | `margin-inline: auto;` |
+| `clamp(min, pref, max)` | Fluid responsive sizing | `font-size: clamp(1rem, 3vw, 2rem);` |
+| `aspect-ratio` | Lock width-to-height proportion | `aspect-ratio: 16 / 9;` |
+| `overflow` | Control overflowing content | `overflow: clip;` / `overflow: auto;` |
+
+## Layout (Flexbox, Grid & Positioning)
+
+| Property | Purpose | Example |
+| :--- | :--- | :--- |
+| `display` | Activate Flexbox or CSS Grid | `display: flex;` / `display: grid;` |
+| `gap` | Space between flex/grid items | `gap: 1rem;` |
+| `grid-template-columns` | Define columns or auto-fit cards | `repeat(auto-fit, minmax(14rem, 1fr))` |
+| `grid-template-rows: subgrid` | Inherit parent grid row tracks | `grid-row: span 3; grid-template-rows: subgrid;` |
+| `position` | Anchor or pin elements | `position: sticky; top: 0;` |
+| `scroll-snap-type` | Touch-friendly snapping carousels | `scroll-snap-type: x mandatory;` |
+
+## Modern Selectors & At-Rules
+
+| Syntax | Purpose |
+| :--- | :--- |
+| `:has(selector)` | Style a parent based on its children or checked inputs |
+| `:is(a, b)` / `:where(a, b)` | Group selectors (with `:where()` at zero specificity) |
+| `:focus-visible` | Show focus rings for keyboard navigation only |
+| `@container (min-width: ...)` | Adapt a component to its parent container's width |
+| `@layer base, components, utilities;` | Control cascade order without specificity wars |
+
+## Color, Typography & Motion
+
+| Property / Function | Purpose | Example |
+| :--- | :--- | :--- |
+| `--custom-prop` / `var()` | Design-system variables | `color: var(--accent, #2563eb);` |
+| `color-mix()` | Dynamic tints & shades | `color-mix(in srgb, var(--brand) 15%, white)` |
+| `text-wrap: balance` | Prevent orphan words in headings | `h1 { text-wrap: balance; }` |
+| `backdrop-filter` | Frosted glass blur behind surfaces | `backdrop-filter: blur(10px);` |
+| `transition` / `transform` | GPU-friendly 60fps micro-interactions | `transition: transform 200ms ease;` |
+| `@keyframes` + `prefers-reduced-motion` | Accessible multi-step animations | `@media (prefers-reduced-motion: reduce)` |

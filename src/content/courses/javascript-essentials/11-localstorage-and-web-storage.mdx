@@ -1,0 +1,99 @@
+---
+title: "Persisting State with localStorage & JSON"
+description: "Save user preferences, notes, and course progress right in the browser using localStorage, JSON.stringify, and safe try/catch wrappers."
+course: "javascript-essentials"
+module: "DOM & Browser APIs"
+order: 11
+durationMinutes: 8
+objectives:
+  - "Store and read key-value strings with localStorage.setItem() and getItem()"
+  - "Serialize arrays and objects with JSON.stringify() and JSON.parse()"
+  - "Guard storage calls with try/catch for restricted or private browsing modes"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+**`localStorage`** lets your web app remember state across page reloads, with zero backend database! SkillForge itself uses `localStorage` to save your completed lessons and theme preference.
+
+## Storing Objects via `JSON`
+
+`localStorage` only stores **strings**. To save an object or array, convert it with `JSON.stringify()` on write and `JSON.parse()` on read:
+
+```js
+const prefs = { theme: 'dark', fontSize: 16 };
+localStorage.setItem('prefs', JSON.stringify(prefs));
+
+const loaded = JSON.parse(localStorage.getItem('prefs') ?? '{}');
+```
+
+<Callout type="warning" title="Never Store Secrets in localStorage">
+  Any JavaScript running on the page can read <code>localStorage</code>. It is great for UI preferences, drafts, and learning progress, never for passwords or sensitive auth tokens.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Save & Load JSON State"
+  prompt="Serialize the bookmarks array to JSON when saving and parse it back when loading."
+  template={`localStorage.setItem('bookmarks', JSON.{{0}}(bookmarks));
+const saved = JSON.{{1}}(localStorage.getItem('bookmarks') ?? '[]');`}
+  blanks={[
+    { answer: 'stringify', placeholder: 'method' },
+    { answer: 'parse', placeholder: 'method' },
+  ]}
+  hint={'JSON.stringify() converts JS values into a string; JSON.parse() converts a JSON string back into JS.'}
+/>
+
+## Try It Yourself
+
+Notice how our safe storage wrapper gracefully handles sandboxed environments where `localStorage` may be restricted, falling back to in-memory storage without crashing:
+
+<Playground
+  client:visible
+  title="Resilient Note Persistence Wrapper"
+  defaultTab="js"
+  showConsole={true}
+  height={250}
+  html={`<div class="box">
+  <label for="note"><strong>Scratchpad Note</strong></label>
+  <textarea id="note" rows="3" placeholder="Type a note..."></textarea>
+  <p id="status" class="status">Ready</p>
+</div>`}
+  css={`.box { max-width: 360px; display: grid; gap: 8px; }
+textarea { padding: 8px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 13px; }
+.status { margin: 0; font-size: 12px; color: #15803d; font-weight: 600; }`}
+  js={`const KEY = 'demo_note_v1';
+const memoryFallback = new Map();
+
+function save(key, value) {
+  const json = JSON.stringify(value);
+  try { localStorage.setItem(key, json); }
+  catch { memoryFallback.set(key, json); }
+}
+
+const textarea = document.querySelector('#note');
+const status = document.querySelector('#status');
+
+textarea.addEventListener('input', () => {
+  const payload = { text: textarea.value, updatedAt: new Date().toLocaleTimeString() };
+  save(KEY, payload);
+  status.textContent = \`Saved (\${payload.text.length} chars) at \${payload.updatedAt}\`;
+  console.log('Saved JSON:', JSON.stringify(payload));
+});`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What type of values can localStorage store directly?",
+      options: ["Any JavaScript object or function", "Strings only (use JSON.stringify for objects/arrays)", "Only numbers and booleans"],
+      answer: 1,
+      explanation: "localStorage stores string key-value pairs; complex structures must be serialized with JSON.stringify()."
+    }
+  ]}
+/>

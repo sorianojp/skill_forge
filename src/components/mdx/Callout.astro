@@ -1,0 +1,38 @@
+---
+interface Props {
+  type?: 'note' | 'tip' | 'warning';
+  title?: string;
+}
+
+const { type = 'note', title } = Astro.props;
+
+const config = {
+  note: {
+    defaultTitle: 'Note',
+    border: 'border-[var(--accent)]',
+    bg: 'bg-[var(--accent-soft)]',
+    titleColor: 'text-[var(--accent)]',
+  },
+  tip: {
+    defaultTitle: 'Pro Tip',
+    border: 'border-[var(--success)]',
+    bg: 'bg-[var(--success-soft)]',
+    titleColor: 'text-[var(--success)]',
+  },
+  warning: {
+    defaultTitle: 'Watch Out',
+    border: 'border-[var(--warning)]',
+    bg: 'bg-[var(--warning-soft)]',
+    titleColor: 'text-[var(--warning)]',
+  },
+}[type];
+---
+
+<aside class={`not-prose my-6 rounded-2xl ${config.bg} p-5`}>
+  <p class={`text-xs font-bold uppercase tracking-wider ${config.titleColor}`}>
+    {title ?? config.defaultTitle}
+  </p>
+  <div class="mt-1.5 text-sm leading-relaxed text-[var(--text)] [&_code]:rounded-md [&_code]:bg-[var(--bg-elevated)] [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:text-xs">
+    <slot />
+  </div>
+</aside>

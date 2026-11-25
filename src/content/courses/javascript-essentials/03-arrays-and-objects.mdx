@@ -1,0 +1,107 @@
+---
+title: "Arrays, Objects & Rendering Lists"
+description: "Store structured data in arrays of objects and transform them cleanly with .filter() and .map() before rendering to the DOM."
+course: "javascript-essentials"
+module: "Data Structures & Modern Syntax"
+order: 6
+durationMinutes: 9
+objectives:
+  - "Model structured records using JavaScript objects and arrays"
+  - "Filter items with .filter() and transform them with .map()"
+  - "Render dynamic lists cleanly into the DOM"
+---
+
+import Playground from '@/components/playground/Playground';
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+Most real web apps fetch a list of items (courses, products, messages) as an **array of objects**, filter or sort it, and render it into HTML.
+
+## `.filter()` + `.map()` Pipeline
+
+```js
+const courses = [
+  { title: 'HTML', free: true },
+  { title: 'CSS', free: true },
+  { title: 'Pro Workshop', free: false },
+];
+
+const freeTitles = courses
+  .filter((c) => c.free)
+  .map((c) => c.title);
+// ['HTML', 'CSS']
+```
+
+<Callout type="tip" title="Immutability">
+  Both <code>.filter()</code> and <code>.map()</code> return <strong>brand-new arrays</strong> without mutating the original data, making bugs much easier to avoid.
+</Callout>
+
+## Try It Yourself
+
+Click the difficulty filter buttons below, or add a new course object to the `courses` array in the JS tab:
+
+<Playground
+  client:visible
+  title="Dynamic Course Filter"
+  defaultTab="js"
+  showConsole={true}
+  height={300}
+  html={`<div class="filters">
+  <button data-level="All" class="active">All</button>
+  <button data-level="Beginner">Beginner</button>
+  <button data-level="Intermediate">Intermediate</button>
+</div>
+<ul id="courseList" class="list"></ul>`}
+  css={`.filters { display: flex; gap: 6px; margin-bottom: 12px; }
+button { padding: 6px 12px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; cursor: pointer; font-weight: 600; font-size: 12px; }
+button.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+.list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.item { display: flex; justify-content: space-between; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc; font-size: 13px; }
+.tag { font-size: 11px; font-weight: 700; color: #2563eb; }`}
+  js={`const courses = [
+  { title: 'Modern HTML Fundamentals', level: 'Beginner' },
+  { title: 'Modern CSS Layout', level: 'Beginner' },
+  { title: 'Async JavaScript Patterns', level: 'Intermediate' },
+  { title: 'Web Performance & CWV', level: 'Intermediate' },
+];
+
+const list = document.querySelector('#courseList');
+const buttons = document.querySelectorAll('.filters button');
+
+function render(level) {
+  const visible = level === 'All'
+    ? courses
+    : courses.filter((c) => c.level === level);
+
+  list.replaceChildren(...visible.map((c) => {
+    const li = document.createElement('li');
+    li.className = 'item';
+    li.innerHTML = \`<strong>\${c.title}</strong><span class="tag">\${c.level}</span>\`;
+    return li;
+  }));
+
+  console.log(\`Showing \${visible.length} course(s) for "\${level}"\`);
+}
+
+buttons.forEach((btn) => {
+  btn.addEventListener('click', () => {
+    buttons.forEach((b) => b.classList.remove('active'));
+    btn.classList.add('active');
+    render(btn.dataset.level);
+  });
+});
+
+render('All');`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which array method returns a new array containing only the elements that pass a test condition?",
+      options: [".map()", ".filter()", ".forEach()"],
+      answer: 1,
+      explanation: ".filter() returns a new array with only the items for which the callback returns true."
+    }
+  ]}
+/>

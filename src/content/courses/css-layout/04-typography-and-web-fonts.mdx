@@ -1,0 +1,100 @@
+---
+title: "Typography, Readability & text-wrap"
+description: "Craft editorial-grade reading experiences with comfortable measure (ch), unitless line-height, text-wrap: balance, and tabular numerals."
+course: "css-layout"
+module: "Core Foundations"
+order: 4
+durationMinutes: 8
+objectives:
+  - "Use unitless line-height (e.g., 1.6) so text scales cleanly"
+  - "Limit paragraph width to 60–75ch for effortless scanning"
+  - "Eliminate awkward single-word headline orphans with text-wrap: balance"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+Over 80% of the web is text. Great typography (like you see on `web.dev`)comes down to four simple CSS habits:
+
+1. **Unitless `line-height`**: Always write `line-height: 1.6` (not `24px`) so child headings scale proportionally.
+2. **Readable line length**: Cap prose containers at `max-width: 65ch`.
+3. **Balanced headings**: Add `text-wrap: balance` to `h1`–`h3` so multi-line titles wrap evenly instead of leaving one lonely word on the last line.
+4. **Tabular numbers**: Add `font-variant-numeric: tabular-nums` on timers, prices, and progress counters so digits don't jitter horizontally as they change!
+
+<Callout type="tip" title="Fast Web Fonts with font-display: swap">
+  When loading custom fonts, always include <code>font-display: swap</code> (or <code>&amp;display=swap</code> in Google Fonts) so text appears immediately in a fallback font instead of staying invisible.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Modern Editorial Typography"
+  prompt="Balance heading line wraps and cap paragraph width at 65 characters."
+  template={`h1 {
+  text-wrap: {{0}};
+}
+p {
+  max-width: 65{{1}};
+  line-height: 1.65;
+}`}
+  blanks={[
+    { answer: 'balance', placeholder: 'value' },
+    { answer: 'ch', placeholder: 'unit' },
+  ]}
+  hint={'Use text-wrap: balance for headings and the ch unit for character-based measure.'}
+/>
+
+## Try It Yourself
+
+Compare the balanced headline vs. the unbalanced headline below, and toggle `max-width` on the paragraph:
+
+<Playground
+  client:visible
+  title="Balanced Headings & Readable Measure"
+  defaultTab="css"
+  height={260}
+  html={`<article class="prose">
+  <h1 class="balanced">Learn Modern CSS Typography for Faster, Clearer Reading</h1>
+  <p>
+    Comfortable line length (60 to 75 characters) and generous line-height make technical guides effortless to scan on both desktop and mobile screens.
+  </p>
+  <p class="price">Score: <span>100%</span></p>
+</article>`}
+  css={`.prose { max-width: 58ch; }
+.balanced {
+  font-size: 1.5rem;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  margin: 0 0 0.75rem;
+}
+p {
+  line-height: 1.7;
+  color: #475569;
+  margin: 0 0 0.75rem;
+}
+.price span {
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  color: #15803d;
+}`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does text-wrap: balance do on a multi-line heading?",
+      options: [
+        "Centers the text horizontally",
+        "Distributes words evenly across lines to avoid awkward single-word orphans",
+        "Truncates the heading with an ellipsis"
+      ],
+      answer: 1,
+      explanation: "text-wrap: balance calculates balanced line widths for short blocks like headings and captions."
+    }
+  ]}
+/>

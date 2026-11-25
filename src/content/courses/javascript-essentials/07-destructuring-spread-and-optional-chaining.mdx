@@ -1,0 +1,82 @@
+---
+title: "Destructuring, Spread & Optional Chaining"
+description: "Write concise, crash-proof JavaScript with object/array destructuring, immutable spread copies (...), and optional chaining (?.)."
+course: "javascript-essentials"
+module: "Data Structures & Modern Syntax"
+order: 7
+durationMinutes: 9
+objectives:
+  - "Extract properties and array items cleanly with destructuring"
+  - "Clone and merge objects or arrays immutably with the spread operator (...)"
+  - "Read deeply nested properties safely using optional chaining (?.)"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+These three modern ES syntax features make your code dramatically shorter and safer:
+
+1. **Destructuring**: `const { title, level = 'Beginner' } = course;`
+2. **Spread (`...`)**: `const updated = { ...course, completed: true };` (copies without mutating `course`!)
+3. **Optional Chaining (`?.`)**: `const city = user?.profile?.address?.city ?? 'Unknown';` (returns `undefined` instead of throwing `TypeError: Cannot read properties of undefined`!)
+
+<Callout type="note" title="Shallow Copy Reminder">
+  The spread operator <code>&#123; ...obj &#125;</code> creates a <strong>shallow copy</strong>. For deep cloning nested objects, use the built-in <code>structuredClone(obj)</code>!
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Destructure, Spread & Optional Chain"
+  prompt="Destructure title from course, clone tags with a new item, and safely read author.social.github."
+  template={`const { {{0}} } = course;
+const allTags = [{{1}}tags, 'modern'];
+const handle = course.author{{2}}social{{2}}github ?? 'none';`}
+  blanks={[
+    { answer: 'title', placeholder: 'prop' },
+    { answer: '...', placeholder: '...' },
+    { answer: '?.', placeholder: '?.' },
+  ]}
+  hint={'Use ... to spread an array and ?. for safe optional chaining.'}
+/>
+
+## Try It Yourself
+
+<Playground
+  client:visible
+  title="Destructuring, Spread & Optional Chaining"
+  defaultTab="js"
+  showConsole={true}
+  height={250}
+  html={`<pre id="out"></pre>`}
+  css={`pre { padding: 12px; border-radius: 10px; background: #f8fafc; border: 1px solid #cbd5e1; font-size: 13px; }`}
+  js={`const course = { title: 'Learn JS', lessons: 16, meta: { free: true } };
+
+// 1. Destructuring with default value
+const { title, level = 'Beginner' } = course;
+
+// 2. Immutable spread update
+const nextCourse = { ...course, completed: true };
+
+// 3. Safe optional chaining on missing nested field
+const sponsor = course.sponsor?.company?.name ?? 'Community Funded';
+
+const summary = { title, level, completed: nextCourse.completed, sponsor };
+document.querySelector('#out').textContent = JSON.stringify(summary, null, 2);
+console.log('Original course untouched:', course.completed);`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does `user?.settings?.theme` return if `user.settings` is undefined?",
+      options: ["Throws a TypeError", "Returns undefined safely", "Returns false"],
+      answer: 1,
+      explanation: "Optional chaining (?.) short-circuits and returns undefined instead of throwing when a link in the chain is null or undefined."
+    }
+  ]}
+/>

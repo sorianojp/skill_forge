@@ -1,0 +1,94 @@
+---
+title: "The Box Model, Sizing & Fluid Typography"
+description: "Understand content, padding, border, and margin, why border-box saves your sanity, and how clamp() creates fluid responsive sizing."
+course: "css-layout"
+module: "Core Foundations"
+order: 2
+durationMinutes: 8
+objectives:
+  - "Predict element dimensions accurately with box-sizing: border-box"
+  - "Distinguish between internal padding and external margin"
+  - "Scale typography and spacing smoothly with clamp()"
+---
+
+import Playground from '@/components/playground/Playground';
+import DoDont from '@/components/mdx/DoDont.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+Every HTML element is a rectangular box made of four layers from the inside out: **Content → Padding → Border → Margin**.
+
+## Always Reset `box-sizing`
+
+By default (`content-box`), adding `padding: 20px` to a `width: 200px` box makes it `240px` wide! Switching to `border-box` keeps the total width locked at `200px`.
+
+<DoDont
+  doTitle="Predictable Sizing"
+  dontTitle="Default Surprise Overflow"
+  doCode={`*, *::before, *::after {
+  box-sizing: border-box;
+}
+.card {
+  width: 240px;
+  padding: 20px; /* stays 240px */
+}`}
+  dontCode={`.card {
+  box-sizing: content-box;
+  width: 240px;
+  padding: 20px; /* becomes 280px! */
+}`}
+/>
+
+## Fluid Sizing with `clamp()`
+
+Instead of jumping font sizes at 4 different breakpoints, `clamp(min, preferred, max)` scales smoothly:
+
+```css
+h1 {
+  font-size: clamp(1.25rem, 4vw, 2.25rem);
+}
+```
+
+## Try It Yourself
+
+Toggle `box-sizing` between `border-box` and `content-box`, or adjust `padding` and `clamp()` below:
+
+<Playground
+  client:visible
+  title="Box Model & Fluid Clamp"
+  defaultTab="css"
+  height={270}
+  html={`<div class="wrapper">
+  <div class="box border-box">
+    <h3>border-box (240px total)</h3>
+    <p>Padding stays inside the declared width.</p>
+  </div>
+  <div class="box content-box">
+    <h3>content-box (284px total!)</h3>
+    <p>Padding &amp; border expand past 240px.</p>
+  </div>
+</div>`}
+  css={`.wrapper { display: grid; gap: 12px; }
+.box {
+  width: 240px;
+  padding: 20px;
+  border: 2px solid #2563eb;
+  border-radius: 10px;
+  background: #eff6ff;
+}
+.border-box { box-sizing: border-box; }
+.content-box { box-sizing: content-box; border-color: #ea580c; background: #fff7ed; }
+h3 { margin: 0 0 4px; font-size: clamp(14px, 3vw, 18px); }
+p { margin: 0; font-size: 13px; color: #475569; }`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "With box-sizing: border-box, what is the total rendered width of a box with width: 200px, padding: 16px, and border: 2px solid?",
+      options: ["200px", "232px", "236px"],
+      answer: 0,
+      explanation: "border-box includes padding and border inside the declared width, keeping the total width exactly 200px."
+    }
+  ]}
+/>

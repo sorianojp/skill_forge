@@ -1,0 +1,39 @@
+---
+interface Props {
+  doTitle?: string;
+  dontTitle?: string;
+  doCode: string;
+  dontCode: string;
+  note?: string;
+}
+
+const {
+  doTitle = 'Do this',
+  dontTitle = 'Avoid this',
+  doCode,
+  dontCode,
+  note,
+} = Astro.props;
+---
+
+<div class="not-prose my-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+  <div class="overflow-hidden rounded-2xl bg-[var(--bg-elevated)]">
+    <div class="flex items-center gap-2 bg-[var(--success-soft)] px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-[var(--success)]">
+      <span>✓</span>
+      <span>{doTitle}</span>
+    </div>
+    <pre class="overflow-x-auto p-4 text-xs leading-relaxed text-[var(--text)]"><code>{doCode}</code></pre>
+  </div>
+
+  <div class="overflow-hidden rounded-2xl bg-[var(--bg-elevated)]">
+    <div class="flex items-center gap-2 bg-[var(--danger-soft)] px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-[var(--danger)]">
+      <span>✕</span>
+      <span>{dontTitle}</span>
+    </div>
+    <pre class="overflow-x-auto p-4 text-xs leading-relaxed text-[var(--text)]"><code>{dontCode}</code></pre>
+  </div>
+
+  {note && (
+    <p class="text-xs text-[var(--text-muted)] md:col-span-2">{note}</p>
+  )}
+</div>

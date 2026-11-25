@@ -1,0 +1,106 @@
+---
+title: "Responsive Design & Container Queries"
+description: "Build layouts that adapt to both viewport size (@media) and parent container size (@container) for truly reusable UI components."
+course: "css-layout"
+module: "Responsive & Modern Selectors"
+order: 9
+durationMinutes: 9
+objectives:
+  - "Write mobile-first responsive rules with min-width media queries"
+  - "Make self-contained components adapt to their parent using @container"
+  - "Keep media proportions locked with aspect-ratio"
+---
+
+import Playground from '@/components/playground/Playground';
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+Traditional **Media Queries** (`@media`) respond to the whole browser viewport. Modern **Container Queries** (`@container`) let a component respond to **the width of its own parent container**, so the same card looks great in both a narrow sidebar and a wide main column!
+
+## Setting Up a Container Query
+
+1. Mark the parent wrapper with `container-type: inline-size;`.
+2. Query it from inside using `@container (min-width: 320px) { ... }`.
+
+<Callout type="tip" title="Baseline Widely Available">
+  CSS Container Queries are supported across all modern browsers (Chrome, Edge, Safari, and Firefox). Pair them with mobile-first <code>@media</code> queries for page-level grids.
+</Callout>
+
+## Try It Yourself
+
+Both cards below use the **exact same HTML and CSS class**, the top one is in a wide container (horizontal layout) and the bottom one is in a narrow container (stacked layout). Try changing `max-width: 240px` to `380px`!
+
+<Playground
+  client:visible
+  title="Live @container Query Demo"
+  defaultTab="css"
+  height={300}
+  html={`<div class="wide-slot">
+  <article class="course-card">
+    <div class="thumb">CSS</div>
+    <div class="body">
+      <h3>Container Queries</h3>
+      <p>Switches to horizontal layout when the parent is 320px+ wide.</p>
+    </div>
+  </article>
+</div>
+
+<div class="narrow-slot">
+  <article class="course-card">
+    <div class="thumb">CSS</div>
+    <div class="body">
+      <h3>Same Component!</h3>
+      <p>Automatically stacks cleanly inside a narrow sidebar.</p>
+    </div>
+  </article>
+</div>`}
+  css={`.wide-slot, .narrow-slot {
+  container-type: inline-size;
+  margin-bottom: 14px;
+}
+.narrow-slot { max-width: 240px; }
+
+.course-card {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+}
+.thumb {
+  aspect-ratio: 16 / 9;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: #2563eb;
+  color: white;
+  font-weight: 800;
+}
+h3 { margin: 0 0 4px; font-size: 15px; }
+p { margin: 0; font-size: 12px; color: #475569; }
+
+@container (min-width: 320px) {
+  .course-card {
+    grid-template-columns: 110px 1fr;
+    align-items: center;
+  }
+  .thumb { aspect-ratio: 1 / 1; }
+}`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What CSS property must you set on a parent element before querying its width with @container?",
+      options: [
+        "display: container",
+        "container-type: inline-size",
+        "position: container"
+      ],
+      answer: 1,
+      explanation: "container-type: inline-size turns the parent into a size query container along its inline (width) axis."
+    }
+  ]}
+/>

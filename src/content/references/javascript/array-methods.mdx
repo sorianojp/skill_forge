@@ -1,0 +1,14 @@
+---
+title: "Array Methods"
+category: "JavaScript"
+syntax: "arr.map(fn), arr.filter(fn), arr.reduce(fn, init), arr.find(fn)"
+summary: "Most frequently used immutable JavaScript array transformation and lookup methods."
+browserSupport: "Baseline Widely Available"
+---
+
+| Method | Returns | Mutates Original? | Example |
+| :--- | :--- | :--- | :--- |
+| `.map(fn)` | New array of transformed items | No | `[1, 2].map(x => x * 2)` → `[2, 4]` |
+| `.filter(fn)` | New array of matching items | No | `[1, 2, 3].filter(x => x > 1)` → `[2, 3]` |
+| `.find(fn)` | First matching item or `undefined` | No | `[1, 2, 3].find(x => x > 1)` → `2` |
+| `.reduce(fn, init)` | Single accumulated value | No | `[1, 2, 3].reduce((a, b) => a + b, 0)` → `6` |

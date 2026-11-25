@@ -1,0 +1,100 @@
+---
+title: "Audio, Video & Captions"
+description: "Embed native HTML audio and video players with multiple source formats, poster images, preload hints, and accessible WebVTT captions."
+course: "html-fundamentals"
+module: "Media, Graphics & Data"
+order: 8
+durationMinutes: 8
+objectives:
+  - "Embed native <video> and <audio> players with controls and fallback sources"
+  - "Attach accessible captions and subtitles using <track kind=\"captions\">"
+  - "Follow browser autoplay and preload best practices"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+HTML lets you play audio and video natively without third-party plugins.
+
+## Accessible `<video>` Structure
+
+```html
+<video controls width="640" height="360" poster="preview.jpg" preload="metadata">
+  <source src="lesson.webm" type="video/webm" />
+  <source src="lesson.mp4" type="video/mp4" />
+  <track kind="captions" src="lesson-en.vtt" srclang="en" label="English" default />
+  <p>Your browser does not support HTML video. <a href="lesson.mp4">Download MP4</a>.</p>
+</video>
+```
+
+### Key Attributes to Know
+- **`controls`**: Displays native play/pause, volume, scrub bar, and captions menu.
+- **`preload="metadata"`**: Loads only duration and dimensions until the user clicks play, saving bandwidth.
+- **`muted` + `playsinline`**: Required if you ever use `autoplay` (browsers block unmuted autoplay).
+- **`<track kind="captions">`**: Loads a `.vtt` (WebVTT) captions file so deaf/hard-of-hearing users and sound-off viewers can follow along.
+
+<Callout type="tip" title="Always Provide a Fallback">
+  Include multiple <code>&lt;source&gt;</code> formats (e.g., WebM first for smaller file sizes, MP4 as broad fallback) plus a download link inside the element.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Accessible Video Markup"
+  prompt="Show native player controls, defer downloading full video bytes, and attach English captions."
+  template={`<video {{0}} preload="{{1}}">
+  <source src="intro.mp4" type="video/mp4" />
+  <{{2}} kind="captions" src="intro.vtt" srclang="en" label="English" />
+</video>`}
+  blanks={[
+    { answer: 'controls', placeholder: 'attr' },
+    { answer: 'metadata', accepted: ['none'], placeholder: 'value' },
+    { answer: 'track', placeholder: 'tag' },
+  ]}
+  hint={'Use controls for playback UI, preload="metadata" for lightweight loading, and <track> for WebVTT captions.'}
+/>
+
+## Try It Yourself: Interactive Web Audio Synthesizer + Media UI
+
+Since sandboxed offline previews don't depend on external video files, try controlling native browser audio playback and inspect the `<audio>` element structure below:
+
+<Playground
+  client:visible
+  title="Native Audio Controls & Web Audio Demo"
+  height={240}
+  html={`<div class="player">
+  <h3>Native Media Controls</h3>
+  <audio controls preload="metadata" style="width: 100%">
+    <p>Native audio player shell.</p>
+  </audio>
+  <button id="beep">Play 440Hz Tone (Web Audio API)</button>
+</div>`}
+  css={`.player { max-width: 360px; display: grid; gap: 12px; padding: 16px; border-radius: 12px; border: 1px solid #cbd5e1; background: #f8fafc; }
+h3 { margin: 0; font-size: 15px; }
+button { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 8px 14px; font-weight: 600; cursor: pointer; font-size: 13px; }`}
+  js={`document.getElementById('beep').addEventListener('click', () => {
+  const ctx = new AudioContext();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.frequency.value = 440;
+  gain.gain.value = 0.08;
+  osc.connect(gain).connect(ctx.destination);
+  osc.start();
+  osc.stop(ctx.currentTime + 0.25);
+});`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which HTML element attaches WebVTT captions or subtitles to a <video>?",
+      options: ["<caption src=\"...\">", "<track kind=\"captions\" src=\"...\">", "<subtitle src=\"...\">"],
+      answer: 1,
+      explanation: "The <track> element connects timed text tracks (captions, subtitles, chapters) to <video> and <audio>."
+    }
+  ]}
+/>

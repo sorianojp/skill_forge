@@ -1,0 +1,110 @@
+---
+title: "Timers, Intervals & Debouncing"
+description: "Schedule delayed or recurring work with setTimeout and setInterval, clean up timers properly, and debounce rapid user input."
+course: "javascript-essentials"
+module: "DOM & Browser APIs"
+order: 12
+durationMinutes: 9
+objectives:
+  - "Schedule one-shot delays with setTimeout() and cancel them with clearTimeout()"
+  - "Build a start/stop timer with setInterval() and clearInterval()"
+  - "Implement a reusable debounce() helper for search inputs"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+Timers let you coordinate delayed notifications, countdowns, and performance optimizations like **debouncing**.
+
+## Debouncing Rapid Input
+
+When a user types `"javascript"` into a search bar, firing an API request on all 10 keystrokes wastes bandwidth. A **debounce** waits until the user pauses typing for `300ms`:
+
+```js
+function debounce(fn, delayMs = 300) {
+  let timerId;
+  return (...args) => {
+    clearTimeout(timerId);
+    timerId = setTimeout(() => fn(...args), delayMs);
+  };
+}
+```
+
+<Callout type="warning" title="Always Clean Up Intervals">
+  Save the ID returned by <code>setInterval()</code> and call <code>clearInterval(id)</code> when stopping or unmounting so timers don't leak memory or stack up!
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Cancel Previous Timer (Debounce)"
+  prompt="Cancel any pending timer before scheduling a new delayed call."
+  template={`let timer;
+function runDebounced(fn) {
+  {{0}}(timer);
+  timer = {{1}}(fn, 300);
+}`}
+  blanks={[
+    { answer: 'clearTimeout', placeholder: 'fn' },
+    { answer: 'setTimeout', placeholder: 'fn' },
+  ]}
+  hint={'clearTimeout(timer) cancels the previous timeout before setTimeout() schedules a fresh one.'}
+/>
+
+## Try It Yourself
+
+Type quickly into the input below and compare the **Raw keystrokes** count vs. the **Debounced API calls** count!
+
+<Playground
+  client:visible
+  title="Live Debounce Visualizer"
+  defaultTab="js"
+  showConsole={true}
+  height={250}
+  html={`<input id="query" type="search" placeholder="Type quickly here..." />
+<p id="stats" class="stats">Keystrokes: 0 · Debounced searches: 0</p>`}
+  css={`input { width: 100%; max-width: 340px; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 14px; }
+.stats { margin-top: 12px; font-size: 13px; font-weight: 600; color: #1d4ed8; }`}
+  js={`let rawCount = 0;
+let searchCount = 0;
+const stats = document.querySelector('#stats');
+
+function debounce(fn, ms) {
+  let id;
+  return (...args) => {
+    clearTimeout(id);
+    id = setTimeout(() => fn(...args), ms);
+  };
+}
+
+const runSearch = debounce((value) => {
+  searchCount += 1;
+  stats.textContent = \`Keystrokes: \${rawCount} · Debounced searches: \${searchCount}\`;
+  console.log('Executed debounced search for:', value);
+}, 400);
+
+document.querySelector('#query').addEventListener('input', (e) => {
+  rawCount += 1;
+  stats.textContent = \`Keystrokes: \${rawCount} · Debounced searches: \${searchCount}\`;
+  runSearch(e.target.value);
+});`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does debouncing a search input accomplish?",
+      options: [
+        "It blocks all keyboard input for 5 seconds",
+        "It waits until the user pauses typing for a short delay before running the expensive search function",
+        "It sorts search results alphabetically"
+      ],
+      answer: 1,
+      explanation: "Debouncing resets a short timer on every keystroke so the callback only fires once the user pauses."
+    }
+  ]}
+/>

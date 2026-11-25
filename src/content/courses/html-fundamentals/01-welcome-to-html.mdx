@@ -1,0 +1,82 @@
+---
+title: "Welcome to HTML"
+description: "Understand how HTML elements, attributes, and document structure work together to build every web page."
+course: "html-fundamentals"
+module: "Foundations"
+order: 1
+durationMinutes: 6
+objectives:
+  - "Recognize HTML tags, elements, and attributes"
+  - "Write a valid heading, paragraph, link, and list"
+  - "Modify live HTML and see instant browser output"
+---
+
+import Playground from '@/components/playground/Playground';
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+HTML (**HyperText Markup Language**) gives a web page its **meaning and structure**. Every site you visit (from simple blogs to complex web apps)starts with HTML.
+
+## Anatomy of an HTML Element
+
+Most HTML elements have three parts:
+
+1. **Opening tag**: e.g., `<p>`
+2. **Content**: the text or nested elements inside
+3. **Closing tag**: e.g., `</p>`
+
+```html
+<a href="https://skillforge.dev">Start learning</a>
+```
+
+In the example above, `href` is an **attribute** that tells the browser where the link points.
+
+<Callout type="tip" title="Try Editing Live">
+  Every lesson on SkillForge includes an interactive sandbox. Change the heading text, add a new list item, or tweak the link below!
+</Callout>
+
+## Try It Yourself
+
+<Playground
+  client:visible
+  title="Your First HTML Page"
+  height={260}
+  html={`<h1>Welcome to HTML!</h1>
+<p>HTML describes the <strong>structure</strong> of your content.</p>
+
+<h2>Topics in this course</h2>
+<ul>
+  <li>Elements &amp; Attributes</li>
+  <li>Semantic Landmarks</li>
+  <li>Accessible Forms</li>
+</ul>`}
+  css={`h1 { color: #2563eb; margin-bottom: 8px; }
+ul { padding-left: 20px; }
+li { margin-bottom: 4px; }`}
+/>
+
+## Heading Hierarchy Matters
+
+Use `<h1>` for the main page title, `<h2>` for major sections, and `<h3>` for subsections. Never pick a heading tag just because you like its default font size, use CSS for visual sizing.
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What is the primary job of HTML on a web page?",
+      options: [
+        "Styling colors and animations",
+        "Defining the structure and meaning of content",
+        "Running database queries on the server"
+      ],
+      answer: 1,
+      explanation: "HTML provides structure and semantic meaning. CSS handles presentation, and JavaScript handles interactivity."
+    },
+    {
+      question: "In <a href=\"/courses\">Courses</a>, what is href?",
+      options: ["A closing tag", "An attribute", "A CSS selector"],
+      answer: 1,
+      explanation: "Attributes live inside the opening tag and configure an element's behavior or metadata."
+    }
+  ]}
+/>

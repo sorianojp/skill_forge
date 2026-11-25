@@ -1,0 +1,88 @@
+---
+title: "Loops & Iteration (for...of, for, while)"
+description: "Iterate over arrays, strings, and ranges cleanly with for...of, classic for loops, break, and continue."
+course: "javascript-essentials"
+module: "Language Foundations"
+order: 3
+durationMinutes: 8
+objectives:
+  - "Loop cleanly over arrays and strings with for...of"
+  - "Use classic for loops when you need numeric ranges or step sizes"
+  - "Skip or stop iterations cleanly using continue and break"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+Loops let your program repeat work without copy-pasting code. In modern JavaScript, **`for...of`** is the cleanest default for iterating arrays, strings, Maps, and Sets.
+
+## `for...of` vs. Classic `for`
+
+```js
+const tracks = ['HTML', 'CSS', 'JavaScript'];
+
+for (const track of tracks) {
+  console.log(track);
+}
+```
+
+Use **`continue`** to skip the current item and move to the next, or **`break`** to exit the loop early (something `.forEach()` cannot do!).
+
+<Callout type="tip" title="Need the Index Too?">
+  Use <code>for (const [index, item] of tracks.entries())</code> to get both the index and the value cleanly in a <code>for...of</code> loop.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Iterate with for...of and break"
+  prompt="Loop through lessons with for...of and stop immediately when you find 'CSS Grid'."
+  template={`for (const lesson {{0}} lessons) {
+  if (lesson === 'CSS Grid') {{1}};
+  console.log(lesson);
+}`}
+  blanks={[
+    { answer: 'of', placeholder: 'kw' },
+    { answer: 'break', placeholder: 'kw' },
+  ]}
+  hint={'Use for...of to iterate values and break to exit the loop early.'}
+/>
+
+## Try It Yourself
+
+<Playground
+  client:visible
+  title="Looping & Early Exit with for...of"
+  defaultTab="js"
+  showConsole={true}
+  height={250}
+  html={`<ul id="out"></ul>`}
+  css={`ul { padding-left: 20px; font-size: 14px; line-height: 1.7; }`}
+  js={`const lessons = ['HTML', 'CSS', 'SKIP:Draft', 'JavaScript', 'STOP', 'Hidden'];
+const list = document.querySelector('#out');
+
+for (const [i, item] of lessons.entries()) {
+  if (item.startsWith('SKIP:')) continue;
+  if (item === 'STOP') break;
+
+  const li = document.createElement('li');
+  li.textContent = \`#\${i + 1}: \${item}\`;
+  list.appendChild(li);
+  console.log('Rendered:', item);
+}`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which loop allows you to exit early using the break statement?",
+      options: ["array.forEach()", "for...of", "array.map()"],
+      answer: 1,
+      explanation: "for...of (and classic for/while loops) support break and continue, whereas .forEach() and .map() cannot be broken out of with break."
+    }
+  ]}
+/>

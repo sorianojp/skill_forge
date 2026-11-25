@@ -1,0 +1,106 @@
+---
+title: "DOM Manipulation, classList & Fragments"
+description: "Create, update, and remove DOM nodes cleanly using createElement, replaceChildren, classList.toggle, and DocumentFragment."
+course: "javascript-essentials"
+module: "DOM & Browser APIs"
+order: 9
+durationMinutes: 8
+objectives:
+  - "Toggle CSS states cleanly with element.classList (add, remove, toggle)"
+  - "Build and insert nodes safely with document.createElement and replaceChildren()"
+  - "Batch multiple insertions efficiently without repeated layout reflows"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+Instead of manually stitching raw HTML strings (which risks XSS bugs), modern DOM APIs make creating and updating elements both **safe** and **concise**.
+
+## Everyday DOM Methods
+
+| Method | What It Does |
+| :--- | :--- |
+| `el.classList.toggle('open')` | Adds class if absent, removes if present |
+| `document.createElement('li')` | Creates a fresh element node |
+| `parent.replaceChildren(...nodes)` | Replaces all children cleanly in a single DOM update |
+| `el.remove()` | Removes the element from the DOM |
+
+<Callout type="tip" title="Second Argument to classList.toggle()">
+  Pass a boolean as the second argument (<code>el.classList.toggle('active', isSelected)</code>)to explicitly force-add or force-remove a class without writing an <code>if/else</code>!
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Safe DOM Creation & classList"
+  prompt="Create a button element, toggle its 'active' class, and insert it into the container."
+  template={`const btn = document.{{0}}('button');
+btn.textContent = 'Pinned';
+btn.{{1}}.toggle('active');
+container.append(btn);`}
+  blanks={[
+    { answer: 'createElement', placeholder: 'method' },
+    { answer: 'classList', placeholder: 'prop' },
+  ]}
+  hint={'Use document.createElement() to make nodes and element.classList to manage CSS classes.'}
+/>
+
+## Try It Yourself
+
+<Playground
+  client:visible
+  title="Dynamic Tag Chips with classList & remove()"
+  defaultTab="js"
+  showConsole={true}
+  height={250}
+  html={`<div class="controls">
+  <button id="add">Add Chip</button>
+  <button id="theme" class="secondary">Toggle Compact</button>
+</div>
+<div id="chips" class="chips"></div>`}
+  css={`.controls { display: flex; gap: 8px; margin-bottom: 12px; }
+button { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 7px 12px; font-weight: 600; cursor: pointer; font-size: 13px; }
+button.secondary { background: #e2e8f0; color: #0f172a; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips.compact { gap: 4px; }
+.chip { padding: 6px 10px; border-radius: 999px; background: #eff6ff; color: #1d4ed8; font-size: 12px; font-weight: 600; border: 1px solid #bfdbfe; cursor: pointer; }
+.chips.compact .chip { padding: 3px 8px; font-size: 11px; }`}
+  js={`const chips = document.querySelector('#chips');
+let num = 1;
+
+function addChip() {
+  const btn = document.createElement('button');
+  btn.className = 'chip';
+  btn.textContent = \`Topic #\${num++} ×\`;
+  btn.addEventListener('click', () => btn.remove());
+  chips.append(btn);
+}
+
+document.querySelector('#add').addEventListener('click', addChip);
+document.querySelector('#theme').addEventListener('click', () => {
+  const isCompact = chips.classList.toggle('compact');
+  console.log('Compact mode:', isCompact);
+});
+
+addChip();
+addChip();`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does `container.replaceChildren(nodeA, nodeB)` do?",
+      options: [
+        "Appends nodeA and nodeB while keeping existing children",
+        "Clears all existing children and inserts nodeA and nodeB in one step",
+        "Clones the container twice"
+      ],
+      answer: 1,
+      explanation: "replaceChildren() atomically replaces a parent's existing children with the new nodes you pass in."
+    }
+  ]}
+/>

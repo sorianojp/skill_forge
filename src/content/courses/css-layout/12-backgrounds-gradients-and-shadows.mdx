@@ -1,0 +1,104 @@
+---
+title: "Gradients, Layered Shadows & Backdrop Filters"
+description: "Add visual depth with linear/radial gradients, realistic multi-layered box-shadows, and frosted-glass backdrop-filter surfaces."
+course: "css-layout"
+module: "Visual Polish & Motion"
+order: 12
+durationMinutes: 8
+objectives:
+  - "Create smooth linear and radial CSS gradients without image files"
+  - "Combine subtle ambient and direct box-shadows for realistic elevation"
+  - "Build frosted-glass sticky surfaces using backdrop-filter: blur()"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+Depth and surface separation guide the user's eye. Modern CSS lets you craft crisp surfaces (gradients, soft elevation shadows, and frosted glass)with zero image assets.
+
+## Realistic Layered Shadows
+
+A single harsh black shadow (`0 4px 10px black`) looks dated. Pair a **tight low-opacity shadow** with a **soft diffused shadow**:
+
+```css
+.elevated {
+  box-shadow:
+    0 1px 2px rgb(15 23 42 / 0.06),
+    0 12px 24px -4px rgb(15 23 42 / 0.12);
+}
+```
+
+<Callout type="warning" title="Keep Contrast Accessible on Glass Surfaces">
+  When using <code>backdrop-filter: blur(10px)</code> over colorful backgrounds, use a high-opacity tint (e.g., <code>rgb(255 255 255 / 0.82)</code>) so text still meets WCAG AA contrast.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Frosted Glass Surface"
+  prompt="Create a diagonal gradient background and a frosted-glass blur overlay."
+  template={`.banner {
+  background: {{0}}(135deg, #2563eb, #7c3aed);
+}
+.glass {
+  background: rgb(255 255 255 / 0.8);
+  {{1}}: blur(8px);
+}`}
+  blanks={[
+    { answer: 'linear-gradient', placeholder: 'fn' },
+    { answer: 'backdrop-filter', placeholder: 'property' },
+  ]}
+  hint={'Use linear-gradient(...) for angled gradients and backdrop-filter: blur(...) for glassmorphism.'}
+/>
+
+## Try It Yourself
+
+Tweak the gradient angle, shadow softness, or `backdrop-filter` blur radius below:
+
+<Playground
+  client:visible
+  title="Gradient Hero + Frosted Glass Card"
+  defaultTab="css"
+  height={250}
+  html={`<div class="stage">
+  <div class="glass-card">
+    <h3>Frosted Surface</h3>
+    <p>Layered shadows + translucent backdrop blur over a vibrant gradient.</p>
+  </div>
+</div>`}
+  css={`.stage {
+  padding: 28px;
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at top right, #38bdf8, transparent 55%),
+    linear-gradient(135deg, #1d4ed8, #7c3aed);
+}
+.glass-card {
+  max-width: 300px;
+  padding: 18px;
+  border-radius: 14px;
+  background: rgb(255 255 255 / 0.86);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgb(255 255 255 / 0.6);
+  box-shadow:
+    0 1px 2px rgb(15 23 42 / 0.08),
+    0 14px 28px -6px rgb(15 23 42 / 0.25);
+}
+h3 { margin: 0 0 6px; font-size: 16px; color: #0f172a; }
+p { margin: 0; font-size: 13px; color: #334155; }`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which CSS property blurs the content *behind* a semi-transparent element?",
+      options: ["filter: blur()", "backdrop-filter: blur()", "box-shadow: blur()"],
+      answer: 1,
+      explanation: "backdrop-filter applies effects like blur() to the area behind an element, whereas filter blurs the element itself."
+    }
+  ]}
+/>

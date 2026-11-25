@@ -1,0 +1,105 @@
+---
+title: "Logical Properties, Overflow & Scroll Snap"
+description: "Write internationalization-ready spacing with margin-inline and padding-block, manage overflow cleanly, and build silky horizontal carousels with CSS Scroll Snap."
+course: "css-layout"
+module: "Responsive & Modern Selectors"
+order: 11
+durationMinutes: 8
+objectives:
+  - "Use logical shorthands (margin-inline, padding-block) instead of physical left/right/top/bottom"
+  - "Handle overflowing content safely with overflow: auto and overflow: clip"
+  - "Create touch-friendly snapping carousels with scroll-snap-type and scroll-snap-align"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+## Logical Properties
+
+Instead of physical directions (`margin-left`, `margin-right`), modern CSS uses **flow-relative logical properties**:
+
+| Physical | Logical Equivalent | Benefit |
+| :--- | :--- | :--- |
+| `margin-left` + `margin-right` | `margin-inline` | One shorthand (`margin-inline: auto` centers horizontally!) |
+| `padding-top` + `padding-bottom` | `padding-block` | Adapts automatically to right-to-left (RTL) & vertical writing modes |
+| `border-left` | `border-inline-start` | Flips to the right automatically in Arabic/Hebrew (`dir="rtl"`) |
+
+## Zero-JS Carousels with Scroll Snap
+
+Add just two properties to turn any horizontal scrolling row into a crisp, touch-friendly snapping carousel:
+- Container: `scroll-snap-type: x mandatory;`
+- Slides: `scroll-snap-align: start;`
+
+<Callout type="tip" title="Prefer overflow: clip over overflow: hidden">
+  <code>overflow: clip</code> clips overflowing visuals without creating a scroll container, so <code>position: sticky</code> inside it keeps working!
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Logical Centering & Scroll Snap"
+  prompt="Center a container horizontally with a logical property and snap carousel slides cleanly."
+  template={`.container {
+  max-width: 60rem;
+  {{0}}: auto;
+}
+.carousel {
+  overflow-x: auto;
+  scroll-snap-type: x {{1}};
+}`}
+  blanks={[
+    { answer: 'margin-inline', placeholder: 'property' },
+    { answer: 'mandatory', accepted: ['proximity'], placeholder: 'value' },
+  ]}
+  hint={'margin-inline: auto centers along the horizontal inline axis, and scroll-snap-type: x mandatory locks onto slides.'}
+/>
+
+## Try It Yourself
+
+Scroll horizontally through the cards below and feel them snap cleanly into place!
+
+<Playground
+  client:visible
+  title="CSS Scroll Snap Carousel"
+  defaultTab="css"
+  height={240}
+  html={`<div class="rail">
+  <div class="slide">1. HTML5</div>
+  <div class="slide">2. Flexbox</div>
+  <div class="slide">3. CSS Grid</div>
+  <div class="slide">4. Scroll Snap</div>
+</div>`}
+  css={`.rail {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-block: 8px;
+}
+.slide {
+  flex: 0 0 75%;
+  scroll-snap-align: start;
+  padding: 36px 20px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #2563eb, #4f46e5);
+  color: white;
+  font-weight: 800;
+  font-size: 18px;
+  text-align: center;
+}`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What is the logical-property equivalent of setting both margin-left: auto and margin-right: auto?",
+      options: ["margin-block: auto", "margin-inline: auto", "margin-axis: auto"],
+      answer: 1,
+      explanation: "In horizontal writing modes, the inline axis runs left-to-right (or right-to-left), so margin-inline: auto centers horizontally."
+    }
+  ]}
+/>

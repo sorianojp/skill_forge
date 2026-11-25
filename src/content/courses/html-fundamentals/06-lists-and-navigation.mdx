@@ -1,0 +1,95 @@
+---
+title: "Lists & Accessible Navigation"
+description: "Choose between unordered, ordered, and description lists, and build accessible navbars, breadcrumbs, and skip-to-content links."
+course: "html-fundamentals"
+module: "Text, Links & Navigation"
+order: 6
+durationMinutes: 8
+objectives:
+  - "Use <ul>, <ol>, and <dl> (description lists) for the right kind of list"
+  - "Mark the active page in navigation with aria-current=\"page\""
+  - "Build accessible breadcrumb trails and skip-to-content links"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+## Choosing the Right List
+
+1. **Unordered list (`<ul>`)**: Order doesn't change the meaning (e.g., navigation links, feature bullets).
+2. **Ordered list (`<ol>`)**: Sequence matters (e.g., recipe steps, top-5 rankings, breadcrumbs).
+3. **Description list (`<dl>`)**: Key-value pairs (`<dt>` term + `<dd>` description), great for glossaries and metadata!
+
+## Accessible Navigation Patterns
+
+- Wrap major link groups in `<nav aria-label="...">`.
+- Mark the current page link with **`aria-current="page"`** so screen-reader users immediately know where they are.
+- Include a **Skip to content** link (`<a href="#main-content">`) as the very first focusable element on the page so keyboard users can jump past long navbars.
+
+<Callout type="tip" title="Breadcrumbs Use <ol>">
+  Because breadcrumb paths represent an ordered hierarchy (Home → Courses → HTML), wrap them in <code>&lt;nav aria-label="Breadcrumb"&gt;&lt;ol&gt;...&lt;/ol&gt;&lt;/nav&gt;</code>.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Accessible Breadcrumb & Active Link"
+  prompt="Complete the breadcrumb landmark and mark the current page accessibly."
+  template={`<{{0}} aria-label="Breadcrumb">
+  <{{1}}>
+    <li><a href="/">Home</a></li>
+    <li><a href="/courses/html" {{2}}="page">HTML</a></li>
+  </ol>
+</nav>`}
+  blanks={[
+    { answer: 'nav', placeholder: 'tag' },
+    { answer: 'ol', placeholder: 'list' },
+    { answer: 'aria-current', placeholder: 'aria-*' },
+  ]}
+  hint={'Use <nav> for the landmark, <ol> for the ordered trail, and aria-current="page" on the active link.'}
+/>
+
+## Try It Yourself
+
+<Playground
+  client:visible
+  title="Breadcrumbs + Description List Glossary"
+  height={270}
+  html={`<nav aria-label="Breadcrumb" class="crumbs">
+  <ol>
+    <li><a href="#home">Home</a></li>
+    <li><a href="#courses">Courses</a></li>
+    <li><a href="#html" aria-current="page">Learn HTML</a></li>
+  </ol>
+</nav>
+
+<dl class="glossary">
+  <dt>Landmark</dt>
+  <dd>A semantic region like &lt;main&gt; or &lt;nav&gt; that helps users navigate quickly.</dd>
+  <dt>Skip Link</dt>
+  <dd>A keyboard-accessible link that jumps directly to the primary content.</dd>
+</dl>`}
+  css={`.crumbs ol { display: flex; gap: 8px; list-style: none; padding: 0; margin: 0 0 18px; font-size: 13px; }
+.crumbs li + li::before { content: "/"; margin-right: 8px; color: #94a3b8; }
+.crumbs a { color: #2563eb; text-decoration: none; }
+.crumbs a[aria-current="page"] { color: #0f172a; font-weight: 700; pointer-events: none; }
+.glossary { margin: 0; padding: 14px; border-radius: 10px; border: 1px solid #e2e8f0; background: #f8fafc; }
+dt { font-weight: 700; font-size: 14px; color: #0f172a; }
+dd { margin: 2px 0 12px; font-size: 13px; color: #475569; }
+dd:last-child { margin-bottom: 0; }`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which HTML list element is designed for term-and-definition (key-value) pairs?",
+      options: ["<ul>", "<ol>", "<dl> with <dt> and <dd>"],
+      answer: 2,
+      explanation: "<dl> (description list) pairs <dt> terms with <dd> descriptions."
+    }
+  ]}
+/>

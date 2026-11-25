@@ -1,0 +1,107 @@
+---
+title: "Global Attributes, Classes & IDs"
+description: "Master global HTML attributes available on every element: id, class, data-*, hidden, inert, title, and boolean attributes."
+course: "html-fundamentals"
+module: "Foundations"
+order: 4
+durationMinutes: 8
+objectives:
+  - "Use id for unique anchors/labels and class for reusable styling"
+  - "Store custom metadata cleanly using data-* attributes"
+  - "Understand boolean attributes like hidden, disabled, and inert"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import DoDont from '@/components/mdx/DoDont.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+**Global attributes** can be placed on *any* HTML element. Mastering them gives you clean hooks for CSS styling, JavaScript interactivity, and accessibility.
+
+| Attribute | Purpose | Example |
+| :--- | :--- | :--- |
+| `id` | **Unique** identifier on the page (links `#anchor`, `<label for>`) | `id="pricing"` |
+| `class` | Space-separated reusable names for CSS / JS | `class="btn primary"` |
+| `data-*` | Custom app metadata readable via `el.dataset` | `data-course="html"` |
+| `hidden` | Hides the element from view and assistive tech | `<div hidden>` |
+| `inert` | Disables clicks, focus, and screen-reader access for an entire subtree | `<section inert>` |
+| `lang` | Overrides language for a specific word or quote | `<span lang="es">Hola</span>` |
+
+## Boolean Attributes
+
+Attributes like `disabled`, `required`, `hidden`, and `inert` are **boolean attributes**. Their *presence* means `true`, even writing `disabled="false"` still disables the button!
+
+<DoDont
+  doTitle="Clean Boolean Attributes"
+  dontTitle="Misleading Boolean Values"
+  doCode={`<button disabled>Saving...</button>
+<input type="checkbox" checked />`}
+  dontCode={`<!-- Still disabled! -->
+<button disabled="false">Click me</button>`}
+/>
+
+<Callout type="tip" title="Modern inert Attribute">
+  Adding <code>inert</code> to a container prevents keyboard tabbing, clicks, and text selection inside it, perfect for temporarily locking a form or background panel.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Global Attributes Practice"
+  prompt="Give the card a unique id of 'hero', a class of 'featured', and a custom data attribute for track='html'."
+  template={`<section {{0}}="hero" {{1}}="featured" {{2}}="html">
+  <h2>Learn HTML</h2>
+</section>`}
+  blanks={[
+    { answer: 'id', placeholder: 'attr' },
+    { answer: 'class', placeholder: 'attr' },
+    { answer: 'data-track', placeholder: 'data-*' },
+  ]}
+  hint="Custom data attributes always start with data-."
+/>
+
+## Try It Yourself
+
+Toggle the `inert` attribute on the panel below and try clicking or tabbing into its button!
+
+<Playground
+  client:visible
+  title="Explore data-* and inert"
+  height={250}
+  showConsole={true}
+  html={`<button id="toggle">Toggle inert on panel</button>
+
+<section id="panel" class="panel" data-course="html-fundamentals">
+  <h3>Interactive Panel</h3>
+  <button id="innerBtn">Try clicking me</button>
+</section>`}
+  css={`.panel { margin-top: 12px; padding: 14px; border-radius: 10px; border: 1px solid #cbd5e1; background: #f8fafc; transition: opacity 0.2s; }
+.panel[inert] { opacity: 0.45; }
+button { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 7px 12px; font-weight: 600; cursor: pointer; font-size: 13px; }`}
+  js={`const panel = document.getElementById('panel');
+document.getElementById('toggle').addEventListener('click', () => {
+  panel.inert = !panel.inert;
+  console.log('Panel inert:', panel.inert, '| data-course:', panel.dataset.course);
+});
+document.getElementById('innerBtn').addEventListener('click', () => {
+  console.log('Inner button clicked!');
+});`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What happens if you write <button disabled=\"false\">Submit</button> in HTML?",
+      options: [
+        "The button is enabled",
+        "The button is still disabled because disabled is a boolean attribute",
+        "The browser throws a syntax error"
+      ],
+      answer: 1,
+      explanation: "For boolean attributes, mere presence equals true regardless of the string value. Remove the attribute completely to make it false."
+    }
+  ]}
+/>

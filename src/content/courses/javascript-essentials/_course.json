@@ -1,0 +1,20 @@
+{
+  "slug": "javascript-essentials",
+  "title": "Modern JavaScript & the DOM",
+  "shortTitle": "Learn JavaScript",
+  "description": "A complete 16-lesson JavaScript track combining modern ES2025+ syntax with hands-on DOM playgrounds, from data types, closures, Map/Set, and localStorage to debouncing, async/await, and ES Modules.",
+  "track": "JavaScript",
+  "difficulty": "Beginner",
+  "estimatedHours": 7,
+  "accentColor": "#ca8a04",
+  "prerequisites": ["Basic HTML and CSS"],
+  "outcomes": [
+    "Master modern JavaScript types, strict equality, loops, functions, and closures",
+    "Work fluently with arrays, objects, destructuring, spread, Map, Set, and .reduce()",
+    "Manipulate the DOM safely, handle delegated events, and persist state in localStorage",
+    "Write resilient async/await code, debounced inputs, ES Modules, and clean error handling",
+    "Build a complete interactive Task Tracker app from scratch"
+  ],
+  "featured": true,
+  "order": 3
+}

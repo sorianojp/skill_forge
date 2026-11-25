@@ -1,0 +1,54 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import CourseExam from '@/components/quiz/CourseExam';
+import { getAllCoursesSorted } from '@/lib/courses';
+import { COURSE_EXAMS } from '@/data/exams';
+
+export async function getStaticPaths() {
+  const courses = await getAllCoursesSorted();
+  return courses.map((course) => ({
+    params: { course: course.data.slug },
+    props: { course },
+  }));
+}
+
+const { course } = Astro.props;
+const questions = COURSE_EXAMS[course.data.slug] ?? [];
+---
+
+<BaseLayout
+  title={`Final Exam & Certificate: ${course.data.title}`}
+  description={`Pass the ${course.data.title} final exam (80%+) to unlock your free downloadable SkillForge completion certificate.`}
+>
+  <div class="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+    <a
+      href={`/courses/${course.data.slug}`}
+      class="text-xs font-semibold uppercase tracking-wider text-[var(--accent)] hover:underline"
+    >
+      ← Back to {course.data.title}
+    </a>
+
+    <header class="mt-4 mb-8 pb-2">
+      <span
+        class="inline-block rounded-full px-3 py-0.5 text-xs font-bold text-white"
+        style={`background-color: ${course.data.accentColor}`}
+      >
+        {course.data.track} Final Exam
+      </span>
+      <h1 class="mt-3 text-3xl font-extrabold tracking-tight text-[var(--text)] sm:text-4xl">
+        {course.data.title}: Certification Exam
+      </h1>
+      <p class="mt-2 text-base text-[var(--text-muted)]">
+        {questions.length} questions · 80% passing score · Unlimited free retakes · Instant downloadable PNG/SVG/PDF certificate.
+      </p>
+    </header>
+
+    <CourseExam
+      client:load
+      courseSlug={course.data.slug}
+      courseTitle={course.data.title}
+      accentColor={course.data.accentColor}
+      questions={questions}
+    />
+  </div>
+</BaseLayout>

@@ -1,0 +1,102 @@
+---
+title: "Text Basics, Block vs. Inline & Entities"
+description: "Distinguish block and inline elements, use semantic text tags like strong, em, time, code, and kbd, and escape special characters with HTML entities."
+course: "html-fundamentals"
+module: "Text, Links & Navigation"
+order: 5
+durationMinutes: 8
+objectives:
+  - "Tell the difference between block-level and inline-level elements"
+  - "Use semantic inline tags: <strong>, <em>, <mark>, <time>, <code>, <kbd>, <abbr>"
+  - "Display reserved characters like <, >, and & safely with HTML entities"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+HTML offers rich inline elements that carry real meaning, far beyond just making text bold or italic.
+
+## Block vs. Inline Elements
+
+- **Block elements** (`<p>`, `<h1>`–`<h6>`, `<div>`, `<blockquote>`, `<ul>`) start on a new line and stretch to fill the available width.
+- **Inline elements** (`<span>`, `<a>`, `<strong>`, `<em>`, `<code>`, `<kbd>`) flow naturally inside a line of text and only take up as much width as their content needs.
+
+## Semantic Inline Text Elements
+
+| Element | Meaning | Example |
+| :--- | :--- | :--- |
+| `<strong>` | Strong importance / urgency | `<strong>Warning:</strong> Save first.` |
+| `<em>` | Verbal stress / emphasis | `I <em>really</em> mean it.` |
+| `<mark>` | Highlighted search match or reference | `Match: <mark>HTML</mark>` |
+| `<time>` | Machine-readable date or time | `<time datetime="2026-11-25">Nov 25</time>` |
+| `<code>` | Inline code snippet | `Use <code>display: grid</code>` |
+| `<kbd>` | Keyboard shortcut | `Press <kbd>Ctrl</kbd> + <kbd>K</kbd>` |
+| `<abbr>` | Abbreviation with expansion | `<abbr title="HyperText Markup Language">HTML</abbr>` |
+
+## HTML Entities
+
+Because `<`, `>`, and `&` have special meaning in HTML, use **character entities** when you want to display them literally:
+- `&lt;` → `<`
+- `&gt;` → `>`
+- `&amp;` → `&`
+- `&copy;` → `©`
+
+<Callout type="note" title="<strong> vs <b> and <em> vs <i>">
+  Prefer <code>&lt;strong&gt;</code> and <code>&lt;em&gt;</code> when emphasizing meaning, screen readers can adjust vocal stress for them, whereas <code>&lt;b&gt;</code> and <code>&lt;i&gt;</code> are purely stylistic.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Semantic Inline Markup"
+  prompt="Mark up a keyboard shortcut, a machine-readable date, and an escaped HTML tag."
+  template={`<p>Press <{{0}}>⌘K</kbd> to search.</p>
+<p>Updated <{{1}} datetime="2026-11-25">Nov 25, 2026</time>.</p>
+<p>Use the {{2}}main&gt; landmark.</p>`}
+  blanks={[
+    { answer: 'kbd', placeholder: 'tag' },
+    { answer: 'time', placeholder: 'tag' },
+    { answer: '&lt;', placeholder: 'entity' },
+  ]}
+  hint="Keyboard keys use <kbd>, dates use <time>, and < is escaped as &lt;."
+/>
+
+## Try It Yourself
+
+<Playground
+  client:visible
+  title="Rich Semantic Typography"
+  height={250}
+  html={`<article class="note">
+  <p>
+    Published <time datetime="2026-11-25">November 25, 2026</time> ·
+    Topic: <abbr title="HyperText Markup Language">HTML</abbr>
+  </p>
+  <blockquote>
+    "Good markup makes <mark>accessibility</mark> the default, not an afterthought."
+  </blockquote>
+  <p>
+    Tip: Press <kbd>Cmd</kbd> + <kbd>K</kbd> to search for <code>&lt;dialog&gt;</code>.
+  </p>
+</article>`}
+  css={`.note { font-size: 14px; line-height: 1.7; color: #334155; }
+blockquote { margin: 12px 0; padding: 10px 14px; border-left: 4px solid #2563eb; background: #eff6ff; font-style: italic; }
+kbd { padding: 2px 6px; border: 1px solid #cbd5e1; border-radius: 5px; background: #f8fafc; font-size: 12px; font-weight: 600; }
+code { background: #f1f5f9; padding: 2px 5px; border-radius: 4px; font-size: 13px; }
+mark { background: #fef08a; padding: 0 4px; border-radius: 3px; }`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "How do you safely display the literal text <h1> inside an HTML paragraph?",
+      options: ["&lt;h1&gt;", "\\<h1>", "<literal><h1></literal>"],
+      answer: 0,
+      explanation: "&lt; renders < and &gt; renders > without the browser parsing them as a real HTML tag."
+    }
+  ]}
+/>

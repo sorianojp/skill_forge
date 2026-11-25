@@ -1,0 +1,20 @@
+{
+  "slug": "css-layout",
+  "title": "Modern CSS & Layout",
+  "shortTitle": "Learn CSS",
+  "description": "A complete 16-lesson CSS track combining web.dev's modern standards with W3Schools' interactive sandboxes, from the cascade, custom properties, Flexbox, and Grid/Subgrid to :has(), animations, and CSS nesting.",
+  "track": "CSS",
+  "difficulty": "Beginner",
+  "estimatedHours": 6,
+  "accentColor": "#2563eb",
+  "prerequisites": ["Basic familiarity with HTML tags"],
+  "outcomes": [
+    "Master CSS selectors, specificity, inheritance, and @layer cascade control",
+    "Use modern color spaces, fluid units, custom properties, and crisp typography",
+    "Build responsive layouts with Flexbox, CSS Grid, Subgrid, and @container queries",
+    "Style interactive states with :has(), logical properties, transitions, and @keyframes",
+    "Ship a responsive dashboard layout combining Grid and Flexbox"
+  ],
+  "featured": true,
+  "order": 2
+}

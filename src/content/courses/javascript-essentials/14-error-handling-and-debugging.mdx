@@ -1,0 +1,105 @@
+---
+title: "Error Handling & Debugging"
+description: "Write resilient code by validating inputs, throwing descriptive Error objects, catching failures cleanly, and using console debugging tools."
+course: "javascript-essentials"
+module: "Async & Modern JS"
+order: 14
+durationMinutes: 8
+objectives:
+  - "Throw meaningful Error instances when invalid arguments or states occur"
+  - "Guard risky parsing or network code with try / catch"
+  - "Use console.log, console.warn, console.error, and console.table effectively"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+Bugs happen in every codebase. The difference between brittle code and production-grade code is **failing loudly with clear error messages** during development and **recovering gracefully** for end users.
+
+## Throwing Descriptive Errors
+
+```js
+function divide(a, b) {
+  if (b === 0) {
+    throw new Error('Cannot divide by zero');
+  }
+  return a / b;
+}
+```
+
+<Callout type="tip" title="Always Throw Error Objects">
+  Throw <code>new Error('message')</code> rather than plain strings, an <code>Error</code> object automatically captures a full stack trace showing the exact file and line number.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Throw & Catch Errors Safely"
+  prompt="Throw a new Error when input is empty, and catch it cleanly."
+  template={`function parseName(str) {
+  if (!str.trim()) {{0}} new Error('Name is required');
+  return str.trim();
+}
+try {
+  parseName('');
+} {{1}} (err) {
+  console.error(err.message);
+}`}
+  blanks={[
+    { answer: 'throw', placeholder: 'kw' },
+    { answer: 'catch', placeholder: 'kw' },
+  ]}
+  hint={'Use throw new Error(...) to raise an exception and catch (err) to handle it.'}
+/>
+
+## Try It Yourself
+
+Test valid JSON vs. malformed JSON below and watch how `try / catch` prevents the app from crashing:
+
+<Playground
+  client:visible
+  title="Safe JSON Validator with try/catch"
+  defaultTab="js"
+  showConsole={true}
+  height={250}
+  html={`<textarea id="jsonInput" rows="3">{ "course": "JS", "free": true }</textarea>
+<button id="check">Validate JSON</button>
+<p id="result"></p>`}
+  css={`textarea { width: 100%; max-width: 360px; padding: 8px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: monospace; font-size: 13px; display: block; margin-bottom: 8px; }
+button { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 7px 12px; font-weight: 600; cursor: pointer; font-size: 13px; }
+#result { margin-top: 10px; font-size: 13px; font-weight: 600; }`}
+  js={`const input = document.querySelector('#jsonInput');
+const result = document.querySelector('#result');
+
+document.querySelector('#check').addEventListener('click', () => {
+  try {
+    const parsed = JSON.parse(input.value);
+    result.style.color = '#15803d';
+    result.textContent = 'Valid JSON! Keys: ' + Object.keys(parsed).join(', ');
+    console.log('Parsed OK:', parsed);
+  } catch (err) {
+    result.style.color = '#b91c1c';
+    result.textContent = 'Invalid JSON: ' + err.message;
+    console.error(err.message);
+  }
+});`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why is `throw new Error('Invalid ID')` better than `throw 'Invalid ID'`?",
+      options: [
+        "Error objects include a .message and a debugging stack trace",
+        "Throwing a string is a syntax error",
+        "Error objects automatically fix the bug"
+      ],
+      answer: 0,
+      explanation: "Error instances carry stack traces and standard properties (.name, .message) that debuggers and monitoring tools rely on."
+    }
+  ]}
+/>

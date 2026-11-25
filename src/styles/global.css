@@ -1,0 +1,189 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+:root {
+  color-scheme: light dark;
+
+  &:has(> head > meta[name="color-scheme"][content="dark"]) {
+    color-scheme: dark;
+  }
+  &:has(> head > meta[name="color-scheme"][content="light"]) {
+    color-scheme: light;
+  }
+
+  /* AppBuildersPH-inspired tonal hierarchy: soft canvas + crisp elevated surfaces, minimal borders */
+  --bg: light-dark(#f5f5f5, #0b0f14);
+  --bg-subtle: light-dark(#ffffff, #131922);
+  --bg-elevated: light-dark(#ffffff, #141b25);
+  --bg-muted: light-dark(#ececec, #1d2532);
+  --border: light-dark(rgba(15, 23, 42, 0.07), rgba(255, 255, 255, 0.08));
+  --border-strong: light-dark(rgba(15, 23, 42, 0.12), rgba(255, 255, 255, 0.14));
+  --text: light-dark(#0f172a, #f1f5f9);
+  --text-muted: light-dark(#52606d, #94a3b8);
+  --text-subtle: light-dark(#7b8794, #64748b);
+  --accent: light-dark(#2563eb, #60a5fa);
+  --accent-strong: light-dark(#1d4ed8, #3b82f6);
+  --accent-soft: light-dark(#eaf2ff, #16243d);
+  --success: light-dark(#15803d, #4ade80);
+  --success-soft: light-dark(#e7f7ed, #0b2919);
+  --warning: light-dark(#b45309, #fbbf24);
+  --warning-soft: light-dark(#fef3c7, #332208);
+  --danger: light-dark(#b91c1c, #f87171);
+  --danger-soft: light-dark(#fee2e2, #331015);
+}
+
+@layer base {
+  html {
+    font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+    letter-spacing: -0.01em;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  h1, h2, h3, h4 {
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  code, pre, kbd {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+}
+
+/* Native <dialog> scroll containment per modern web guidance */
+dialog:modal {
+  overscroll-behavior: contain;
+}
+
+dialog::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
+  background: color-mix(in srgb, #020617 48%, transparent);
+  backdrop-filter: blur(4px);
+}
+
+/* Shiki dual-theme support: borderless tonal code block */
+.astro-code {
+  border: 0;
+  border-radius: 1rem;
+  padding: 1.1rem 1.35rem;
+  font-size: 0.875rem;
+  line-height: 1.65;
+  overflow-x: auto;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(:has(> head > meta[name="color-scheme"][content="light"])) .astro-code,
+  :root:not(:has(> head > meta[name="color-scheme"][content="light"])) .astro-code span {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+  }
+}
+
+:root:has(> head > meta[name="color-scheme"][content="dark"]) .astro-code,
+:root:has(> head > meta[name="color-scheme"][content="dark"]) .astro-code span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+}
+
+/* Theme toggle icon branching without JS-only classes */
+.theme-icon-light {
+  display: none;
+}
+.theme-icon-dark {
+  display: inline-flex;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(:has(> head > meta[name="color-scheme"][content="light"])) .theme-icon-light {
+    display: inline-flex;
+  }
+  :root:not(:has(> head > meta[name="color-scheme"][content="light"])) .theme-icon-dark {
+    display: none;
+  }
+}
+
+:root:has(> head > meta[name="color-scheme"][content="dark"]) .theme-icon-light {
+  display: inline-flex;
+}
+:root:has(> head > meta[name="color-scheme"][content="dark"]) .theme-icon-dark {
+  display: none;
+}
+
+/* Prose styling aligned with semantic tokens */
+.lesson-prose {
+  color: var(--text);
+  max-width: 70ch;
+}
+
+.lesson-prose :where(h2, h3, h4) {
+  color: var(--text);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.lesson-prose :where(p, li) {
+  color: var(--text-muted);
+  line-height: 1.75;
+}
+
+.lesson-prose :where(strong) {
+  color: var(--text);
+}
+
+.lesson-prose :where(a) {
+  color: var(--accent);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+.lesson-prose :where(code):not(pre code) {
+  background-color: var(--bg-muted);
+  color: var(--text);
+  padding: 0.15rem 0.42rem;
+  border-radius: 0.4rem;
+  font-size: 0.86em;
+  font-weight: 500;
+  border: 0;
+}
+
+.lesson-prose :where(code)::before,
+.lesson-prose :where(code)::after {
+  content: none;
+}
+
+.lesson-prose :where(table) {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  background-color: var(--bg-elevated);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.lesson-prose :where(th, td) {
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+.lesson-prose :where(tr:last-child td) {
+  border-bottom: 0;
+}
+
+.lesson-prose :where(th) {
+  background-color: var(--bg-muted);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}

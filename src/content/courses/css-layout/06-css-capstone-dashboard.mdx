@@ -1,0 +1,185 @@
+---
+title: "Mini Project: Responsive Learning Dashboard"
+description: "Combine CSS Grid, Flexbox, sticky navigation, and fluid spacing to build a polished course dashboard layout."
+course: "css-layout"
+module: "Capstone Project"
+order: 16
+durationMinutes: 12
+objectives:
+  - "Use CSS Grid for the outer sidebar + main shell"
+  - "Use Flexbox for the top header and metric pill rows"
+  - "Use auto-fit Grid for responsive course progress cards"
+---
+
+import Playground from '@/components/playground/Playground';
+import Challenge from '@/components/playground/Challenge';
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+In real production websites, you rarely use *only* Flexbox or *only* Grid, you **combine them**. Use **Grid** for macro page regions and card grids, and **Flexbox** for alignment inside headers, buttons, and small rows.
+
+## Try It Yourself: Course Dashboard
+
+Experiment with the grid column widths, change the accent color, or add a fourth stat card:
+
+<Playground
+  client:visible
+  title="CSS Capstone: Student Dashboard"
+  defaultTab="css"
+  height={350}
+  html={`<div class="app">
+  <header class="topbar">
+    <strong>SkillForge</strong>
+    <span class="pill">Streak: 5 days</span>
+  </header>
+
+  <div class="stats">
+    <div class="stat">
+      <span class="label">Completed</span>
+      <strong>12 Lessons</strong>
+    </div>
+    <div class="stat">
+      <span class="label">Quiz Avg</span>
+      <strong>94%</strong>
+    </div>
+    <div class="stat">
+      <span class="label">Track</span>
+      <strong>CSS Layout</strong>
+    </div>
+  </div>
+
+  <section class="panel">
+    <h3>Active Courses</h3>
+    <div class="course-row">
+      <span>Modern HTML Fundamentals</span>
+      <span class="done">100%</span>
+    </div>
+    <div class="course-row">
+      <span>Modern CSS Layout</span>
+      <span class="active">85%</span>
+    </div>
+  </section>
+</div>`}
+  css={`.app { display: grid; gap: 14px; }
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: #0f172a;
+  color: white;
+}
+.pill {
+  font-size: 11px;
+  font-weight: 700;
+  background: #2563eb;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(105px, 1fr));
+  gap: 10px;
+}
+.stat {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  display: grid;
+  gap: 4px;
+}
+.label { font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 700; }
+.panel {
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+.panel h3 { margin: 0 0 10px; font-size: 14px; }
+.course-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-top: 1px solid #f1f5f9;
+  font-size: 13px;
+}
+.done { color: #15803d; font-weight: 700; }
+.active { color: #2563eb; font-weight: 700; }`}
+/>
+
+<Quiz
+  client:visible
+  title="CSS Layout Final Check"
+  questions={[
+    {
+      question: "Which layout tool is best for a top navigation bar with a logo on the left and action buttons on the right?",
+      options: ["Flexbox (display: flex; justify-content: space-between)", "HTML <table>", "Float left and right"],
+      answer: 0,
+      explanation: "Flexbox is purpose-built for single-axis alignment and spacing like navigation bars."
+    },
+    {
+      question: "Which Grid rule creates responsive cards that automatically wrap to fit available width without media queries?",
+      options: [
+        "grid-template-columns: 100px 100px 100px",
+        "grid-template-columns: repeat(auto-fit, minmax(140px, 1fr))",
+        "grid-auto-flow: dense"
+      ],
+      answer: 1,
+      explanation: "repeat(auto-fit, minmax(140px, 1fr)) dynamically calculates how many columns fit cleanly in the container."
+    }
+  ]}
+/>
+
+## Auto-Graded Capstone Challenge
+
+Style the `.navbar` with Flexbox and `.cards` with CSS Grid so all 4 automated layout tests pass!
+
+<Challenge
+  client:visible
+  id="css-capstone-1"
+  title="CSS Capstone Challenge: Flexbox Header + Grid Cards"
+  instructions="Make .navbar a horizontal Flexbox bar with space-between alignment, and turn .cards into a CSS Grid with a visible gap."
+  defaultTab="css"
+  height={270}
+  html={`<header class="navbar">
+  <strong>SkillForge</strong>
+  <span>Dashboard</span>
+</header>
+<div class="cards">
+  <div class="card">HTML</div>
+  <div class="card">CSS</div>
+  <div class="card">JS</div>
+</div>`}
+  css={`.navbar {
+  padding: 12px;
+  background: #0f172a;
+  color: white;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  /* TODO: add Flexbox + space-between */
+}
+
+.cards {
+  /* TODO: add CSS Grid + gap */
+}
+
+.card {
+  padding: 16px;
+  border-radius: 10px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  font-weight: 700;
+  text-align: center;
+}`}
+  tests={[
+    { label: '.navbar uses display: flex', test: "return getComputedStyle(document.querySelector('.navbar')).display === 'flex';" },
+    { label: '.navbar uses justify-content: space-between', test: "return getComputedStyle(document.querySelector('.navbar')).justifyContent === 'space-between';" },
+    { label: '.cards uses display: grid', test: "return getComputedStyle(document.querySelector('.cards')).display === 'grid';" },
+    { label: '.cards sets a non-zero gap (e.g. gap: 12px)', test: "const g = parseFloat(getComputedStyle(document.querySelector('.cards')).gap); return !Number.isNaN(g) && g > 0;" },
+  ]}
+/>
+
+<Callout type="tip" title="Ready for Your Free Certificate?">
+  Take the <a href="/courses/css-layout/exam"><strong>Modern CSS Final Exam</strong></a> (score 80% or higher) to unlock your free downloadable Completion Certificate!
+</Callout>

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#1e3a8a" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#g)" />
+  <rect x="72" y="72" width="76" height="76" rx="18" fill="#2563eb" />
+  <text x="110" y="123" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="34" font-weight="900">SF</text>
+  <text x="170" y="124" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="36" font-weight="800">SkillForge</text>
+  <text x="72" y="275" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="64" font-weight="800">Free Interactive Web</text>
+  <text x="72" y="355" fill="#60a5fa" font-family="Inter, system-ui, sans-serif" font-size="64" font-weight="800">Development Courses</text>
+  <text x="72" y="435" fill="#cbd5e1" font-family="Inter, system-ui, sans-serif" font-size="28">48 Lessons · Live Code Playgrounds · Auto-Graded Challenges · Free Certificates</text>
+  <rect x="72" y="495" width="160" height="44" rx="22" fill="#ea580c" />
+  <text x="152" y="524" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="700">HTML5</text>
+  <rect x="248" y="495" width="160" height="44" rx="22" fill="#2563eb" />
+  <text x="328" y="524" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="700">Modern CSS</text>
+  <rect x="424" y="495" width="180" height="44" rx="22" fill="#ca8a04" />
+  <text x="514" y="524" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="700">JavaScript</text>
+</svg>

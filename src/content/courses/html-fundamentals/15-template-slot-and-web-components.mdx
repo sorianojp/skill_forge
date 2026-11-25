@@ -1,0 +1,97 @@
+---
+title: "<template>, <slot> & Web Components"
+description: "Reuse HTML fragments with <template> and build encapsulated custom elements with Shadow DOM and <slot>, using pure browser standards."
+course: "html-fundamentals"
+module: "Modern Interactive HTML"
+order: 15
+durationMinutes: 10
+objectives:
+  - "Store inert, reusable HTML markup inside <template>"
+  - "Define a native Custom Element with customElements.define()"
+  - "Project user content into a Shadow DOM using <slot>"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+HTML has its own built-in component system (**Web Components**) powered by three native primitives:
+
+1. **`<template>`**: Holds HTML markup that the browser parses but **does not render** until your JavaScript clones it (`template.content.cloneNode(true)`).
+2. **Custom Elements**: Register your own HTML tag (must include a hyphen, like `<course-badge>`).
+3. **Shadow DOM + `<slot>`**: Encapsulates component CSS so styles never leak in or out, while `<slot>` lets callers inject their own inner HTML.
+
+<Callout type="note" title="Custom Element Naming Rule">
+  Every custom element tag name <strong>must contain a hyphen</strong> (e.g., <code>&lt;user-card&gt;</code>, <code>&lt;lesson-tip&gt;</code>) so it never collides with future built-in HTML tags.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Template & Slot Basics"
+  prompt="Define an inert HTML template with a default slot for projected content."
+  template={`<{{0}} id="badge-tpl">
+  <span class="pill"><{{1}}></slot></span>
+</template>`}
+  blanks={[
+    { answer: 'template', placeholder: 'tag' },
+    { answer: 'slot', placeholder: 'tag' },
+  ]}
+  hint="Use <template> for inert reusable markup and <slot> for inserting child content."
+/>
+
+## Try It Yourself: Build a Native `<tip-card>` Web Component
+
+Notice how `<tip-card>` has scoped CSS inside its Shadow DOM and accepts custom content through `<slot>`:
+
+<Playground
+  client:visible
+  title="Native Web Component with <template> & <slot>"
+  height={280}
+  html={`<template id="tip-template">
+  <style>
+    .box { padding: 12px 14px; border-radius: 10px; border-left: 4px solid #2563eb; background: #eff6ff; margin-bottom: 10px; font-size: 13px; }
+    .title { font-weight: 800; color: #1d4ed8; margin-bottom: 4px; text-transform: uppercase; font-size: 11px; }
+  </style>
+  <div class="box">
+    <div class="title"><slot name="title">Tip</slot></div>
+    <div><slot></slot></div>
+  </div>
+</template>
+
+<tip-card>
+  <span slot="title">Encapsulated Styles</span>
+  CSS inside Shadow DOM will never leak out to the rest of your page!
+</tip-card>
+
+<tip-card>
+  <span slot="title">Zero Frameworks</span>
+  This custom element works natively in every modern browser.
+</tip-card>`}
+  js={`class TipCard extends HTMLElement {
+  constructor() {
+    super();
+    const tpl = document.getElementById('tip-template');
+    const shadow = this.attachShadow({ mode: 'open' });
+    shadow.appendChild(tpl.content.cloneNode(true));
+  }
+}
+
+if (!customElements.get('tip-card')) {
+  customElements.define('tip-card', TipCard);
+}`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which of the following is a valid Custom Element tag name?",
+      options: ["<card>", "<course-card>", "<CourseCard>"],
+      answer: 1,
+      explanation: "Custom Element names must be lowercase and contain at least one hyphen (like <course-card>)."
+    }
+  ]}
+/>

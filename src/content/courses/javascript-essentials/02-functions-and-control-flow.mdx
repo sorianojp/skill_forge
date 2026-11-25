@@ -1,0 +1,84 @@
+---
+title: "Functions, Conditionals & Template Literals"
+description: "Write reusable arrow functions, make decisions with if/else and ternaries, and format dynamic strings with template literals."
+course: "javascript-essentials"
+module: "Language Foundations"
+order: 4
+durationMinutes: 8
+objectives:
+  - "Define reusable arrow functions with parameters and return values"
+  - "Branch logic cleanly using if/else and the ternary operator"
+  - "Build readable dynamic strings with template literals"
+---
+
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+**Functions** let you package reusable logic so you don't repeat yourself. Modern JavaScript favors **arrow functions** (`const fn = (x) => ...`) and **template literals** (backticks `` `Hello, ${name}` ``).
+
+## Clean Arrow Functions
+
+```js
+const getGrade = (score) => {
+  if (score >= 90) return 'A: Excellent!';
+  if (score >= 75) return 'B: Solid work!';
+  return 'Keep practicing!';
+};
+```
+
+## Try It Yourself
+
+Move the score slider in the live preview and inspect how `getGrade()` evaluates in real time:
+
+<Playground
+  client:visible
+  title="Live Grade Calculator"
+  defaultTab="js"
+  showConsole={true}
+  height={280}
+  html={`<div class="grader">
+  <label for="score">Quiz Score: <strong id="scoreVal">85</strong>%</label>
+  <input id="score" type="range" min="0" max="100" value="85" />
+  <p id="result" class="badge"></p>
+</div>`}
+  css={`.grader { max-width: 320px; display: grid; gap: 10px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc; }
+label { font-size: 14px; }
+.badge { margin: 0; padding: 8px 12px; border-radius: 8px; background: #eff6ff; color: #1d4ed8; font-weight: 700; font-size: 13px; }`}
+  js={`const slider = document.querySelector('#score');
+const scoreVal = document.querySelector('#scoreVal');
+const result = document.querySelector('#result');
+
+const getGrade = (score) => {
+  if (score >= 90) return 'A: Outstanding!';
+  if (score >= 75) return 'B: Great job!';
+  if (score >= 60) return 'C: Passing';
+  return 'Keep practicing!';
+};
+
+const update = () => {
+  const value = Number(slider.value);
+  scoreVal.textContent = String(value);
+  const message = getGrade(value);
+  result.textContent = \`Score \${value}%: \${message}\`;
+  console.log('Evaluated:', value, '->', message);
+};
+
+slider.addEventListener('input', update);
+update();`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which syntax correctly embeds a variable named user inside a JavaScript template literal?",
+      options: [
+        "'Hello, ${user}'",
+        "`Hello, ${user}`",
+        "\"Hello, #{user}\""
+      ],
+      answer: 1,
+      explanation: "Template literals use backticks (`...`) and ${expression} for interpolation."
+    }
+  ]}
+/>

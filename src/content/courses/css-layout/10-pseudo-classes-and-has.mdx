@@ -1,0 +1,117 @@
+---
+title: "Pseudo-Classes, :is(), :where() & :has()"
+description: "Style interactive states cleanly, simplify verbose selector lists with :is() and :where(), and style parent containers based on their children with :has()."
+course: "css-layout"
+module: "Responsive & Modern Selectors"
+order: 10
+durationMinutes: 9
+objectives:
+  - "Style a parent element based on its children or checked inputs using :has()"
+  - "Group complex selectors concisely with :is() and zero-specificity :where()"
+  - "Add decorative accents cleanly using ::before and ::after pseudo-elements"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+Modern CSS selectors eliminate dozens of JavaScript helper classes.
+
+## The `:has()` "Parent Selector"
+
+Want to highlight a card *only when* the checkbox inside it is checked, with **zero JavaScript**?
+
+```css
+.plan-card:has(input:checked) {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+```
+
+## `:is()` vs. `:where()`
+
+Both simplify repetitive selector lists like `:is(h1, h2, h3) a { ... }`, with one key difference:
+- **`:is(...)`** takes the specificity of its *most specific* argument.
+- **`:where(...)`** always has **zero specificity `(0, 0, 0)`**, making it ideal for base/reset styles that are easy to override!
+
+<Callout type="tip" title="Zero-JS Interactive Cards">
+  Combine <code>:has(input:checked)</code> with native checkboxes or radio buttons to build selectable pricing tiers, filters, and checklists without writing a single line of JavaScript.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Modern Selector Practice"
+  prompt="Highlight .option whenever its inner checkbox is checked, and use a zero-specificity selector for headings."
+  template={`.option:{{0}}(input:checked) {
+  border-color: #2563eb;
+}
+:{{1}}(h1, h2, h3) {
+  margin-top: 0;
+}`}
+  blanks={[
+    { answer: 'has', placeholder: 'fn' },
+    { answer: 'where', placeholder: 'fn' },
+  ]}
+  hint={'Use :has() to match based on descendants, and :where() for zero specificity.'}
+/>
+
+## Try It Yourself
+
+Check and uncheck the tasks below, the card border, background, and strikethrough are powered **100% by CSS `:has()`**!
+
+<Playground
+  client:visible
+  title="Zero-JS Checklist with :has()"
+  defaultTab="css"
+  height={260}
+  html={`<div class="list">
+  <label class="row">
+    <input type="checkbox" checked />
+    <span>Learn Flexbox &amp; CSS Grid</span>
+  </label>
+  <label class="row">
+    <input type="checkbox" />
+    <span>Master :has() parent selector</span>
+  </label>
+  <label class="row">
+    <input type="checkbox" />
+    <span>Build responsive dashboard</span>
+  </label>
+</div>`}
+  css={`.list { display: grid; gap: 8px; max-width: 340px; }
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 2px solid #e2e8f0;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.15s ease;
+}
+.row:has(input:checked) {
+  border-color: #16a34a;
+  background: #f0fdf4;
+}
+.row:has(input:checked) span {
+  text-decoration: line-through;
+  color: #15803d;
+}`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What is the specificity of :where(.card, #hero, h1)?",
+      options: ["(1, 0, 0)", "(0, 1, 1)", "(0, 0, 0): always zero"],
+      answer: 2,
+      explanation: ":where() always contributes zero specificity, making its rules trivially overridable."
+    }
+  ]}
+/>

@@ -1,0 +1,20 @@
+{
+  "slug": "html-fundamentals",
+  "title": "Modern HTML Fundamentals",
+  "shortTitle": "Learn HTML",
+  "description": "A complete 16-lesson HTML track combining web.dev's modern standards with W3Schools' hands-on sandboxes, from document structure and metadata to accessible forms, native dialogs, focus management, and Web Components.",
+  "track": "HTML",
+  "difficulty": "Beginner",
+  "estimatedHours": 6,
+  "accentColor": "#ea580c",
+  "prerequisites": ["None: designed for complete beginners"],
+  "outcomes": [
+    "Structure valid, SEO-friendly documents with proper metadata and landmarks",
+    "Master global attributes, inline semantics, lists, navigation, and data tables",
+    "Embed responsive images, audio/video captions, SVG, Canvas, and sandboxed iframes",
+    "Build accessible, validated HTML forms with modern input types",
+    "Use native <dialog>, Popover API, focus management, and <template>/<slot>"
+  ],
+  "featured": true,
+  "order": 1
+}

@@ -1,0 +1,110 @@
+---
+title: "Focus & Keyboard Accessibility"
+description: "Design effortless keyboard navigation by respecting natural DOM tab order, using tabindex correctly, and styling :focus-visible."
+course: "html-fundamentals"
+module: "Modern Interactive HTML"
+order: 14
+durationMinutes: 8
+objectives:
+  - "Understand which HTML elements are focusable by default"
+  - "Know the difference between tabindex=\"0\", tabindex=\"-1\", and why positive tabindex is an anti-pattern"
+  - "Style crisp keyboard focus indicators with :focus-visible"
+---
+
+import DoDont from '@/components/mdx/DoDont.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+Millions of users navigate the web with a keyboard (`Tab`, `Shift + Tab`, `Enter`, `Space`), whether due to motor disabilities, screen readers, or power-user speed.
+
+## Naturally Focusable Elements
+
+Links (`<a href>`), `<button>`, `<input>`, `<select>`, `<textarea>`, and `<summary>` are **automatically in the keyboard tab order**. Generic `<div>` and `<span>` elements are *not*.
+
+## Understanding `tabindex`
+
+| Value | Meaning | When to Use |
+| :--- | :--- | :--- |
+| `tabindex="0"` | Adds a non-interactive element to the **natural** DOM tab order | Custom scrollable regions or custom ARIA widgets |
+| `tabindex="-1"` | Not reachable via `Tab`, **but** can receive focus via `el.focus()` | Jumping focus to a heading or error summary after form submit |
+| `tabindex="1"` (positive) | Forces an element ahead of natural order | **Never use**: breaks predictable tab navigation! |
+
+<DoDont
+  doTitle="Keep Focus Visible for Keyboard Users"
+  dontTitle="Never Hide Focus Outlines"
+  doCode={`button:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
+}`}
+  dontCode={`/* Traps keyboard users in the dark! */
+button:focus {
+  outline: none;
+}`}
+  note=":focus-visible shows the ring for keyboard navigation while staying clean on mouse clicks."
+/>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Programmatic Focus Target"
+  prompt="Make the alert heading focusable via JavaScript without adding it to the normal Tab order, and style keyboard focus cleanly."
+  template={`<h2 id="errorBanner" tabindex="{{0}}">Please fix 2 errors</h2>
+
+<style>
+  button:{{1}} {
+    outline: 2px solid #2563eb;
+  }
+</style>`}
+  blanks={[
+    { answer: '-1', placeholder: 'num' },
+    { answer: 'focus-visible', placeholder: 'pseudo-class' },
+  ]}
+  hint={'tabindex="-1" allows el.focus() without polluting Tab order, and :focus-visible targets keyboard focus.'}
+/>
+
+## Try It Yourself
+
+Click inside the preview and press **`Tab`** to move across the buttons, then click **Jump to Main Heading** to see `tabindex="-1"` programmatic focus:
+
+<Playground
+  client:visible
+  title="Keyboard Focus & :focus-visible Demo"
+  height={240}
+  html={`<div class="bar">
+  <button id="jump">Jump to Main Heading</button>
+  <button>Courses</button>
+  <button>Reference</button>
+</div>
+
+<h2 id="target" tabindex="-1">Main Lesson Content</h2>
+<p>Try pressing Tab through the buttons above to see the crisp :focus-visible ring.</p>`}
+  css={`.bar { display: flex; gap: 8px; margin-bottom: 16px; }
+button { padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; background: #f8fafc; font-weight: 600; cursor: pointer; }
+button:focus-visible, h2:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
+}
+h2 { display: inline-block; margin: 0 0 6px; padding: 2px 6px; border-radius: 6px; font-size: 18px; }
+p { margin: 0; font-size: 13px; color: #475569; }`}
+  js={`document.getElementById('jump').addEventListener('click', () => {
+  document.getElementById('target').focus();
+});`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why should you avoid positive tabindex values like tabindex=\"2\"?",
+      options: [
+        "Browsers ignore values above 1",
+        "They override the natural DOM reading order and confuse keyboard users",
+        "They disable CSS hover states"
+      ],
+      answer: 1,
+      explanation: "Positive tabindex values hijack the tab sequence away from the visual DOM order. Rely on natural HTML order instead."
+    }
+  ]}
+/>

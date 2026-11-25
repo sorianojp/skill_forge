@@ -1,0 +1,123 @@
+---
+title: "Transitions & GPU-Friendly Transforms"
+description: "Create silky 60fps micro-interactions by transitioning transform and opacity with smooth cubic-bezier easing."
+course: "css-layout"
+module: "Visual Polish & Motion"
+order: 13
+durationMinutes: 8
+objectives:
+  - "Animate hover and focus states smoothly with transition"
+  - "Use translate, scale, and rotate transforms without triggering expensive layout reflows"
+  - "Keep interactions snappy (150ms–250ms) and responsive"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import DoDont from '@/components/mdx/DoDont.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+Subtle transitions give buttons and cards tactile feedback. To keep animations at a buttery **60fps** even on budget phones, stick to **compositor-only properties**: `transform` and `opacity`.
+
+<DoDont
+  doTitle="Animate transform & opacity (Fast)"
+  dontTitle="Avoid Animating Layout Properties"
+  doCode={`.card {
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+.card:hover {
+  transform: translateY(-4px);
+}`}
+  dontCode={`/* Triggers layout recalculation every frame! */
+.card {
+  transition: all 200ms ease;
+}
+.card:hover {
+  margin-top: -4px;
+}`}
+  note="Avoid transition: all, explicitly listing the properties you animate prevents accidental jank."
+/>
+
+<Callout type="tip" title="Modern Individual Transform Properties">
+  Modern CSS lets you write <code>translate: 0 -4px;</code>, <code>scale: 1.03;</code>, and <code>rotate: 2deg;</code> as standalone properties without overwriting each other!
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Snappy Button Lift"
+  prompt="Transition transform over 180ms and lift the button upward by 2px on hover."
+  template={`.btn {
+  {{0}}: transform 180ms ease;
+}
+.btn:hover {
+  transform: {{1}}(-2px);
+}`}
+  blanks={[
+    { answer: 'transition', placeholder: 'property' },
+    { answer: 'translateY', placeholder: 'fn' },
+  ]}
+  hint={'Use transition for smooth state changes and translateY(-2px) to move upward without shifting layout.'}
+/>
+
+## Try It Yourself
+
+Hover over the cards below to feel the smooth `translateY` + `scale` micro-interaction:
+
+<Playground
+  client:visible
+  title="Interactive Card Hover Transitions"
+  defaultTab="css"
+  height={240}
+  html={`<div class="row">
+  <button class="tile">
+    <span class="icon">⚡</span>
+    <strong>Fast Hover</strong>
+  </button>
+  <button class="tile">
+    <span class="icon">🎯</span>
+    <strong>Crisp Lift</strong>
+  </button>
+</div>`}
+  css={`.row { display: flex; gap: 14px; padding: 12px 4px; }
+.tile {
+  display: grid;
+  gap: 6px;
+  place-items: center;
+  width: 140px;
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  cursor: pointer;
+  transition: transform 200ms cubic-bezier(0.2, 0.8, 0.2, 1),
+              box-shadow 200ms ease,
+              border-color 200ms ease;
+}
+.tile:hover {
+  transform: translateY(-4px) scale(1.02);
+  border-color: #2563eb;
+  box-shadow: 0 12px 24px -8px rgb(37 99 235 / 0.25);
+}
+.tile:active {
+  transform: translateY(-1px) scale(0.99);
+}
+.icon { font-size: 24px; }`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which two CSS properties are cheapest for the browser to animate at 60fps?",
+      options: [
+        "width and height",
+        "transform and opacity",
+        "margin and padding"
+      ],
+      answer: 1,
+      explanation: "transform and opacity run on the GPU compositor thread without triggering layout recalculation."
+    }
+  ]}
+/>

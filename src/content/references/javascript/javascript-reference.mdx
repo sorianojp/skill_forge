@@ -1,0 +1,49 @@
+---
+title: "Modern JavaScript Reference"
+category: "JavaScript"
+syntax: "const/let, ?., ??, Set/Map, querySelector, async/await, import/export"
+summary: "Essential modern JavaScript syntax, data structures, DOM APIs, and async patterns in one scannable cheat sheet."
+browserSupport: "Baseline Widely Available"
+---
+
+## Modern Syntax & Operators
+
+| Syntax | Purpose | Example |
+| :--- | :--- | :--- |
+| `const` / `let` | Block-scoped bindings | `const max = 10; let count = 0;` |
+| `===` / `!==` | Strict equality (no coercion) | `if (role === 'admin')` |
+| `??` | Nullish coalescing default | `const name = input ?? 'Guest';` |
+| `?.` | Optional chaining | `user?.profile?.avatar` |
+| `{ a, b } = obj` | Destructuring | `const { title, level = 'Beginner' } = course;` |
+| `...` | Spread / Rest | `const copy = { ...obj, done: true };` |
+
+## Collections & Iteration
+
+| API | Purpose | Example |
+| :--- | :--- | :--- |
+| `for (const x of arr)` | Clean loop supporting `break` / `continue` | `for (const [i, v] of arr.entries())` |
+| `.map()` / `.filter()` / `.reduce()` | Immutable array transforms | `nums.filter(n => n > 0)` |
+| `new Set(arr)` | Unique values with O(1) `.has()` | `[...new Set(tags)]` |
+| `new Map()` | Key-value lookup with `.get()`/`.set()` | `counts.set('html', 16)` |
+| `structuredClone(obj)` | Deep clone nested objects/arrays | `const deep = structuredClone(state);` |
+
+## DOM, Events & Browser APIs
+
+| API | Purpose | Example |
+| :--- | :--- | :--- |
+| `document.querySelector()` | Find first matching element | `document.querySelector('#btn')` |
+| `el.textContent` | Set/read plain text safely (XSS-safe) | `el.textContent = 'Saved';` |
+| `el.classList.toggle()` | Add/remove CSS classes | `panel.classList.toggle('open', isOpen)` |
+| `el.closest(selector)` | Event delegation helper | `e.target.closest('button[data-id]')` |
+| `parent.replaceChildren()` | Replace child nodes cleanly | `list.replaceChildren(...items)` |
+| `localStorage` + `JSON` | Persist client-side state | `localStorage.setItem(k, JSON.stringify(v))` |
+| `setTimeout` / `clearTimeout` | Delayed execution & debouncing | `clearTimeout(id); id = setTimeout(fn, 300)` |
+
+## Async, Errors & Modules
+
+| Pattern | Purpose | Example |
+| :--- | :--- | :--- |
+| `async` / `await` | Linear asynchronous control flow | `const res = await fetch(url);` |
+| `try / catch / finally` | Resilient error handling & cleanup | `finally { btn.disabled = false; }` |
+| `export` / `import` | Native ES Modules | `import { clamp } from './math.js';` |
+| `class { #private }` | Encapsulated private class fields | `#completed = new Set();` |

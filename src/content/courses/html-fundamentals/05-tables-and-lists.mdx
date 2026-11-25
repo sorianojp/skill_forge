@@ -1,0 +1,104 @@
+---
+title: "Tables, Lists & Disclosure Widgets"
+description: "Present structured tabular data accessibly with thead, scope, and caption, and build zero-JS accordions with details and summary."
+course: "html-fundamentals"
+module: "Media, Graphics & Data"
+order: 10
+durationMinutes: 8
+objectives:
+  - "Structure accessible data tables using <caption>, <thead>, <tbody>, and scope"
+  - "Choose between <ul>, <ol>, and <dl> description lists"
+  - "Create native, accessible accordions using <details> and <summary>"
+---
+
+import Playground from '@/components/playground/Playground';
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+HTML provides purpose-built elements for structured data and collapsible FAQs, no JavaScript frameworks needed.
+
+## Accessible Data Tables
+
+Use `<table>` strictly for **tabular data** (schedules, pricing comparisons, metrics), never for page layout.
+
+Key accessibility ingredients:
+- **`<caption>`**: Acts like a title for the table.
+- **`<thead>` and `<tbody>`**: Separate column headers from data rows.
+- **`<th scope="col">` / `<th scope="row">`**: Explicitly links headers to their cells for screen readers.
+
+## Native Accordions with `<details>` & `<summary>`
+
+Need an FAQ or collapsible hint? Native HTML `<details>` works with keyboard navigation and screen readers out of the box!
+
+<Callout type="tip" title="Linked Exclusive Accordions">
+  Give multiple <code>&lt;details&gt;</code> elements the same <code>name="faq"</code> attribute, and opening one automatically closes the others, with zero JavaScript!
+</Callout>
+
+## Try It Yourself
+
+Click the FAQ items below and try adding a fourth course row to the table:
+
+<Playground
+  client:visible
+  title="Semantic Table + Native Accordion"
+  height={300}
+  html={`<table>
+  <caption>SkillForge Track Overview</caption>
+  <thead>
+    <tr>
+      <th scope="col">Course</th>
+      <th scope="col">Level</th>
+      <th scope="col">Price</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">HTML Fundamentals</th>
+      <td>Beginner</td>
+      <td>Free</td>
+    </tr>
+    <tr>
+      <th scope="row">CSS Layout</th>
+      <td>Beginner</td>
+      <td>Free</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="faq">
+  <details name="faq" open>
+    <summary>Do I need an account to track progress?</summary>
+    <p>No! Progress is saved automatically in your browser.</p>
+  </details>
+  <details name="faq">
+    <summary>Can I run code directly in lessons?</summary>
+    <p>Yes, every lesson includes a live Try It Yourself sandbox.</p>
+  </details>
+</div>`}
+  css={`table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px; }
+caption { text-align: left; font-weight: 700; margin-bottom: 6px; color: #0f172a; }
+th, td { border: 1px solid #cbd5e1; padding: 8px 10px; text-align: left; }
+thead th { background: #f1f5f9; }
+.faq { display: grid; gap: 8px; }
+details { border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; background: #f8fafc; }
+summary { font-weight: 600; cursor: pointer; font-size: 13px; }
+details p { margin: 8px 0 0; font-size: 13px; color: #475569; }`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which HTML element provides a visible, accessible title for a <table>?",
+      options: ["<title>", "<caption>", "<legend>"],
+      answer: 1,
+      explanation: "<caption> is placed as the first child of <table> to describe the table's contents."
+    },
+    {
+      question: "Which pair of HTML elements creates a native collapsible accordion with zero JavaScript?",
+      options: ["<accordion> and <item>", "<details> and <summary>", "<dialog> and <header>"],
+      answer: 1,
+      explanation: "<details> with a <summary> child provides built-in keyboard and screen-reader-accessible disclosure behavior."
+    }
+  ]}
+/>

@@ -1,0 +1,109 @@
+---
+title: "Links, Images & Media"
+description: "Create accessible links, write meaningful alt text, prevent layout shift on images, and pair visuals with captions using figure."
+course: "html-fundamentals"
+module: "Media, Graphics & Data"
+order: 7
+durationMinutes: 8
+objectives:
+  - "Write clear, accessible link text and safe external links"
+  - "Use alt, width, height, and loading=\"lazy\" on images for accessibility and performance"
+  - "Group media with captions using <figure> and <figcaption>"
+---
+
+import Playground from '@/components/playground/Playground';
+import Callout from '@/components/mdx/Callout.astro';
+import DoDont from '@/components/mdx/DoDont.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+Hyperlinks (`<a>`) and images (`<img>`) turn isolated documents into a connected, visual web. Getting their attributes right directly improves **accessibility** and **Core Web Vitals** (like Cumulative Layout Shift).
+
+## Writing Better Links
+
+Screen-reader users often scan a page by listing all links out of context. That's why link text should make sense on its own.
+
+<DoDont
+  doTitle="Descriptive Link Text"
+  dontTitle="Vague Link Text"
+  doCode={`<a href="/courses/css-layout">
+  Explore the CSS Layout course
+</a>`}
+  dontCode={`To start learning CSS,
+<a href="/courses/css-layout">click here</a>.`}
+  note={'When opening an external link in a new tab with target="_blank", always add rel="noopener noreferrer" for security.'}
+/>
+
+## Performant, Accessible Images
+
+Every `<img>` should include:
+- **`alt`**: Describes the image's purpose. Use an empty `alt=""` for purely decorative images so screen readers skip them.
+- **`width` & `height`**: Lets the browser reserve exact space before the image loads, preventing jarring page jumps (CLS).
+- **`loading="lazy"`**: Defers off-screen images until the user scrolls near them. (Skip lazy loading on your main above-the-fold hero image!)
+
+<Callout type="tip" title="Use <figure> for Captions">
+  Wrap an image and its caption inside <code>&lt;figure&gt;</code> and <code>&lt;figcaption&gt;</code> so assistive technologies associate them together.
+</Callout>
+
+## Try It Yourself
+
+Edit the SVG data image, caption, or link attributes below:
+
+<Playground
+  client:visible
+  title="Accessible Figure & Links"
+  height={280}
+  html={`<figure class="media-card">
+  <img
+    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='180' viewBox='0 0 400 180'%3E%3Crect width='400' height='180' rx='12' fill='%231d4ed8'/%3E%3Ctext x='200' y='98' text-anchor='middle' fill='white' font-family='sans-serif' font-size='22' font-weight='bold'%3E400 × 180 Responsive Card%3C/text%3E%3C/svg%3E"
+    alt="Blue banner card showing 400 by 180 dimensions"
+    width="400"
+    height="180"
+    loading="lazy"
+  />
+  <figcaption>
+    Always declare <code>width</code>, <code>height</code>, and meaningful <code>alt</code> text.
+  </figcaption>
+</figure>
+
+<p>
+  <a href="#top" class="cta">Read the HTML Reference Guide →</a>
+</p>`}
+  css={`.media-card {
+  margin: 0 0 14px;
+  max-width: 400px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+img { display: block; width: 100%; height: auto; border-radius: 8px; }
+figcaption { margin-top: 8px; font-size: 13px; color: #475569; }
+.cta { color: #2563eb; font-weight: 600; text-decoration: none; }
+.cta:hover { text-decoration: underline; }`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What alt attribute should you use on a purely decorative background icon?",
+      options: [
+        "Omit the alt attribute completely",
+        "Use alt=\"\" (an empty string)",
+        "Write alt=\"decorative icon\""
+      ],
+      answer: 1,
+      explanation: "An empty alt=\"\" tells screen readers to skip the image cleanly. Omitting alt entirely often causes screen readers to read out the raw filename."
+    },
+    {
+      question: "Why should you include width and height attributes on <img> elements?",
+      options: [
+        "To prevent the browser from resizing the image with CSS",
+        "To reserve layout space before the image loads and prevent layout shift (CLS)",
+        "To compress the image file size"
+      ],
+      answer: 1,
+      explanation: "Browsers compute the image's aspect ratio from width and height immediately, reserving space so surrounding text does not jump."
+    }
+  ]}
+/>

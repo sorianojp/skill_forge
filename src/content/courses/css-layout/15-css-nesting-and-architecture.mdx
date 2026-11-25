@@ -1,0 +1,132 @@
+---
+title: "Native CSS Nesting & @layer Architecture"
+description: "Write cleaner component styles with native CSS nesting (&) and eliminate specificity bugs forever using @layer cascade layers."
+course: "css-layout"
+module: "Visual Polish & Motion"
+order: 15
+durationMinutes: 9
+objectives:
+  - "Group component rules and states cleanly with native CSS nesting (&)"
+  - "Organize stylesheets predictably with @layer reset, base, components, utilities"
+  - "Understand why layer order beats selector specificity"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+Two of the biggest upgrades in modern CSS (**Native Nesting** and **Cascade Layers (`@layer`)**)let you write clean, scalable stylesheets without Sass or `!important`.
+
+## Native CSS Nesting
+
+Group child rules, hover states, and media queries right inside the parent selector:
+
+```css
+.course-pill {
+  background: #eff6ff;
+  color: #1d4ed8;
+
+  &:hover {
+    background: #dbeafe;
+  }
+
+  & strong {
+    font-weight: 800;
+  }
+}
+```
+
+## Cascade Layers (`@layer`)
+
+Declare your layer order once at the top of your stylesheet:
+
+```css
+@layer reset, components, utilities;
+```
+
+Rules in a **later layer** (`utilities`) *always* beat rules in an **earlier layer** (`components`), even if the earlier layer used a more specific selector!
+
+<Callout type="tip" title="Tailwind CSS v4 Uses @layer Under the Hood">
+  SkillForge itself runs on Tailwind CSS v4, which relies on native <code>@layer</code> so utility classes override component styles cleanly without specificity battles.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Cascade Layers & Nesting"
+  prompt="Declare layers so 'utilities' always overrides 'base', and nest a :hover state using &."
+  template={`@{{0}} base, utilities;
+
+.card {
+  border: 1px solid #cbd5e1;
+  {{1}}:hover {
+    border-color: #2563eb;
+  }
+}`}
+  blanks={[
+    { answer: 'layer', placeholder: 'at-rule' },
+    { answer: '&', placeholder: 'sym' },
+  ]}
+  hint={'Use @layer to declare cascade layers and & inside a nested rule to reference the parent selector.'}
+/>
+
+## Try It Yourself
+
+Notice how `.btn-highlight` in `@layer utilities` overrides `button.primary` in `@layer components` cleanly!
+
+<Playground
+  client:visible
+  title="Native CSS Nesting + @layer"
+  defaultTab="css"
+  height={250}
+  html={`<div class="box">
+  <button class="primary">Component Button</button>
+  <button class="primary bg-emerald">Utility Layer Override</button>
+</div>`}
+  css={`@layer components, utilities;
+
+@layer components {
+  .box {
+    display: flex;
+    gap: 10px;
+
+    & button.primary {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+
+      &:hover {
+        filter: brightness(1.08);
+      }
+    }
+  }
+}
+
+@layer utilities {
+  .bg-emerald {
+    background: #059669;
+  }
+}`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Given @layer base, utilities; which rule wins when both target the same element?",
+      options: [
+        "Whichever selector has more classes",
+        "The rule inside @layer utilities, because later layers always outrank earlier layers",
+        "Whichever rule appears first in the file"
+      ],
+      answer: 1,
+      explanation: "Cascade layer order takes precedence over specificity, making utility overrides completely predictable."
+    }
+  ]}
+/>

@@ -1,0 +1,122 @@
+---
+title: "ES Modules & Modern Classes"
+description: "Organize growing codebases cleanly with native import/export ES Modules and encapsulate state and methods with ES6 Classes and private #fields."
+course: "javascript-essentials"
+module: "Async & Modern JS"
+order: 15
+durationMinutes: 9
+objectives:
+  - "Share functions and data between files using named and default export / import"
+  - "Define clean classes with constructor, methods, and private #fields"
+  - "Know when a plain object/function is simpler than a class"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+## ES Modules (`import` / `export`)
+
+Every modern browser natively supports `<script type="module">`, letting you split your app into small, focused files:
+
+```js
+// math.js
+export const clamp = (n, min, max) => Math.min(Math.max(n, min), max);
+export default function double(n) { return n * 2; }
+
+// app.js
+import double, { clamp } from './math.js';
+```
+
+## Modern Classes & True Private Fields (`#`)
+
+Prefixing a property with `#` makes it **genuinely private**, external code cannot read or mutate it directly:
+
+```js
+class ProgressTracker {
+  #completed = new Set();
+
+  complete(slug) { this.#completed.add(slug); }
+  get count() { return this.#completed.size; }
+}
+```
+
+<Callout type="tip" title="Module Scope Is Automatic">
+  Variables declared at the top level of an ES Module stay private to that file unless explicitly exported, no more accidental global variable collisions!
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Named Export & Private Field"
+  prompt="Export a helper function by name and declare a private #score field in a class."
+  template={`{{0}} function formatScore(n) {
+  return n + '%';
+}
+
+class QuizState {
+  {{1}}score = 0;
+}`}
+  blanks={[
+    { answer: 'export', placeholder: 'kw' },
+    { answer: '#', placeholder: '#' },
+  ]}
+  hint={'Use export before a function for a named export, and # to declare a private class field.'}
+/>
+
+## Try It Yourself
+
+<Playground
+  client:visible
+  title="ES6 Class with Private #completed Set"
+  defaultTab="js"
+  showConsole={true}
+  height={250}
+  html={`<button id="mark">Complete Next Lesson</button>
+<p id="out" class="out">Completed: 0 / 3</p>`}
+  css={`button { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 8px 14px; font-weight: 600; cursor: pointer; }
+.out { margin-top: 12px; font-size: 14px; font-weight: 600; color: #0f172a; }`}
+  js={`class CourseTracker {
+  #completed = new Set();
+  constructor(total) {
+    this.total = total;
+  }
+  markDone(lesson) {
+    this.#completed.add(lesson);
+  }
+  get summary() {
+    const pct = Math.round((this.#completed.size / this.total) * 100);
+    return \`Completed: \${this.#completed.size} / \${this.total} (\${pct}%)\`;
+  }
+}
+
+const tracker = new CourseTracker(3);
+const lessons = ['html-1', 'html-2', 'html-3'];
+let idx = 0;
+
+document.querySelector('#mark').addEventListener('click', () => {
+  if (idx < lessons.length) {
+    tracker.markDone(lessons[idx++]);
+    document.querySelector('#out').textContent = tracker.summary;
+    console.log(tracker.summary);
+  }
+});`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does prefixing a JavaScript class field with `#` (like `#token`) do?",
+      options: [
+        "Makes it a CSS ID selector",
+        "Makes it a truly private field accessible only inside the class",
+        "Makes it a static constant"
+      ],
+      answer: 1,
+      explanation: "Private class fields prefixed with # are enforced by the JavaScript engine and cannot be accessed outside the class body."
+    }
+  ]}
+/>

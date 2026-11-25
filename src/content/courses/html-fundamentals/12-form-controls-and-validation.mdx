@@ -1,0 +1,116 @@
+---
+title: "Form Controls, Fieldsets & Constraint Validation"
+description: "Go beyond basic text inputs with fieldset/legend, radio groups, select menus, datalist autocomplete, and native validation rules."
+course: "html-fundamentals"
+module: "Forms & User Input"
+order: 12
+durationMinutes: 10
+objectives:
+  - "Group related radio buttons or checkboxes with <fieldset> and <legend>"
+  - "Offer choices using <select>, <optgroup>, and searchable <datalist>"
+  - "Use inputmode, autocomplete, pattern, and min/max for frictionless UX"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+Great forms reduce typing effort and prevent mistakes *before* the user hits submit.
+
+## Grouping Related Inputs with `<fieldset>` & `<legend>`
+
+When you have a group of radio buttons (like "Preferred Track"), wrap them in `<fieldset>` with a `<legend>`. Screen readers automatically announce the legend before each radio option!
+
+## Choosing the Right Control
+
+| Control | Best For |
+| :--- | :--- |
+| `<input type="radio">` | Choosing **one** option from 2–5 visible choices |
+| `<input type="checkbox">` | Toggling **zero or more** independent options |
+| `<select>` | Choosing one option from a long list (e.g., country) |
+| `<input list="...">` + `<datalist>` | Free-text input with native **autocomplete suggestions** |
+| `<textarea>` | Multi-line comments or bio text |
+
+<Callout type="tip" title="Boost Mobile UX with autocomplete">
+  Adding standard tokens like <code>autocomplete="name"</code> or <code>autocomplete="email"</code> lets browsers and password managers fill forms in a single tap.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Accessible Radio Group"
+  prompt="Group the radio choices accessibly using <fieldset> and <legend>."
+  template={`<{{0}}>
+  <{{1}}>Experience Level</legend>
+  <label><input type="radio" name="level" value="beginner" /> Beginner</label>
+  <label><input type="radio" name="level" value="pro" /> Pro</label>
+</fieldset>`}
+  blanks={[
+    { answer: 'fieldset', placeholder: 'tag' },
+    { answer: 'legend', placeholder: 'tag' },
+  ]}
+  hint="Use <fieldset> as the container and <legend> as its first child caption."
+/>
+
+## Try It Yourself
+
+Test the `<fieldset>`, `<datalist>` autocomplete, and numeric `min`/`max` validation below:
+
+<Playground
+  client:visible
+  title="Rich Native Form Controls"
+  height={310}
+  html={`<form id="prefs" class="form">
+  <fieldset>
+    <legend>Learning Pace</legend>
+    <label><input type="radio" name="pace" value="casual" checked /> Casual (15 min/day)</label>
+    <label><input type="radio" name="pace" value="intense" /> Intensive (1 hr/day)</label>
+  </fieldset>
+
+  <div class="field">
+    <label for="lang">Primary Language (with suggestions)</label>
+    <input id="lang" name="lang" list="langOptions" placeholder="Start typing..." required />
+    <datalist id="langOptions">
+      <option value="HTML & CSS"></option>
+      <option value="JavaScript"></option>
+      <option value="TypeScript"></option>
+      <option value="Python"></option>
+    </datalist>
+  </div>
+
+  <button type="submit">Save Preferences</button>
+  <p id="out" role="status"></p>
+</form>`}
+  css={`.form { max-width: 360px; display: grid; gap: 12px; font-size: 13px; }
+fieldset { border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 12px; display: grid; gap: 6px; }
+legend { font-weight: 700; padding: 0 6px; color: #0f172a; }
+.field { display: grid; gap: 4px; }
+input[list] { padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 8px; }
+button { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 9px 14px; font-weight: 600; cursor: pointer; }
+#out { margin: 0; color: #15803d; font-weight: 600; }`}
+  js={`const form = document.getElementById('prefs');
+const out = document.getElementById('out');
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const fd = new FormData(form);
+  out.textContent = \`Saved: \${fd.get('lang')} (\${fd.get('pace')})\`;
+});`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "How do radio buttons know they belong to the same mutually exclusive group?",
+      options: [
+        "They share the same id attribute",
+        "They share the same name attribute",
+        "They share the same class attribute"
+      ],
+      answer: 1,
+      explanation: "Radio inputs with the same name attribute act as a single group where only one option can be checked at a time."
+    }
+  ]}
+/>
