@@ -1,0 +1,20 @@
+{
+  "slug": "python-fundamentals",
+  "title": "Python 3 Fundamentals",
+  "shortTitle": "Learn Python",
+  "description": "Write and run real Python 3 directly in your browser using WebAssembly (Pyodide). Master variables, control flow, functions, lists, dictionaries, comprehensions, and an auto-graded capstone.",
+  "track": "Python",
+  "difficulty": "Beginner",
+  "estimatedHours": 4,
+  "accentColor": "#059669",
+  "prerequisites": ["None, designed for complete beginners"],
+  "outcomes": [
+    "Write clean Python 3 code with variables, f-strings, and core data types",
+    "Control program flow with if/elif/else, for loops, and range()",
+    "Build reusable functions with default parameters and return values",
+    "Transform data cleanly using lists, dictionaries, and comprehensions",
+    "Pass an auto-graded Python capstone challenge in the browser"
+  ],
+  "featured": true,
+  "order": 4
+}

@@ -1,0 +1,67 @@
+---
+title: "Comprehensions & Built-In Functions"
+description: "Write expressive Pythonic one-liners with list comprehensions, sum(), min(), max(), sorted(), and set deduplication."
+course: "python-fundamentals"
+module: "Pythonic Patterns"
+order: 5
+durationMinutes: 8
+objectives:
+  - "Transform and filter lists cleanly using list comprehensions"
+  - "Summarize data quickly with sum(), len(), min(), max(), and sorted()"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import PythonPlayground from '@/components/playground/PythonPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+**List comprehensions** are one of Python's signature superpowers. They replace multi-line `for` + `.append()` loops with one clear expression:
+
+```python
+scores = [65, 88, 92, 74, 95]
+passing = [s for s in scores if s >= 80]
+# [88, 92, 95]
+```
+
+<Callout type="tip" title="Keep Comprehensions Readable">
+  If a comprehension needs more than one condition or nested loop, a regular <code>for</code> loop is usually clearer for teammates to read.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Python List Comprehension"
+  prompt="Build a list of doubled numbers for every n in nums that is greater than 0."
+  template={`doubled = [n * 2 {{0}} n in nums {{1}} n > 0]`}
+  blanks={[
+    { answer: 'for', placeholder: 'kw' },
+    { answer: 'if', placeholder: 'kw' },
+  ]}
+  hint={'List comprehensions follow the pattern: [expression for item in iterable if condition].'}
+/>
+
+## Try It Yourself
+
+<PythonPlayground
+  client:visible
+  title="Comprehensions & Built-Ins"
+  code={`scores = [72, 85, 91, 68, 95, 88]
+passing = [s for s in scores if s >= 80]
+
+print("Passing scores:", sorted(passing, reverse=True))
+print("Average passing:", round(sum(passing) / len(passing), 1))
+print("Highest:", max(passing), "| Lowest:", min(passing))`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does `[x * 2 for x in [1, 2, 3]]` evaluate to?",
+      options: ["[1, 2, 3, 1, 2, 3]", "[2, 4, 6]", "(2, 4, 6)"],
+      answer: 1,
+      explanation: "The list comprehension doubles each element and returns a new list [2, 4, 6]."
+    }
+  ]}
+/>

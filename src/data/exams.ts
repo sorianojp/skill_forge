@@ -242,4 +242,67 @@ export const COURSE_EXAMS: Record<string, ExamQuestion[]> = {
       explanation: 'finally always runs, making it ideal for clearing loading states or re-enabling buttons.',
     },
   ],
+
+  'python-fundamentals': [
+    {
+      question: 'How are boolean values written in Python 3?',
+      options: ['true and false', 'True and False', 'TRUE and FALSE'],
+      answer: 1,
+      explanation: 'Python boolean literals are always capitalized: True and False.',
+    },
+    {
+      question: 'Which prefix creates a formatted f-string in Python?',
+      options: ['s"Hello {name}"', 'f"Hello {name}"', '$"Hello {name}"'],
+      answer: 1,
+      explanation: 'Prefixing a string with f evaluates expressions inside curly braces.',
+    },
+    {
+      question: 'What naming convention is standard for Python variables and functions?',
+      options: ['camelCase', 'snake_case', 'PascalCase'],
+      answer: 1,
+      explanation: 'PEP 8 recommends snake_case for variable and function names.',
+    },
+    {
+      question: 'Which keyword introduces an additional conditional branch after if in Python?',
+      options: ['else if', 'elif', 'elsif'],
+      answer: 1,
+      explanation: 'Python uses elif instead of else if.',
+    },
+    {
+      question: 'What sequence of integers does range(1, 5) produce?',
+      options: ['1, 2, 3, 4, 5', '1, 2, 3, 4', '0, 1, 2, 3, 4'],
+      answer: 1,
+      explanation: 'range(start, stop) starts at start and stops before stop.',
+    },
+    {
+      question: 'What does a Python function return if it has no return statement?',
+      options: ['0', 'undefined', 'None'],
+      answer: 2,
+      explanation: 'Python functions implicitly return None when no return value is specified.',
+    },
+    {
+      question: 'How do you read a dictionary key safely without risking a KeyError?',
+      options: ['d[key]', 'd.get(key, default)', 'd.fetch(key)'],
+      answer: 1,
+      explanation: 'dict.get(key, default) returns the default value if the key is absent.',
+    },
+    {
+      question: 'In Python, what does `items[-1]` access?',
+      options: ['The first element', 'The last element', 'Raises an IndexError'],
+      answer: 1,
+      explanation: 'Negative indexes count from the end of the sequence, so -1 is the last item.',
+    },
+    {
+      question: 'What does `[x * 2 for x in [1, 2, 3]]` evaluate to?',
+      options: ['[2, 4, 6]', '[1, 2, 3, 1, 2, 3]', '{2, 4, 6}'],
+      answer: 0,
+      explanation: 'The list comprehension doubles each item and returns [2, 4, 6].',
+    },
+    {
+      question: 'Which built-in helper yields both the index and value while looping over a list?',
+      options: ['index()', 'enumerate()', 'entries()'],
+      answer: 1,
+      explanation: 'enumerate(items) yields (index, item) pairs cleanly in a for loop.',
+    },
+  ],
 };

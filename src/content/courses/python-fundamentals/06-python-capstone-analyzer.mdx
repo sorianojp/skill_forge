@@ -1,0 +1,69 @@
+---
+title: "Capstone: Auto-Graded Python Grade Analyzer"
+description: "Bring together functions, dictionaries, and comprehensions to pass an auto-graded Python capstone challenge in your browser."
+course: "python-fundamentals"
+module: "Capstone Project"
+order: 6
+durationMinutes: 10
+objectives:
+  - "Implement a reusable analyze_scores(scores) function returning a summary dictionary"
+  - "Pass all 4 automated Python assertions in the browser"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import PythonPlayground from '@/components/playground/PythonPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+Welcome to the **Python 3 Fundamentals** capstone! Complete `analyze_scores(scores)` below so it returns a dictionary with:
+- `"count"`: total number of scores
+- `"passed"`: list of scores `>= 80`
+- `"average"`: average of all scores rounded to 1 decimal place (`0` if `scores` is empty)
+
+## Auto-Graded Python Capstone Challenge
+
+Edit the function below and click **Run & Test** until all 4 automated assertions turn green!
+
+<PythonPlayground
+  client:visible
+  title="Python Capstone: Grade Analyzer"
+  height={280}
+  code={`def analyze_scores(scores):
+    # TODO: replace the placeholder return values so all 4 tests pass!
+    passed = [s for s in scores if s >= 80]
+    average = round(sum(scores) / len(scores), 1) if scores else 0
+    return {
+        "count": len(scores),
+        "passed": passed,
+        "average": average,
+    }
+
+sample = [75, 82, 94, 88]
+print("Summary:", analyze_scores(sample))`}
+  tests={[
+    { label: 'Returns count == 4 for [75, 82, 94, 88]', assertCode: 'assert analyze_scores([75, 82, 94, 88])["count"] == 4' },
+    { label: 'Filters passed scores >= 80 into [82, 94, 88]', assertCode: 'assert analyze_scores([75, 82, 94, 88])["passed"] == [82, 94, 88]' },
+    { label: 'Calculates average == 84.8 rounded to 1 decimal', assertCode: 'assert analyze_scores([75, 82, 94, 88])["average"] == 84.8' },
+    { label: 'Handles an empty list [] safely with average == 0', assertCode: 'assert analyze_scores([]) == {"count": 0, "passed": [], "average": 0}' },
+  ]}
+/>
+
+<Callout type="tip" title="Ready for Your Free Python Certificate?">
+  Take the <a href="/courses/python-fundamentals/exam"><strong>Python 3 Final Exam</strong></a> (score 80% or higher) to unlock your free downloadable Completion Certificate!
+</Callout>
+
+<Quiz
+  client:visible
+  title="Python Fundamentals Final Check"
+  questions={[
+    {
+      question: "Why should you check `if scores` before computing `sum(scores) / len(scores)`?",
+      options: [
+        "To avoid ZeroDivisionError when the list is empty",
+        "Because sum() only works on strings",
+        "Because len() returns None on empty lists"
+      ],
+      answer: 0,
+      explanation: "Dividing by len([]) (which is 0) raises ZeroDivisionError in Python."
+    }
+  ]}
+/>

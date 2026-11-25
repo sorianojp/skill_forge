@@ -8,7 +8,7 @@ const courses = defineCollection({
     title: z.string(),
     shortTitle: z.string(),
     description: z.string(),
-    track: z.enum(['HTML', 'CSS', 'JavaScript', 'Web Fundamentals']),
+    track: z.enum(['HTML', 'CSS', 'JavaScript', 'Python', 'Web Fundamentals']),
     difficulty: z.enum(['Beginner', 'Intermediate', 'Advanced']),
     estimatedHours: z.number(),
     accentColor: z.string().default('#2563eb'),
@@ -37,7 +37,7 @@ const references = defineCollection({
   loader: glob({ pattern: '**/*.mdx', base: './src/content/references' }),
   schema: z.object({
     title: z.string(),
-    category: z.enum(['HTML', 'CSS', 'JavaScript']),
+    category: z.enum(['HTML', 'CSS', 'JavaScript', 'Python']),
     syntax: z.string(),
     summary: z.string(),
     browserSupport: z.string().default('Baseline Widely Available'),

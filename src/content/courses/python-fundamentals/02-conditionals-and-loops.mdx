@@ -1,0 +1,79 @@
+---
+title: "Conditionals & Loops"
+description: "Branch logic cleanly with if/elif/else and iterate over sequences and numeric ranges using for loops."
+course: "python-fundamentals"
+module: "Python Basics"
+order: 2
+durationMinutes: 8
+objectives:
+  - "Write indented if, elif, and else blocks"
+  - "Loop through lists and ranges with for and range()"
+  - "Get both index and value using enumerate()"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import PythonPlayground from '@/components/playground/PythonPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+In Python, **indentation (4 spaces)** defines code blocks. That keeps every Python file clean and uniform.
+
+## `if` / `elif` / `else`
+
+```python
+score = 88
+if score >= 90:
+    grade = "A"
+elif score >= 80:
+    grade = "B"
+else:
+    grade = "Keep practicing"
+```
+
+<Callout type="tip" title="Use enumerate() for Indexes">
+  Instead of manually tracking a counter variable, write <code>for idx, item in enumerate(items, start=1):</code> to get clean 1-based numbering!
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Conditionals & Range Loop"
+  prompt="Use elif for the second branch and range(1, 4) to loop over 1, 2, 3."
+  template={`if score >= 90:
+    print("A")
+{{0}} score >= 80:
+    print("B")
+
+for n in {{1}}(1, 4):
+    print(n)`}
+  blanks={[
+    { answer: 'elif', placeholder: 'kw' },
+    { answer: 'range', placeholder: 'fn' },
+  ]}
+  hint={'Python shortens "else if" to elif, and range(1, 4) produces 1, 2, 3.'}
+/>
+
+## Try It Yourself
+
+<PythonPlayground
+  client:visible
+  title="Looping with enumerate() and Conditionals"
+  code={`scores = [95, 82, 74, 91]
+
+for idx, score in enumerate(scores, start=1):
+    status = "Passed" if score >= 80 else "Review"
+    print(f"Exam #{idx}: {score}% -> {status}")`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which numbers does range(1, 5) produce in Python?",
+      options: ["1, 2, 3, 4, 5", "1, 2, 3, 4", "0, 1, 2, 3, 4"],
+      answer: 1,
+      explanation: "range(start, stop) includes start and stops right before stop, so range(1, 5) yields 1, 2, 3, 4."
+    }
+  ]}
+/>

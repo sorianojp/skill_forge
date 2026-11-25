@@ -1,0 +1,74 @@
+---
+title: "Lists & Dictionaries"
+description: "Store ordered collections in lists, key-value records in dicts, and look up missing keys safely with .get()."
+course: "python-fundamentals"
+module: "Functions & Data"
+order: 4
+durationMinutes: 9
+objectives:
+  - "Slice, append, and iterate over Python lists"
+  - "Store structured data in dictionaries and iterate with .items()"
+  - "Avoid KeyError crashes by using dict.get(key, default)"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import PythonPlayground from '@/components/playground/PythonPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+**Lists** (`[1, 2, 3]`) hold ordered sequences, while **Dictionaries** (`{"track": "Python", "free": True}`) store fast key-value mappings.
+
+## Safe Dictionary Lookups with `.get()`
+
+Accessing `course["price"]` raises a `KeyError` if `"price"` does not exist. Calling `course.get("price", 0)` safely returns `0` instead!
+
+<Callout type="tip" title="Negative Indexing & Slicing">
+  In Python, <code>items[-1]</code> grabs the last element, and <code>items[:3]</code> slices the first 3 elements cleanly.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="List Append & Safe Dict Lookup"
+  prompt="Add 'Python' to tracks and safely read the 'level' key with a default of 'Beginner'."
+  template={`tracks = ["HTML", "CSS"]
+tracks.{{0}}("Python")
+
+course = {"title": "Learn Python"}
+level = course.{{1}}("level", "Beginner")`}
+  blanks={[
+    { answer: 'append', placeholder: 'method' },
+    { answer: 'get', placeholder: 'method' },
+  ]}
+  hint={'Use .append() to add to a list and .get(key, default) to read a dictionary safely.'}
+/>
+
+## Try It Yourself
+
+<PythonPlayground
+  client:visible
+  title="Lists, Slicing & Dictionaries"
+  code={`tracks = ["HTML", "CSS", "JavaScript"]
+tracks.append("Python")
+print("All tracks:", tracks)
+print("Latest track:", tracks[-1])
+
+lesson_counts = {"HTML": 16, "CSS": 16, "JavaScript": 16, "Python": 6}
+for name, count in lesson_counts.items():
+    print(f"- {name}: {count} lessons")
+
+print("SQL lessons:", lesson_counts.get("SQL", 0))`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does `{'a': 1}.get('b', 99)` return?",
+      options: ["Raises KeyError", "None", "99"],
+      answer: 2,
+      explanation: "dict.get(key, default) returns the default value when the key is missing instead of raising KeyError."
+    }
+  ]}
+/>

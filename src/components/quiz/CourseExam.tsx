@@ -365,9 +365,10 @@ export default function CourseExam({ courseSlug, courseTitle, accentColor, quest
             type="button"
             disabled={answeredCount < questions.length}
             onClick={handleSubmit}
-            className="min-h-12 rounded-2xl bg-[var(--accent)] px-7 py-3.5 text-sm font-semibold text-white transition hover:bg-[var(--accent-strong)] disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex min-h-12 items-center gap-2 rounded-2xl bg-[var(--accent)] px-7 py-3.5 text-sm font-semibold text-white transition hover:bg-[var(--accent-strong)] disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Submit Exam
+            <CheckCircle2 className="h-4 w-4" />
+            <span>Submit Exam</span>
           </button>
         </div>
       )}

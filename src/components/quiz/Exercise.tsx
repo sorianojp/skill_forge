@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CheckCircle2, Eye, RotateCcw, Sparkles, XCircle } from 'lucide-react';
+import { Check, CheckCircle2, Eye, Lightbulb, RotateCcw, Sparkles, XCircle } from 'lucide-react';
 
 export interface ExerciseBlank {
   answer: string;
@@ -148,18 +148,20 @@ export default function Exercise({
         <button
           type="button"
           onClick={handleCheck}
-          className="min-h-10 rounded-full bg-[var(--accent)] px-5 py-2 text-sm font-semibold text-white transition hover:bg-[var(--accent-strong)]"
+          className="inline-flex min-h-10 items-center gap-1.5 rounded-full bg-[var(--accent)] px-5 py-2 text-sm font-semibold text-white transition hover:bg-[var(--accent-strong)]"
         >
-          Check Answer
+          <Check className="h-4 w-4" />
+          <span>Check Answer</span>
         </button>
 
         {hint && (
           <button
             type="button"
             onClick={() => setShowHint((v) => !v)}
-            className="min-h-10 rounded-full bg-[var(--bg-muted)] px-4 py-2 text-sm font-medium text-[var(--text)] transition hover:opacity-85"
+            className="inline-flex min-h-10 items-center gap-1.5 rounded-full bg-[var(--bg-muted)] px-4 py-2 text-sm font-medium text-[var(--text)] transition hover:opacity-85"
           >
-            {showHint ? 'Hide Hint' : 'Show Hint'}
+            <Lightbulb className="h-4 w-4" />
+            <span>{showHint ? 'Hide Hint' : 'Show Hint'}</span>
           </button>
         )}
 

@@ -1,0 +1,37 @@
+name: Deploy SkillForge to Droplet
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build static site and Pagefind index
+        run: npm run build
+
+      - name: Configure SSH deploy key
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.DROPLET_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H 159.65.135.59 >> ~/.ssh/known_hosts
+
+      - name: Sync dist/ to Droplet
+        run: |
+          rsync -avz --delete -e "ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes" dist/ root@159.65.135.59:/var/www/skillforge/

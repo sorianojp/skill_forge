@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Award, BookOpen, CheckCircle2, Trash2 } from 'lucide-react';
+import { ArrowRight, Award, BookOpen, CheckCircle2, Download, Trash2 } from 'lucide-react';
 import {
   clearAllProgress,
   getProgress,
@@ -105,9 +105,10 @@ export default function ProgressDashboard({ courses }: Props) {
                 </div>
                 <a
                   href={`/courses/${course.slug}/exam`}
-                  className="inline-flex min-h-11 shrink-0 items-center rounded-2xl bg-[var(--success)] px-5 py-3 text-sm font-semibold text-white hover:opacity-90"
+                  className="inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-2xl bg-[var(--success)] px-5 py-3 text-sm font-semibold text-white hover:opacity-90"
                 >
-                  Download
+                  <Download className="h-4 w-4" />
+                  <span>Download</span>
                 </a>
               </div>
             ))}
@@ -147,16 +148,20 @@ export default function ProgressDashboard({ courses }: Props) {
                     {nextLesson && (
                       <a
                         href={nextLesson.href}
-                        className="inline-flex min-h-11 items-center rounded-2xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[var(--accent-strong)]"
+                        className="inline-flex min-h-11 items-center gap-1.5 rounded-2xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[var(--accent-strong)]"
                       >
-                        {doneCount === 0 ? 'Start Course' : doneCount === course.lessons.length ? 'Review Lessons' : 'Continue Learning'}
+                        <span>
+                          {doneCount === 0 ? 'Start Course' : doneCount === course.lessons.length ? 'Review Lessons' : 'Continue Learning'}
+                        </span>
+                        <ArrowRight className="h-4 w-4" />
                       </a>
                     )}
                     <a
                       href={`/courses/${course.slug}/exam`}
-                      className="inline-flex min-h-11 items-center rounded-2xl bg-[var(--bg-muted)] px-5 py-3 text-sm font-semibold text-[var(--text)] transition hover:opacity-85"
+                      className="inline-flex min-h-11 items-center gap-1.5 rounded-2xl bg-[var(--bg-muted)] px-5 py-3 text-sm font-semibold text-[var(--text)] transition hover:opacity-85"
                     >
-                      {exam?.passed ? 'View Certificate' : 'Final Exam'}
+                      <Award className="h-4 w-4 text-[var(--accent)]" />
+                      <span>{exam?.passed ? 'View Certificate' : 'Final Exam'}</span>
                     </a>
                   </div>
                 </div>

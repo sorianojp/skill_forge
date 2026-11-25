@@ -1,0 +1,69 @@
+---
+title: "Functions & Default Arguments"
+description: "Package reusable logic with def, default parameter values, keyword arguments, and return statements."
+course: "python-fundamentals"
+module: "Functions & Data"
+order: 3
+durationMinutes: 8
+objectives:
+  - "Define clean functions using def and return"
+  - "Provide sensible default argument values"
+  - "Call functions with keyword arguments for readability"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import PythonPlayground from '@/components/playground/PythonPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+Functions in Python start with the `def` keyword and return values with `return`.
+
+```python
+def calculate_percent(done, total, decimals=0):
+    ratio = (done / total) * 100
+    return round(ratio, decimals)
+```
+
+<Callout type="warning" title="Avoid Mutable Default Arguments">
+  Never use an empty list <code>def add(item, items=[]):</code> as a default argument in Python, because that list is shared across every call. Use <code>items=None</code> and create a fresh list inside the function.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Define a Python Function"
+  prompt="Declare a greet function with a default name of 'World' and return the f-string."
+  template={`{{0}} greet(name="World"):
+    {{1}} f"Hello, {name}!"`}
+  blanks={[
+    { answer: 'def', placeholder: 'kw' },
+    { answer: 'return', placeholder: 'kw' },
+  ]}
+  hint={'Python functions are defined with def and send values back with return.'}
+/>
+
+## Try It Yourself
+
+<PythonPlayground
+  client:visible
+  title="Reusable Functions & Keyword Arguments"
+  code={`def format_progress(completed, total, label="Course"):
+    pct = round((completed / total) * 100) if total > 0 else 0
+    return f"{label}: {completed}/{total} ({pct}%)"
+
+print(format_progress(3, 6))
+print(format_progress(completed=16, total=16, label="HTML Track"))`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does a Python function return if it has no return statement?",
+      options: ["0", "False", "None"],
+      answer: 2,
+      explanation: "Functions without an explicit return statement automatically return None."
+    }
+  ]}
+/>

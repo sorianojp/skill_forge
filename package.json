@@ -8,7 +8,8 @@
     "build": "astro build && pagefind --site dist",
     "preview": "astro preview",
     "astro": "astro",
-    "check": "astro check"
+    "check": "astro check",
+    "deploy": "npm run build && rsync -avz --delete dist/ root@159.65.135.59:/var/www/skillforge/"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.2.0",
@@ -17,6 +18,7 @@
     "@codemirror/lang-css": "^6.3.1",
     "@codemirror/lang-html": "^6.4.9",
     "@codemirror/lang-javascript": "^6.2.3",
+    "@codemirror/lang-python": "^6.2.1",
     "@codemirror/state": "^6.5.2",
     "@codemirror/theme-one-dark": "^6.1.2",
     "@codemirror/view": "^6.36.4",
