@@ -1,6 +1,6 @@
 # skill_forge
 
-**SkillForge** is a free, interactive web development learning platform built with Astro, React islands, MDX, Tailwind CSS v4, CodeMirror 6, and Pagefind.
+**DevPath** is a free, interactive web development learning platform built with Astro, React islands, MDX, Tailwind CSS v4, CodeMirror 6, and Pagefind.
 
 ## Features
 - **48 Interactive Lessons** across Modern HTML Fundamentals, Modern CSS & Layout, and Modern JavaScript & the DOM

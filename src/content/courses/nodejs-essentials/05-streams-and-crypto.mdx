@@ -29,7 +29,7 @@ Reading a 2 GB log file with `fs.readFile()` loads all 2 GB into RAM at once. **
   title="SHA-256 Digest with node:crypto"
   prompt="Compute the hex SHA-256 hash of a string."
   template={`const crypto = require("node:crypto");
-const hash = crypto.createHash("{{0}}").update("skillforge").digest("{{1}}");`}
+const hash = crypto.createHash("{{0}}").update("devpath").digest("{{1}}");`}
   blanks={[
     { answer: 'sha256', placeholder: 'alg' },
     { answer: 'hex', placeholder: 'enc' },
@@ -45,12 +45,12 @@ const hash = crypto.createHash("{{0}}").update("skillforge").digest("{{1}}");`}
   language="node"
   code={`const crypto = require("node:crypto");
 
-const digest = crypto.createHash("sha256").update("SkillForge").digest("hex");
+const digest = crypto.createHash("sha256").update("DevPath").digest("hex");
 const tokenLen = crypto.randomBytes(16).toString("hex").length;
 
 console.log("SHA-256 prefix:", digest.slice(0, 16));
 console.log("Secure token hex length:", tokenLen);`}
-  expectedOutput={`SHA-256 prefix: 9e46c0a26829524c
+  expectedOutput={`SHA-256 prefix: 0e635254d02df3d0
 Secure token hex length: 32`}
 />
 

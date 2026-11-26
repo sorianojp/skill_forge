@@ -71,7 +71,7 @@ export async function registerCloudAccount(
     setCloudSession(session);
     return { ok: true, session };
   } catch {
-    return { ok: false, error: 'Could not reach SkillForge Sync API.' };
+    return { ok: false, error: 'Could not reach DevPath Sync API.' };
   }
 }
 
@@ -91,7 +91,7 @@ export async function loginCloudAccount(
     setCloudSession(session);
     return { ok: true, session, progress: data.progress || { completed: {}, exams: {} } };
   } catch {
-    return { ok: false, error: 'Could not reach SkillForge Sync API.' };
+    return { ok: false, error: 'Could not reach DevPath Sync API.' };
   }
 }
 

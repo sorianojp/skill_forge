@@ -37,7 +37,7 @@ function buildCertificateSvg({
   certificateId: string;
   accentColor: string;
 }): string {
-  const safeName = escapeXml(learnerName.trim() || 'SkillForge Scholar');
+  const safeName = escapeXml(learnerName.trim() || 'DevPath Scholar');
   const safeCourse = escapeXml(courseTitle);
   const safeDate = escapeXml(dateStr);
   const safeId = escapeXml(certificateId);
@@ -54,9 +54,9 @@ function buildCertificateSvg({
   <rect x="48" y="48" width="1104" height="704" rx="16" fill="none" stroke="#e2e8f0" stroke-width="2" />
 
   <rect x="556" y="88" width="88" height="88" rx="20" fill="${accentColor}" />
-  <text x="600" y="147" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="38" font-weight="900">SF</text>
+  <text x="600" y="147" text-anchor="middle" fill="#ffffff" font-family="Inter, system-ui, sans-serif" font-size="38" font-weight="900">DP</text>
 
-  <text x="600" y="220" text-anchor="middle" fill="${accentColor}" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="800" letter-spacing="5">SKILLFORGE · CERTIFICATE OF COMPLETION</text>
+  <text x="600" y="220" text-anchor="middle" fill="${accentColor}" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="800" letter-spacing="5">DEVPATH · CERTIFICATE OF COMPLETION</text>
 
   <text x="600" y="290" text-anchor="middle" fill="#475569" font-family="Inter, system-ui, sans-serif" font-size="22">This certifies that</text>
 
@@ -75,7 +75,7 @@ function buildCertificateSvg({
   <line x1="480" y1="674" x2="720" y2="674" stroke="#94a3b8" stroke-width="1.5" />
   <text x="600" y="700" text-anchor="middle" fill="#64748b" font-family="Inter, system-ui, sans-serif" font-size="14">Certificate ID</text>
 
-  <text x="1000" y="660" text-anchor="middle" fill="#0f172a" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="700">SkillForge</text>
+  <text x="1000" y="660" text-anchor="middle" fill="#0f172a" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="700">DevPath</text>
   <line x1="910" y1="674" x2="1090" y2="674" stroke="#94a3b8" stroke-width="1.5" />
   <text x="1000" y="700" text-anchor="middle" fill="#64748b" font-family="Inter, system-ui, sans-serif" font-size="14">Free Open Curriculum</text>
 </svg>`;
@@ -114,7 +114,7 @@ export default function CourseExam({ courseSlug, courseTitle, accentColor, quest
     if (saved.passed && saved.certificateId) {
       void registerPublicCertificate({
         certId: saved.certificateId,
-        learnerName: (learnerName || saved.learnerName || 'SkillForge Scholar').trim(),
+        learnerName: (learnerName || saved.learnerName || 'DevPath Scholar').trim(),
         courseSlug,
         courseTitle,
         score: saved.bestScore,
@@ -157,7 +157,7 @@ export default function CourseExam({ courseSlug, courseTitle, accentColor, quest
       })
     : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
-  const certId = record?.certificateId ?? `SF-${courseSlug.slice(0, 4).toUpperCase()}-VERIFIED`;
+  const certId = record?.certificateId ?? `DP-${courseSlug.slice(0, 4).toUpperCase()}-VERIFIED`;
   const certScore = Math.max(record?.bestScore ?? 0, submitted ? currentPercent : 0);
 
   const svgMarkup = buildCertificateSvg({
@@ -174,7 +174,7 @@ export default function CourseExam({ courseSlug, courseTitle, accentColor, quest
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `skillforge-${courseSlug}-certificate.svg`;
+    a.download = `devpath-${courseSlug}-certificate.svg`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -195,7 +195,7 @@ export default function CourseExam({ courseSlug, courseTitle, accentColor, quest
           const pngUrl = canvas.toDataURL('image/png');
           const a = document.createElement('a');
           a.href = pngUrl;
-          a.download = `skillforge-${courseSlug}-certificate.png`;
+          a.download = `devpath-${courseSlug}-certificate.png`;
           a.click();
         }
         URL.revokeObjectURL(url);

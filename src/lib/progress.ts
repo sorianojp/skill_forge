@@ -134,7 +134,7 @@ export function saveExamResult(
     certificateId:
       prev?.certificateId ??
       (nowPassed
-        ? `SF-${courseSlug.slice(0, 4).toUpperCase()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`
+        ? `DP-${courseSlug.slice(0, 4).toUpperCase()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`
         : undefined),
     learnerName: learnerName ?? prev?.learnerName,
   };

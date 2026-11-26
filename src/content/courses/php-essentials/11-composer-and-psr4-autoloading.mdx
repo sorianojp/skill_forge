@@ -21,13 +21,13 @@ In modern PHP projects (like Laravel or Symfony), you never write dozens of manu
 {
   "autoload": {
     "psr-4": {
-      "SkillForge\\": "src/"
+      "DevPath\\": "src/"
     }
   }
 }
 ```
 
-With that mapping, `SkillForge\Courses\Lesson` automatically loads from `src/Courses/Lesson.php`!
+With that mapping, `DevPath\Courses\Lesson` automatically loads from `src/Courses/Lesson.php`!
 
 <Callout type="tip" title="One Class Per File">
   Match the filename exactly to the class name (<code>Lesson.php</code> for <code>class Lesson</code>) so PSR-4 autoloading works identically on both macOS and case-sensitive Linux servers.
@@ -56,7 +56,7 @@ With that mapping, `SkillForge\Courses\Lesson` automatically loads from `src/Cou
   client:visible
   title="Namespaces in Action"
   code={`<?php
-namespace SkillForge\\Courses;
+namespace DevPath\\Courses;
 
 class Track {
     public function __construct(public readonly string $name) {}

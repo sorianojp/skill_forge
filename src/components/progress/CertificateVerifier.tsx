@@ -50,7 +50,7 @@ export default function CertificateVerifier() {
           type="text"
           value={certId}
           onChange={(e) => setCertId(e.target.value)}
-          placeholder="Enter Certificate ID (e.g. SF-JAVA-8K2P9Q)"
+          placeholder="Enter Certificate ID (e.g. DP-JAVA-8K2P9Q)"
           className="min-h-12 flex-1 rounded-2xl bg-[var(--bg-elevated)] px-5 py-3 font-mono text-sm text-[var(--text)] outline-none focus:ring-2 focus:ring-[var(--accent)]"
         />
         <button
@@ -67,7 +67,7 @@ export default function CertificateVerifier() {
         <div className="rounded-3xl bg-[var(--bg-elevated)] p-8">
           <div className="inline-flex items-center gap-2 rounded-full bg-[var(--success-soft)] px-3.5 py-1.5 text-xs font-bold text-[var(--success)]">
             <CheckCircle2 className="h-4 w-4" />
-            <span>Authentic SkillForge Certificate</span>
+            <span>Authentic DevPath Certificate</span>
           </div>
 
           <div className="mt-5 flex items-start gap-4">
@@ -116,7 +116,7 @@ export default function CertificateVerifier() {
           <div>
             <p className="text-sm font-bold">Certificate Not Found</p>
             <p className="mt-1 text-xs opacity-90">
-              No SkillForge certificate matches ID <code>{certId}</code>. Double-check the code printed on the certificate and try again.
+              No DevPath certificate matches ID <code>{certId}</code>. Double-check the code printed on the certificate and try again.
             </p>
           </div>
         </div>

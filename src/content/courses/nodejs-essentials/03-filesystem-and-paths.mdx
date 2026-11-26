@@ -46,7 +46,7 @@ const text = {{0}} fs.{{1}}("config.json", "utf8");`}
   code={`const fs = require("node:fs/promises");
 
 async function main() {
-  const payload = { app: "SkillForge", tracks: 18 };
+  const payload = { app: "DevPath", tracks: 18 };
   await fs.writeFile("/tmp/sf_node.json", JSON.stringify(payload), "utf8");
 
   const raw = await fs.readFile("/tmp/sf_node.json", "utf8");
@@ -55,7 +55,7 @@ async function main() {
 }
 
 main();`}
-  expectedOutput={`Loaded: SkillForge | Tracks: 18`}
+  expectedOutput={`Loaded: DevPath | Tracks: 18`}
 />
 
 <Quiz
