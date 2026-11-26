@@ -1,17 +1,64 @@
-import { useEffect, useRef, useState } from 'react';
-import { Award, CheckCircle2, Download, Printer, RotateCcw, ShieldCheck, XCircle } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  ArrowRight,
+  Award,
+  CheckCircle2,
+  Clock,
+  Download,
+  Lock,
+  Printer,
+  RotateCcw,
+  ShieldCheck,
+  XCircle,
+} from 'lucide-react';
 import type { ExamQuestion } from '@/data/exams';
 import { registerPublicCertificate } from '@/lib/cloudSync';
-import { getExamResult, saveExamResult, type ExamResultRecord } from '@/lib/progress';
+import {
+  getExamResult,
+  getProgress,
+  saveExamResult,
+  subscribeProgress,
+  type ExamResultRecord,
+  type ProgressState,
+} from '@/lib/progress';
+
+interface LessonRef {
+  key: string;
+  title: string;
+  href: string;
+}
 
 interface Props {
   courseSlug: string;
   courseTitle: string;
   accentColor: string;
   questions: ExamQuestion[];
+  lessons?: LessonRef[];
 }
 
 const PASSING_PERCENT = 80;
+const EXAM_DURATION_SECONDS = 15 * 60;
+
+function shuffleArray<T>(items: T[]): T[] {
+  const arr = [...items];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function buildShuffledExam(questions: ExamQuestion[]): ExamQuestion[] {
+  return shuffleArray(questions).map((q) => {
+    const indexed = q.options.map((text, idx) => ({ text, isCorrect: idx === q.answer }));
+    const mixed = shuffleArray(indexed);
+    return {
+      ...q,
+      options: mixed.map((m) => m.text),
+      answer: mixed.findIndex((m) => m.isCorrect),
+    };
+  });
+}
 
 function escapeXml(str: string): string {
   return str
@@ -81,32 +128,56 @@ function buildCertificateSvg({
 </svg>`;
 }
 
-export default function CourseExam({ courseSlug, courseTitle, accentColor, questions }: Props) {
+export default function CourseExam({
+  courseSlug,
+  courseTitle,
+  accentColor,
+  questions: rawQuestions,
+  lessons = [],
+}: Props) {
+  const [attemptSeed, setAttemptSeed] = useState(0);
+  const [questions, setQuestions] = useState<ExamQuestion[]>(rawQuestions);
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [submitted, setSubmitted] = useState(false);
   const [record, setRecord] = useState<ExamResultRecord | undefined>(undefined);
+  const [progress, setProgress] = useState<ProgressState>({ completed: {}, exams: {} });
   const [learnerName, setLearnerName] = useState('');
   const [downloading, setDownloading] = useState(false);
+  const [secondsLeft, setSecondsLeft] = useState(EXAM_DURATION_SECONDS);
   const certRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    setQuestions(buildShuffledExam(rawQuestions));
+  }, [rawQuestions, attemptSeed]);
+
+  useEffect(() => {
+    setProgress(getProgress());
     const saved = getExamResult(courseSlug);
     if (saved) {
       setRecord(saved);
       if (saved.learnerName) setLearnerName(saved.learnerName);
     }
+    return subscribeProgress(setProgress);
   }, [courseSlug]);
+
+  const remainingLessons = useMemo(
+    () => lessons.filter((l) => !progress.completed[l.key]),
+    [lessons, progress]
+  );
+  const completedLessonsCount = lessons.length - remainingLessons.length;
+  const isGateUnlocked = lessons.length === 0 || remainingLessons.length === 0 || Boolean(record?.passed);
 
   const answeredCount = Object.keys(answers).length;
   const correctCount = questions.reduce(
     (acc, q, idx) => (answers[idx] === q.answer ? acc + 1 : acc),
     0
   );
-  const currentPercent = Math.round((correctCount / questions.length) * 100);
+  const currentPercent = questions.length > 0 ? Math.round((correctCount / questions.length) * 100) : 0;
   const passedThisRun = submitted && currentPercent >= PASSING_PERCENT;
   const isUnlocked = Boolean(record?.passed || passedThisRun);
 
   const handleSubmit = () => {
+    if (submitted) return;
     setSubmitted(true);
     const passed = currentPercent >= PASSING_PERCENT;
     const saved = saveExamResult(courseSlug, currentPercent, passed, learnerName || undefined);
@@ -124,9 +195,31 @@ export default function CourseExam({ courseSlug, courseTitle, accentColor, quest
     }
   };
 
+  useEffect(() => {
+    if (!isGateUnlocked || submitted) return;
+    const timer = window.setInterval(() => {
+      setSecondsLeft((prev) => {
+        if (prev <= 1) {
+          window.clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [isGateUnlocked, submitted, attemptSeed]);
+
+  useEffect(() => {
+    if (secondsLeft === 0 && isGateUnlocked && !submitted) {
+      handleSubmit();
+    }
+  }, [secondsLeft, isGateUnlocked, submitted]);
+
   const handleRetake = () => {
     setAnswers({});
     setSubmitted(false);
+    setSecondsLeft(EXAM_DURATION_SECONDS);
+    setAttemptSeed((s) => s + 1);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -210,6 +303,78 @@ export default function CourseExam({ courseSlug, courseTitle, accentColor, quest
       setDownloading(false);
     }
   };
+
+  const mins = String(Math.floor(secondsLeft / 60)).padStart(2, '0');
+  const secs = String(secondsLeft % 60).padStart(2, '0');
+
+  if (!isGateUnlocked) {
+    const pct = lessons.length > 0 ? Math.round((completedLessonsCount / lessons.length) * 100) : 0;
+    const nextLesson = remainingLessons[0];
+    return (
+      <div className="rounded-3xl bg-[var(--bg-elevated)] p-8">
+        <div className="flex items-start gap-4">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[var(--warning-soft)] text-[var(--warning)]">
+            <Lock className="h-6 w-6" />
+          </div>
+          <div className="flex-1">
+            <h2 className="text-xl font-extrabold text-[var(--text)]">
+              Complete All Lessons to Unlock This Certification Exam
+            </h2>
+            <p className="mt-1.5 text-sm text-[var(--text-muted)]">
+              To keep DevPath certificates credible and earned, finish all {lessons.length} lessons in{' '}
+              <strong>{courseTitle}</strong> before taking the timed final exam.
+            </p>
+
+            <div className="mt-5">
+              <div className="flex items-center justify-between text-xs font-bold text-[var(--text)]">
+                <span>
+                  Course Progress: {completedLessonsCount} / {lessons.length} lessons
+                </span>
+                <span className="text-[var(--accent)]">{pct}%</span>
+              </div>
+              <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-[var(--bg-muted)]">
+                <div
+                  className="h-full rounded-full bg-[var(--accent)] transition-all"
+                  style={{ width: `${pct}%` }}
+                />
+              </div>
+            </div>
+
+            {nextLesson && (
+              <div className="mt-6">
+                <a
+                  href={nextLesson.href}
+                  className="inline-flex min-h-12 items-center gap-2 rounded-2xl bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[var(--accent-strong)]"
+                >
+                  <span>Continue: {nextLesson.title}</span>
+                  <ArrowRight className="h-4 w-4" />
+                </a>
+              </div>
+            )}
+
+            <div className="mt-6">
+              <p className="text-xs font-bold uppercase tracking-wider text-[var(--text-subtle)]">
+                Remaining Lessons ({remainingLessons.length})
+              </p>
+              <ul className="mt-2.5 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {remainingLessons.map((l) => (
+                  <li key={l.key}>
+                    <a
+                      href={l.href}
+                      className="flex items-center justify-between rounded-2xl bg-[var(--bg-muted)] px-4 py-2.5 text-xs font-semibold text-[var(--text)] transition hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]"
+                    >
+                      <span className="truncate">{l.title}</span>
+                      <ArrowRight className="h-3.5 w-3.5 shrink-0" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-10">
@@ -305,14 +470,27 @@ export default function CourseExam({ courseSlug, courseTitle, accentColor, quest
           </p>
         </div>
 
-        {submitted && (
+        {!submitted ? (
+          <div
+            className={`inline-flex items-center gap-2 rounded-2xl px-4 py-2 font-mono text-sm font-bold ${
+              secondsLeft <= 120
+                ? 'bg-[var(--danger-soft)] text-[var(--danger)]'
+                : 'bg-[var(--bg-muted)] text-[var(--text)]'
+            }`}
+          >
+            <Clock className="h-4 w-4" />
+            <span>
+              {mins}:{secs}
+            </span>
+          </div>
+        ) : (
           <button
             type="button"
             onClick={handleRetake}
-            className="inline-flex items-center gap-1.5 rounded-2xl bg-[var(--bg-muted)] px-4 py-2 text-xs font-semibold text-[var(--text)] hover:opacity-85"
+            className="inline-flex min-h-10 items-center gap-1.5 rounded-2xl bg-[var(--bg-muted)] px-4 py-2 text-xs font-semibold text-[var(--text)] hover:opacity-85"
           >
             <RotateCcw className="h-3.5 w-3.5" />
-            Retake Exam
+            Retake (New Order)
           </button>
         )}
       </div>

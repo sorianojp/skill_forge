@@ -1,8 +1,9 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import CourseExam from '@/components/quiz/CourseExam';
-import { getAllCoursesSorted } from '@/lib/courses';
+import { getAllCoursesSorted, getCourseLessons, getLessonKey, getLessonSlug } from '@/lib/courses';
 import { COURSE_EXAMS } from '@/data/exams';
+import { EXTRA_EXAM_QUESTIONS } from '@/data/examsExtra';
 
 export async function getStaticPaths() {
   const courses = await getAllCoursesSorted();
@@ -13,12 +14,24 @@ export async function getStaticPaths() {
 }
 
 const { course } = Astro.props;
-const questions = COURSE_EXAMS[course.data.slug] ?? [];
+const questions = [
+  ...(COURSE_EXAMS[course.data.slug] ?? []),
+  ...(EXTRA_EXAM_QUESTIONS[course.data.slug] ?? []),
+];
+const rawLessons = await getCourseLessons(course.data.slug);
+const lessons = rawLessons.map((l) => {
+  const slug = getLessonSlug(l);
+  return {
+    key: getLessonKey(course.data.slug, slug),
+    title: l.data.title,
+    href: `/courses/${course.data.slug}/${slug}`,
+  };
+});
 ---
 
 <BaseLayout
   title={`Final Exam & Certificate: ${course.data.title}`}
-  description={`Pass the ${course.data.title} final exam (80%+) to unlock your free downloadable DevPath completion certificate.`}
+  description={`Complete all lessons and pass the ${course.data.title} final exam (80%+) to unlock your free verifiable DevPath completion certificate.`}
 >
   <div class="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
     <a
@@ -39,7 +52,7 @@ const questions = COURSE_EXAMS[course.data.slug] ?? [];
         {course.data.title}: Certification Exam
       </h1>
       <p class="mt-2 text-base text-[var(--text-muted)]">
-        {questions.length} questions · 80% passing score · Unlimited free retakes · Instant downloadable PNG/SVG/PDF certificate.
+        {questions.length} randomized questions · 15-minute timer · 80% passing score · Requires 100% lesson completion.
       </p>
     </header>
 
@@ -49,6 +62,7 @@ const questions = COURSE_EXAMS[course.data.slug] ?? [];
       courseTitle={course.data.title}
       accentColor={course.data.accentColor}
       questions={questions}
+      lessons={lessons}
     />
   </div>
 </BaseLayout>

@@ -1,80 +1,25 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import Playground from '@/components/playground/Playground';
+import MultiPlayground from '@/components/playground/MultiPlayground';
 ---
 
 <BaseLayout
-  title="Live Playground"
-  description="Write and run HTML, CSS, and JavaScript directly in your browser with instant preview and console output."
+  title="Universal Live Playground"
+  description="Write and run HTML, CSS, JavaScript, React JSX, Python 3, SQL, PHP 8, TypeScript, Node.js, C, C++, Java 21, C#, Bash, and Git right in your browser."
 >
   <div class="mx-auto max-w-[82rem] px-5 py-10 sm:px-6 lg:px-8">
     <header class="mb-6">
-      <h1 class="text-3xl font-extrabold tracking-tight text-[var(--text)]">
-        Try It Yourself: Live Playground
+      <span class="inline-flex items-center rounded-full bg-[var(--accent-soft)] px-3 py-1 text-xs font-bold uppercase tracking-wider text-[var(--accent)]">
+        13 Live Runtimes
+      </span>
+      <h1 class="mt-3 text-3xl font-extrabold tracking-tight text-[var(--text)]">
+        Universal Live Playground
       </h1>
       <p class="mt-1.5 text-sm text-[var(--text-muted)]">
-        Experiment freely with HTML, CSS, and JavaScript. Your code runs locally in a sandboxed iframe.
+        Switch between Web, React JSX, WebAssembly (Python, SQL, PHP), Live Compilers (C, C++, Java 21, C#, TypeScript, Node.js, Bash), and Git.
       </p>
     </header>
 
-    <Playground
-      client:load
-      title="DevPath Sandbox"
-      height={460}
-      showConsole={true}
-      html={`<main class="demo">
-  <h1>Build Something Cool</h1>
-  <p>Edit the HTML, CSS, or JS tabs and see instant results.</p>
-  <div class="row">
-    <input id="nameInput" type="text" placeholder="Enter your name" value="Learner" />
-    <button id="greetBtn">Greet</button>
-  </div>
-  <p id="output" class="output"></p>
-</main>`}
-      css={`.demo {
-  max-width: 480px;
-  margin: 24px auto;
-  padding: 24px;
-  border-radius: 16px;
-  border: 1px solid #e2e8f0;
-  background: #f8fafc;
-}
-h1 { margin: 0 0 8px; font-size: 24px; }
-p { color: #475569; margin: 0 0 16px; }
-.row { display: flex; gap: 8px; }
-input {
-  flex: 1;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid #cbd5e1;
-  font-size: 14px;
-}
-button {
-  background: #2563eb;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.output {
-  margin-top: 16px;
-  font-weight: 600;
-  color: #15803d;
-}`}
-      js={`const input = document.getElementById('nameInput');
-const btn = document.getElementById('greetBtn');
-const output = document.getElementById('output');
-
-function greet() {
-  const name = input.value.trim() || 'World';
-  output.textContent = 'Welcome to DevPath, ' + name + '!';
-  console.log('Greeted:', name);
-}
-
-btn.addEventListener('click', greet);
-greet();`}
-    />
+    <MultiPlayground client:load />
   </div>
 </BaseLayout>
