@@ -30,7 +30,7 @@ const LABELS: Record<Lang, { name: string; color: string; runtime: string }> = {
 
 function getApiBase(): string {
   if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
-    return 'http://159.65.135.59';
+    return 'https://devpath.mycampus.ph';
   }
   return '';
 }

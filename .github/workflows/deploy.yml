@@ -1,4 +1,4 @@
-name: Deploy SkillForge to Droplet
+name: Deploy DevPath to Droplet
 
 on:
   push:
