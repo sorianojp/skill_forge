@@ -1,0 +1,67 @@
+---
+title: "Healthchecks & Restart Policies"
+description: "Keep production containers resilient with HEALTHCHECK probes, unless-stopped restart policies, and depends_on conditions."
+course: "docker-essentials"
+module: "Production Docker"
+order: 8
+durationMinutes: 8
+objectives:
+  - "Add a HEALTHCHECK instruction probing /api/health"
+  - "Configure restart: unless-stopped so containers recover after crashes or server reboots"
+  - "Wait for a healthy database before starting the API in Docker Compose"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+A container process can be "running" (`Up`) even while the app inside is deadlocked or failing requests. Adding a **`HEALTHCHECK`** tells Docker to periodically test `/api/health` and mark the container `healthy` or `unhealthy`. Pairing that with **`restart: unless-stopped`** ensures services bounce back automatically after a server reboot.
+
+<Callout type="tip" title="Use depends_on with service_healthy">
+  In Compose, <code>depends_on: db: condition: service_healthy</code> ensures your backend waits until Postgres is actually ready to accept queries, not just started.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Auto-Restart Policy"
+  prompt="Configure a container to restart automatically unless manually stopped."
+  template={`docker run -d --{{0}} {{1}} -p 8787:8787 devpath-api:1.0`}
+  blanks={[
+    { answer: 'restart', placeholder: 'flag' },
+    { answer: 'unless-stopped', placeholder: 'policy' },
+  ]}
+  hint={'Pass --restart unless-stopped to recover from crashes and host reboots.'}
+/>
+
+## Live Healthcheck Config Lab
+
+<CodeLab
+  client:visible
+  title="healthcheck.sh"
+  language="bash"
+  code={`cat << 'EOF'
+HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
+  CMD curl -fsS http://127.0.0.1:8787/api/health || exit 1
+EOF`}
+  expectedOutput={`HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
+  CMD curl -fsS http://127.0.0.1:8787/api/health || exit 1`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does `restart: unless-stopped` do in Docker Compose?",
+      options: [
+        "Automatically restarts the container after crashes or host reboots unless you explicitly ran docker stop",
+        "Restarts the container every 60 seconds even when healthy",
+        "Prevents docker stop from working"
+      ],
+      answer: 0,
+      explanation: "unless-stopped gives hands-free crash and reboot recovery while respecting manual stops."
+    }
+  ]}
+/>

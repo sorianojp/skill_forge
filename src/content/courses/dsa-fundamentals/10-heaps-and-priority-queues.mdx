@@ -1,0 +1,82 @@
+---
+title: "Heaps & Priority Queues (Top-K Pattern)"
+description: "Extract the smallest or largest item in O(log n) using a Binary Heap to solve Top-K and scheduling problems fast."
+course: "dsa-fundamentals"
+module: "Core Data Structures"
+order: 9
+durationMinutes: 9
+objectives:
+  - "Understand Min-Heap / Max-Heap array indexing (parent, left, right)"
+  - "Know Heap complexities: peek O(1), push O(log n), pop O(log n)"
+  - "Use a size-k Min-Heap to find the Top-K largest elements in O(n log k)"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+A **Binary Heap (Priority Queue)** keeps the minimum (or maximum) element at index `0` (`O(1)` peek) and supports `push` and `pop` in **$O(\log n)$**. Because it is stored in a flat array (`parent = Math.floor((i - 1) / 2)`), it has zero pointer overhead.
+
+<Callout type="tip" title="Top-K Largest Uses a Min-Heap of Size k">
+  To find the top 3 scores out of 1,000,000, keep a <strong>Min-Heap</strong> of size 3. Whenever a new score beats the smallest item at the top of the heap, swap it in. Total time: <code>O(n log 3)</code> instead of <code>O(n log n)</code>!
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Binary Heap Parent Index"
+  prompt="Compute the parent index of node i in a 0-indexed binary heap."
+  template={`const parent = Math.floor((i - {{0}}) / {{1}});`}
+  blanks={[
+    { answer: '1', placeholder: 'num' },
+    { answer: '2', placeholder: 'num' },
+  ]}
+  hint={'In a 0-indexed heap, parent(i) = Math.floor((i - 1) / 2).'}
+/>
+
+## Live DSA Playground
+
+<Playground
+  client:visible
+  title="Compact Min-Heap Implementation"
+  defaultTab="js"
+  showConsole={true}
+  html={`<p>Push unsorted priorities and pop them out in ascending order.</p>`}
+  js={`class MinHeap {
+  data = [];
+  push(val) {
+    this.data.push(val);
+    let i = this.data.length - 1;
+    while (i > 0) {
+      const p = Math.floor((i - 1) / 2);
+      if (this.data[p] <= this.data[i]) break;
+      [this.data[p], this.data[i]] = [this.data[i], this.data[p]];
+      i = p;
+    }
+  }
+  peek() { return this.data[0]; }
+}
+
+const heap = new MinHeap();
+[42, 15, 30, 7, 25].forEach((n) => heap.push(n));
+console.log("Smallest element (O(1) peek):", heap.peek());
+console.log("Heap array:", heap.data);`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What are the time complexities of peek() and push() on a Binary Min-Heap?",
+      options: [
+        "peek() is O(1) and push() is O(log n)",
+        "Both are O(n)",
+        "peek() is O(log n) and push() is O(n^2)"
+      ],
+      answer: 0,
+      explanation: "The minimum is always at index 0 (O(1)), and bubbling a new value up takes at most the tree height O(log n)."
+    }
+  ]}
+/>

@@ -1,0 +1,78 @@
+---
+title: "Databases & Parameterized Queries"
+description: "Connect Node.js backends cleanly to SQLite/PostgreSQL using parameterized placeholders and connection pooling."
+course: "nodejs-essentials"
+module: "Data & Persistence"
+order: 8
+durationMinutes: 8
+objectives:
+  - "Prevent SQL injection 100% by binding parameters ($1, ?) instead of string concatenation"
+  - "Use connection pools in PostgreSQL/MySQL backends"
+  - "Map database rows cleanly into response DTOs"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+Never interpolate user input into a SQL string (`"SELECT * FROM users WHERE email = '" + email + "'"`). Always pass placeholders (`$1` in Postgres, `?` in SQLite/MySQL) with a separate values array so the database engine treats input strictly as **data**, never executable SQL.
+
+<Callout type="tip" title="Select Only the Columns You Need">
+  Prefer <code>SELECT id, name, email FROM users</code> over <code>SELECT *</code> so sensitive fields like <code>password_hash</code> are never accidentally serialized into JSON responses.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Parameterized SQL Query"
+  prompt="Bind email safely using the $1 placeholder and a parameter array."
+  template={`const result = await pool.query(
+  "SELECT id, name FROM users WHERE email = {{0}}",
+  [{{1}}]
+);`}
+  blanks={[
+    { answer: '$1', placeholder: 'param' },
+    { answer: 'email', placeholder: 'var' },
+  ]}
+  hint={'Pass $1 in the SQL string and [email] as the second argument.'}
+/>
+
+## Live Code Lab (Node.js 20)
+
+<CodeLab
+  client:visible
+  title="repo_pattern.js"
+  language="node"
+  code={`const rows = [
+  { id: 1, name: "Maya", email: "maya@devpath.io", password_hash: "secret" },
+  { id: 2, name: "Sam", email: "sam@devpath.io", password_hash: "secret2" },
+];
+
+function findPublicUserByEmail(email) {
+  const row = rows.find((r) => r.email === email);
+  if (!row) return null;
+  const { password_hash, ...safeUser } = row;
+  return safeUser;
+}
+
+console.log(findPublicUserByEmail("maya@devpath.io"));`}
+  expectedOutput={`{ id: 1, name: 'Maya', email: 'maya@devpath.io' }`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "How do parameterized SQL queries prevent SQL injection?",
+      options: [
+        "The database parses the SQL structure separately from the bound parameter values, so input is never executed as SQL",
+        "They encrypt the database table",
+        "They strip all spaces from user input"
+      ],
+      answer: 0,
+      explanation: "Bound parameters are strictly treated as literal values, neutralizing injection payloads."
+    }
+  ]}
+/>

@@ -1,0 +1,79 @@
+---
+title: "Sliding Window Pattern"
+description: "Solve contiguous subarray and substring problems in O(n) by expanding a right pointer and shrinking a left pointer."
+course: "dsa-fundamentals"
+module: "Complexity & Patterns"
+order: 6
+durationMinutes: 9
+objectives:
+  - "Recognize contiguous subarray/substring clues that call for Sliding Window"
+  - "Maintain a running window sum or character frequency map in O(n) total time"
+  - "Shrink the left pointer cleanly whenever the window violates a constraint"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+Whenever a problem asks for the **longest/shortest/maximum contiguous subarray or substring**, avoid recomputing each window from scratch in $O(n^2)$. A **Sliding Window** moves `right` forward to add an element and `left` forward to remove an element, visiting each item at most twice -> **$O(n)$ time**.
+
+<Callout type="tip" title="Fixed vs. Variable Window">
+  For a fixed size <code>k</code>, add <code>nums[i]</code> and subtract <code>nums[i - k]</code>. For variable windows (like longest unique substring), shrink <code>left</code> with a <code>while</code> loop until valid again.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Fixed-Size Sliding Window"
+  prompt="Update the running window sum by adding nums[i] and subtracting the outgoing element."
+  template={`windowSum += nums[i] - nums[i - {{0}}];
+best = Math.{{1}}(best, windowSum);`}
+  blanks={[
+    { answer: 'k', placeholder: 'var' },
+    { answer: 'max', placeholder: 'fn' },
+  ]}
+  hint={'Subtract nums[i - k] as it leaves the window and track Math.max(best, windowSum).'}
+/>
+
+## Live DSA Playground
+
+<Playground
+  client:visible
+  title="Longest Substring Without Repeating Characters"
+  defaultTab="js"
+  showConsole={true}
+  html={`<p>Run the O(n) variable sliding window on sample strings.</p>`}
+  js={`function longestUnique(s) {
+  const seen = new Set();
+  let left = 0, best = 0;
+  for (let right = 0; right < s.length; right++) {
+    while (seen.has(s[right])) {
+      seen.delete(s[left++]);
+    }
+    seen.add(s[right]);
+    best = Math.max(best, right - left + 1);
+  }
+  return best;
+}
+
+console.log("abcabcbb ->", longestUnique("abcabcbb"));
+console.log("devpath  ->", longestUnique("devpath"));`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why does a variable-size Sliding Window with an inner while-loop still run in O(n) total time?",
+      options: [
+        "Because both left and right pointers only move forward across the array at most n times each",
+        "Because while loops are always O(1)",
+        "Because Set.delete() skips elements"
+      ],
+      answer: 0,
+      explanation: "Total pointer advances across the entire run are at most 2n, which is O(n)."
+    }
+  ]}
+/>

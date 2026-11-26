@@ -1,0 +1,68 @@
+---
+title: "Built-In Testing with node:test & node:assert"
+description: "Write fast, zero-dependency unit tests directly in Node.js 20 using node:test and node:assert/strict."
+course: "nodejs-essentials"
+module: "Production Node.js"
+order: 10
+durationMinutes: 8
+objectives:
+  - "Write clean unit tests using Node 20's built-in node:test and node:assert/strict"
+  - "Run test suites cleanly with `node --test`"
+  - "Test both synchronous and async functions with zero external packages"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+Node.js 20 ships with a **built-in test runner** (`node:test`) and strict assertions (`node:assert/strict`). For backend utilities and APIs, you can run fast automated tests with `node --test` and zero `node_modules` bloat.
+
+<Callout type="tip" title="Always Use node:assert/strict">
+  <code>assert.equal</code> in strict mode uses <code>Object.is</code> (like <code>===</code>), preventing subtle JavaScript coercion bugs like <code>"1" == 1</code>.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Strict Equality Assertion"
+  prompt="Assert that add(2, 3) strictly equals 5 using node:assert/strict."
+  template={`const assert = require("node:assert/strict");
+assert.{{0}}(add(2, 3), {{1}});`}
+  blanks={[
+    { answer: 'equal', placeholder: 'fn' },
+    { answer: '5', placeholder: 'val' },
+  ]}
+  hint={'In node:assert/strict, assert.equal(actual, expected) checks strict equality.'}
+/>
+
+## Live Code Lab (Node.js 20)
+
+<CodeLab
+  client:visible
+  title="assert_demo.js"
+  language="node"
+  code={`const assert = require("node:assert/strict");
+
+function passRate(passed, total) {
+  return total === 0 ? 0 : Math.round((passed / total) * 100);
+}
+
+assert.equal(passRate(8, 10), 80);
+assert.equal(passRate(0, 0), 0);
+console.log("All 2 assertions passed!");`}
+  expectedOutput={`All 2 assertions passed!`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which command executes built-in node:test suites in Node.js 20?",
+      options: ["node --test", "node --jest", "npm --assert"],
+      answer: 0,
+      explanation: "node --test automatically discovers and runs *.test.js files using Node's native test runner."
+    }
+  ]}
+/>

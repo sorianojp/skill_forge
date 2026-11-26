@@ -1,0 +1,78 @@
+---
+title: "Complex State with useReducer"
+description: "Consolidate interrelated state transitions into a pure, testable reducer function using useReducer."
+course: "react-fundamentals"
+module: "Hooks & Architecture"
+order: 8
+durationMinutes: 8
+objectives:
+  - "Write pure reducer functions `(state, action) => nextState`"
+  - "Dispatch semantic actions (`{ type: 'ADD_ITEM', payload }`) instead of scattering setState calls"
+  - "Unit-test complex UI state transitions outside React"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+When a component has 4+ interconnected `useState` calls that change together (like a multi-step wizard, cart, or async form), **`useReducer`** centralizes every transition inside one pure function `(state, action) => newState`.
+
+<Callout type="tip" title="Reducers Are Trivial to Unit Test">
+  Because a reducer is a plain JavaScript function with zero React imports, you can test every edge case directly with <code>reducer(initialState, action)</code>.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Initialize useReducer & Dispatch"
+  prompt="Connect reducer and initialState with useReducer, then dispatch an increment action."
+  template={`const [state, {{0}}] = {{1}}(reducer, { count: 0 });
+dispatch({ type: "inc" });`}
+  blanks={[
+    { answer: 'dispatch', placeholder: 'fn' },
+    { answer: 'useReducer', placeholder: 'hook' },
+  ]}
+  hint={'useReducer(reducer, initialState) returns [state, dispatch].'}
+/>
+
+## Live Reducer Playground
+
+<Playground
+  client:visible
+  title="Pure Cart Reducer"
+  defaultTab="js"
+  showConsole={true}
+  html={`<p>Check the console to see pure reducer transitions in action.</p>`}
+  js={`function cartReducer(state, action) {
+  switch (action.type) {
+    case "add": return { items: [...state.items, action.name] };
+    case "clear": return { items: [] };
+    default: return state;
+  }
+}
+
+let s = { items: [] };
+s = cartReducer(s, { type: "add", name: "React Track" });
+s = cartReducer(s, { type: "add", name: "Node Track" });
+console.log("Cart:", s.items);
+s = cartReducer(s, { type: "clear" });
+console.log("After clear:", s.items);`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why must a React reducer function be pure?",
+      options: [
+        "Given the same state and action, it must return the exact same next state without mutating inputs or triggering side effects",
+        "So it can mutate state.items directly",
+        "Because reducers cannot use switch statements"
+      ],
+      answer: 0,
+      explanation: "Pure reducers make state changes predictable, debuggable, and safe under React Strict Mode."
+    }
+  ]}
+/>

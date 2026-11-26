@@ -1,0 +1,78 @@
+---
+title: "Memoization & Render Performance"
+description: "Know when React re-renders, measure before optimizing, and use useMemo and useCallback purposefully."
+course: "react-fundamentals"
+module: "Performance & DOM"
+order: 10
+durationMinutes: 8
+objectives:
+  - "Understand React's default render behavior (parent renders -> children render)"
+  - "Cache genuinely expensive derived computations with useMemo"
+  - "Avoid premature memoization everywhere when simple renders are already sub-millisecond"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+**`useMemo(() => compute(items), [items])`** caches the result of an expensive calculation (like filtering/sorting 20,000 rows) until its dependencies change. **`useCallback(fn, [deps])`** stabilizes a function reference passed to memoized children or effect dependencies.
+
+<Callout type="tip" title="Profile First, Memoize Second">
+  Wrapping trivial calculations in <code>useMemo</code> adds complexity and memory overhead without visible speedup. Measure with React DevTools Profiler first.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Memoize Expensive Sort"
+  prompt="Cache the sorted copy of rows so it only recalculates when rows changes."
+  template={`const sorted = {{0}}(() => [...rows].sort((a, b) => b.score - a.score), [{{1}}]);`}
+  blanks={[
+    { answer: 'useMemo', placeholder: 'hook' },
+    { answer: 'rows', placeholder: 'dep' },
+  ]}
+  hint={'Pass the factory function and [rows] dependency array to useMemo().'}
+/>
+
+## Live Memoization Demo
+
+<Playground
+  client:visible
+  title="Cache Hit vs. Cache Miss"
+  defaultTab="js"
+  showConsole={true}
+  html={`<p>See how memoization skips recomputing when inputs do not change.</p>`}
+  js={`let lastKey = null, lastVal = null;
+function memoSort(nums) {
+  const key = nums.join(",");
+  if (key === lastKey) {
+    console.log("-> Cache hit!");
+    return lastVal;
+  }
+  console.log("-> Computing sort...");
+  lastKey = key;
+  lastVal = [...nums].sort((a, b) => a - b);
+  return lastVal;
+}
+
+console.log(memoSort([9, 3, 7, 1]));
+console.log(memoSort([9, 3, 7, 1]));`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "When is useMemo most genuinely useful?",
+      options: [
+        "When caching an expensive calculation (e.g., sorting/filtering thousands of items) or preserving referential equality for memoized children",
+        "On every string concatenation in a component",
+        "To replace useState for form inputs"
+      ],
+      answer: 0,
+      explanation: "Memoization pays off when computation cost or reference stability actually matters."
+    }
+  ]}
+/>

@@ -1,0 +1,74 @@
+---
+title: "Resource Limits & Disk Cleanup (prune)"
+description: "Cap container CPU/RAM limits so one runaway service never crashes your host, and reclaim disk space with docker system prune."
+course: "docker-essentials"
+module: "Production Docker"
+order: 11
+durationMinutes: 8
+objectives:
+  - "Cap container memory (--memory 256m) and CPU (--cpus 0.5) safely"
+  - "Inspect Docker disk usage with docker system df"
+  - "Clean dangling images and build cache safely without deleting active volumes"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+By default, a single container can consume 100% of your server's RAM and CPU. Setting **`--memory 256m --cpus 0.5`** protects neighboring services on small VPS droplets. Also monitor disk space periodically with `docker system df` and clear old unused layers with `docker image prune -f`.
+
+<Callout type="warning" title="Be Careful with --volumes on prune">
+  Running <code>docker system prune -af</code> is safe for unused images and build cache, but never add <code>--volumes</code> unless you are certain no stopped database volume holds data you still need!
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Cap RAM & Clean Unused Images"
+  prompt="Limit a container to 256m of RAM and inspect Docker disk usage."
+  template={`docker run -d --{{0}} 256m --cpus 0.5 devpath-api:1.0
+docker system {{1}}`}
+  blanks={[
+    { answer: 'memory', placeholder: 'flag' },
+    { answer: 'df', placeholder: 'sub' },
+  ]}
+  hint={'Use --memory 256m to cap RAM and docker system df to view disk usage.'}
+/>
+
+## Live Maintenance Script Lab
+
+<CodeLab
+  client:visible
+  title="docker_maintenance.sh"
+  language="bash"
+  code={`cat << 'EOF'
+# Inspect space used by images, containers, and build cache
+docker system df
+
+# Reclaim space from unused images (preserves volumes!)
+docker image prune -af
+EOF`}
+  expectedOutput={`# Inspect space used by images, containers, and build cache
+docker system df
+
+# Reclaim space from unused images (preserves volumes!)
+docker image prune -af`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why should you set --memory limits on containers running on a shared VPS?",
+      options: [
+        "So a memory leak in one container cannot exhaust host RAM and take down other services",
+        "Because Docker refuses to run without --memory",
+        "To make images download faster"
+      ],
+      answer: 0,
+      explanation: "Memory limits isolate runaway processes and protect host stability."
+    }
+  ]}
+/>

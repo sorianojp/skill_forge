@@ -1,0 +1,76 @@
+---
+title: "Data Fetching, AbortController & Error States"
+description: "Handle loading, error, and empty UI states cleanly while preventing race conditions using AbortController."
+course: "react-fundamentals"
+module: "Production React"
+order: 11
+durationMinutes: 9
+objectives:
+  - "Model async UI with explicit loading, error, and data states"
+  - "Prevent stale response race conditions with AbortController in effect cleanup"
+  - "Always handle non-2xx HTTP responses (`if (!res.ok) throw ...`)"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+When a user switches tabs quickly (`courseId = 1` then `courseId = 2`), the slower request for `1` might arrive *after* `2` and overwrite the screen with stale data. Passing an **`AbortController`** signal to `fetch(url, { signal })` and calling `controller.abort()` in the `useEffect` cleanup eliminates this race condition cleanly.
+
+<Callout type="warning" title="fetch() Does Not Reject on HTTP 404 or 500">
+  Always check <code>if (!res.ok) throw new Error("HTTP " + res.status)</code> before calling <code>res.json()</code>.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Cancel Stale Fetch on Cleanup"
+  prompt="Create an AbortController and abort it when the effect cleans up."
+  template={`const controller = new {{0}}();
+fetch(url, { signal: controller.signal });
+return () => controller.{{1}}();`}
+  blanks={[
+    { answer: 'AbortController', placeholder: 'class' },
+    { answer: 'abort', placeholder: 'method' },
+  ]}
+  hint={'Instantiate new AbortController() and call controller.abort() in the cleanup function.'}
+/>
+
+## Live Async State Machine Demo
+
+<Playground
+  client:visible
+  title="Loading / Success / Error UI States"
+  defaultTab="js"
+  showConsole={true}
+  html={`<p id="status" style="font-weight:700"></p>`}
+  js={`function renderState(state) {
+  const el = document.getElementById("status");
+  if (state.status === "loading") el.textContent = "Loading courses...";
+  else if (state.status === "error") el.textContent = "Error: " + state.error;
+  else el.textContent = "Loaded " + state.data.length + " tracks: " + state.data.join(", ");
+}
+
+renderState({ status: "loading" });
+setTimeout(() => {
+  renderState({ status: "ready", data: ["React", "TypeScript", "Node.js"] });
+}, 400);`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why should a React data-fetching useEffect use AbortController (or an ignore flag) in its cleanup function?",
+      options: [
+        "To prevent an older, slower request from overwriting fresher state after parameters change",
+        "Because fetch() cannot return JSON without it",
+        "To cache responses in localStorage"
+      ],
+      answer: 0,
+      explanation: "Aborting stale requests eliminates out-of-order race conditions cleanly."
+    }
+  ]}
+/>

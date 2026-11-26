@@ -1,0 +1,78 @@
+---
+title: "Typing Async Functions & Promises"
+description: "Annotate async functions with Promise<T>, unwrap return types with Awaited<T>, and type API responses cleanly."
+course: "typescript-essentials"
+module: "Production TypeScript"
+order: 8
+durationMinutes: 8
+objectives:
+  - "Return Promise<T> cleanly from async functions"
+  - "Extract the resolved type of a Promise using Awaited<T>"
+  - "Type Promise.all() tuples automatically"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+Every `async` function automatically wraps its return value in a **`Promise<T>`**. When calling `Promise.all([fetchUser(), fetchScore()])`, TypeScript automatically preserves a strongly typed tuple `[User, number]`.
+
+<Callout type="info" title="Awaited<T> Unwraps Nested Promises">
+  <code>type Data = Awaited&lt;ReturnType&lt;typeof loadCourse&gt;&gt;;</code> extracts the exact resolved payload type without duplicating interfaces.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Typed Async Return"
+  prompt="Annotate loadCount as returning a Promise that resolves to a number."
+  template={`async function loadCount(): {{0}}<{{1}}> {
+  return 18;
+}`}
+  blanks={[
+    { answer: 'Promise', placeholder: 'type' },
+    { answer: 'number', placeholder: 'type' },
+  ]}
+  hint={'Async functions always return Promise<ResolvedType>.'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="async_ts.ts"
+  language="ts"
+  code={`interface TrackInfo {
+  name: string;
+  lessons: number;
+}
+
+async function fetchTrack(name: string): Promise<TrackInfo> {
+  return { name, lessons: 12 };
+}
+
+async function main() {
+  const [ts, react] = await Promise.all([
+    fetchTrack("TypeScript"),
+    fetchTrack("React"),
+  ]);
+  console.log(ts.name + "+" + react.name + " =", ts.lessons + react.lessons, "lessons");
+}
+
+main();`}
+  expectedOutput={`TypeScript+React = 24 lessons`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What is the return type of `async function getScore() { return 95; }` in TypeScript?",
+      options: ["Promise<number>", "number", "Async<number>"],
+      answer: 0,
+      explanation: "Async functions always return a Promise wrapping their returned value."
+    }
+  ]}
+/>

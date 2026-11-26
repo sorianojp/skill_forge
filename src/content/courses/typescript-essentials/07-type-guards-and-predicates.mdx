@@ -1,0 +1,71 @@
+---
+title: "Custom Type Guards & Predicates"
+description: "Write reusable narrowing functions with `val is Type` return predicates so TypeScript narrows unknown inputs safely."
+course: "typescript-essentials"
+module: "Advanced TypeScript"
+order: 6
+durationMinutes: 8
+objectives:
+  - "Write custom type guard functions returning `value is Type`"
+  - "Filter arrays cleanly without leaving undefined in the resulting type"
+  - "Narrow unknown JSON payloads before accessing properties"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+When `typeof` or `instanceof` is not enough, a **custom type guard** (`function isUser(x: unknown): x is User`) teaches the TypeScript compiler how to narrow an arbitrary value inside `if (isUser(data))` or `items.filter(isDefined)`.
+
+<Callout type="tip" title="Cleanly Filter Out null and undefined">
+  Passing a predicate <code>(x: T | null | undefined): x is T =&gt; x != null</code> to <code>.filter()</code> narrows <code>(string | null)[]</code> into <code>string[]</code> automatically.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Type Predicate Return Type"
+  prompt="Write a type predicate so TypeScript narrows val to string."
+  template={`function isNonEmpty(val: unknown): val {{0}} {{1}} {
+  return typeof val === "string" && val.length > 0;
+}`}
+  blanks={[
+    { answer: 'is', placeholder: 'kw' },
+    { answer: 'string', placeholder: 'type' },
+  ]}
+  hint={'Type predicates use the syntax parameterName is TargetType.'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="type_guards.ts"
+  language="ts"
+  code={`function isDefined<T>(val: T | null | undefined): val is T {
+  return val !== null && val !== undefined;
+}
+
+const raw: (string | null)[] = ["TS", null, "React", null, "Node"];
+const clean: string[] = raw.filter(isDefined);
+console.log("Defined tracks:", clean.join(", "));`}
+  expectedOutput={`Defined tracks: TS, React, Node`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does the return annotation `x is User` tell the TypeScript compiler?",
+      options: [
+        "When the function returns true, TypeScript can narrow x to type User in that branch",
+        "It converts x into a class instance at runtime",
+        "It disables strict null checks globally"
+      ],
+      answer: 0,
+      explanation: "Type predicates let custom boolean checks participate in TypeScript's control-flow narrowing."
+    }
+  ]}
+/>

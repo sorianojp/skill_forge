@@ -1,0 +1,84 @@
+---
+title: "Classes, Access Modifiers & Parameter Properties"
+description: "Write concise TypeScript classes using public, private, protected, readonly, and implements."
+course: "typescript-essentials"
+module: "Production TypeScript"
+order: 9
+durationMinutes: 8
+objectives:
+  - "Use constructor parameter properties (`private readonly id: string`) to cut boilerplate"
+  - "Enforce class contracts with `implements Interface`"
+  - "Distinguish compile-time `private` from runtime `#private` fields"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+TypeScript **parameter properties** let you declare and assign a class field directly inside the constructor signature (`constructor(private readonly name: string)`), saving lines of repetitive boilerplate.
+
+<Callout type="tip" title="implements Verifies Contracts at Compile Time">
+  Adding <code>class ConsoleLogger implements Logger</code> forces TypeScript to check that every required method and signature is present.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Class Implementing an Interface"
+  prompt="Make MemoryStore implement Store and declare items as private."
+  template={`interface Store { count(): number; }
+
+class MemoryStore {{0}} Store {
+  {{1}} items: string[] = [];
+  count() { return this.items.length; }
+}`}
+  blanks={[
+    { answer: 'implements', placeholder: 'kw' },
+    { answer: 'private', placeholder: 'mod' },
+  ]}
+  hint={'Use implements to enforce an interface contract and private to hide internal fields.'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="classes.ts"
+  language="ts"
+  code={`interface Scorable {
+  label(): string;
+}
+
+class Exam implements Scorable {
+  constructor(
+    public readonly track: string,
+    private score: number
+  ) {}
+
+  label(): string {
+    return this.track + ": " + this.score + "%";
+  }
+}
+
+const e = new Exam("TypeScript", 94);
+console.log(e.label());`}
+  expectedOutput={`TypeScript: 94%`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does `constructor(private readonly id: string)` do in TypeScript?",
+      options: [
+        "Declares a private readonly field named id and automatically assigns the constructor argument to it",
+        "Makes id globally accessible on window",
+        "Deletes id after construction"
+      ],
+      answer: 0,
+      explanation: "Parameter properties combine field declaration and assignment in one concise line."
+    }
+  ]}
+/>

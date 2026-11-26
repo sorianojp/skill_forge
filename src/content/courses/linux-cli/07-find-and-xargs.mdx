@@ -1,0 +1,66 @@
+---
+title: "Finding Files with find & xargs"
+description: "Locate files by name, size, or modification time with find, and process results safely using -print0 and xargs -0."
+course: "linux-cli"
+module: "Shell Basics"
+order: 6
+durationMinutes: 8
+objectives:
+  - "Search directory trees by name (-name), type (-type f), and age (-mtime)"
+  - "Run commands cleanly on matched files using -exec or xargs"
+  - "Handle filenames containing spaces safely with -print0 | xargs -0"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+**`find`** searches entire directory trees with precision: find every `.log` file larger than 50 MB, or every `.mdx` lesson under `src/`. Combining `find` with `wc -l` or `xargs` makes bulk file inspection effortless.
+
+<Callout type="tip" title="Always Quote Wildcards in find">
+  Write <code>find src -name "&#42;.mdx"</code> (with quotes around <code>"&#42;.mdx"</code>) so Bash does not expand the wildcard before passing it to <code>find</code>.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Find Regular Markdown Files"
+  prompt="Find all regular files (-type f) ending in .md inside docs/."
+  template={`{{0}} docs -type f -{{1}} "*.md"`}
+  blanks={[
+    { answer: 'find', placeholder: 'cmd' },
+    { answer: 'name', placeholder: 'flag' },
+  ]}
+  hint={'Use find <dir> -type f -name "*.md".'}
+/>
+
+## Live Bash Lab
+
+<CodeLab
+  client:visible
+  title="find_demo.sh"
+  language="bash"
+  code={`mkdir -p /tmp/dp_find/a /tmp/dp_find/b
+touch /tmp/dp_find/a/one.txt /tmp/dp_find/b/two.txt /tmp/dp_find/b/skip.log
+find /tmp/dp_find -type f -name "*.txt" | sort`}
+  expectedOutput={`/tmp/dp_find/a/one.txt
+/tmp/dp_find/b/two.txt`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why should you quote \"*.log\" when running find /var/log -name \"*.log\"?",
+      options: [
+        "To stop the shell from expanding * against the current directory before find runs",
+        "Because find only accepts uppercase patterns without quotes",
+        "To delete matching files automatically"
+      ],
+      answer: 0,
+      explanation: "Quoting ensures find itself receives the literal glob pattern."
+    }
+  ]}
+/>

@@ -1,0 +1,84 @@
+---
+title: "Networking Debugging: curl, dig & ss"
+description: "Verify DNS records with dig, inspect HTTP/TLS headers with curl -sI, and check listening ports with ss -tulpn."
+course: "linux-cli"
+module: "Server Administration"
+order: 9
+durationMinutes: 8
+objectives:
+  - "Verify DNS A/CNAME propagation quickly using dig +short"
+  - "Inspect HTTP status codes and redirects with curl -sI"
+  - "Send JSON POST payloads cleanly with curl -X POST -H -d"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+When launching a domain or debugging an API outage, three CLI tools save hours:
+
+- **`dig +short devpath.mycampus.ph`** confirms which IP address DNS resolves to.
+- **`curl -sI https://devpath.mycampus.ph`** prints only the HTTP status and response headers (`200 OK`, `301`, cache headers).
+- **`ss -tulpn`** lists every TCP/UDP port currently listening on the server and which process owns it.
+
+<Callout type="tip" title="Follow Redirects with curl -L">
+  Adding <code>-L</code> tells <code>curl</code> to follow <code>301/302</code> redirects (such as HTTP to HTTPS) automatically.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="DNS & HTTP Header Check"
+  prompt="Resolve a domain's IP with dig +short and fetch only headers with curl -sI."
+  template={`{{0}} +short devpath.mycampus.ph
+{{1}} -sI https://devpath.mycampus.ph`}
+  blanks={[
+    { answer: 'dig', placeholder: 'cmd' },
+    { answer: 'curl', placeholder: 'cmd' },
+  ]}
+  hint={'dig queries DNS records, and curl -sI fetches HTTP response headers silently.'}
+/>
+
+## Live Bash Lab
+
+<CodeLab
+  client:visible
+  title="net_tools.sh"
+  language="bash"
+  code={`cat << 'EOF'
+# Check DNS A record
+dig +short devpath.mycampus.ph
+
+# Check HTTPS status & headers
+curl -sI https://devpath.mycampus.ph | head -n 5
+
+# Check listening ports on server
+ss -tulpn
+EOF`}
+  expectedOutput={`# Check DNS A record
+dig +short devpath.mycampus.ph
+
+# Check HTTPS status & headers
+curl -sI https://devpath.mycampus.ph | head -n 5
+
+# Check listening ports on server
+ss -tulpn`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does the -I flag do in curl -sI https://example.com?",
+      options: [
+        "Sends a HEAD request and prints only the HTTP response headers",
+        "Downloads all images on the page",
+        "Ignores DNS entirely"
+      ],
+      answer: 0,
+      explanation: "curl -I inspects status codes, redirect locations, and cache/security headers without downloading the body."
+    }
+  ]}
+/>

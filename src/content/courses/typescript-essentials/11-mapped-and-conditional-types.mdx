@@ -1,0 +1,85 @@
+---
+title: "Mapped & Conditional Types"
+description: "Transform every property of an interface programmatically with mapped types and branch at the type level with conditional types."
+course: "typescript-essentials"
+module: "Production TypeScript"
+order: 10
+durationMinutes: 9
+objectives:
+  - "Read and write mapped types (`{ [K in keyof T]: ... }`)"
+  - "Use conditional types (`T extends U ? X : Y`) to adapt return types"
+  - "Understand how Partial<T> and Readonly<T> are built under the hood"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+Built-in utilities like `Partial<T>` and `Readonly<T>` are not compiler magic; they are written using **mapped types**:
+
+```ts
+type MyReadonly<T> = { readonly [K in keyof T]: T[K] };
+```
+
+Knowing mapped types lets you create domain-specific helpers like `Nullable<T>` or `Flags<T>` in two lines.
+
+<Callout type="info" title="Keep Type-Level Logic Readable">
+  Simple mapped and conditional types eliminate duplication. If a type takes more than 5 lines to understand, prefer simpler explicit interfaces.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Nullable Mapped Type"
+  prompt="Map every key K in keyof T so its value can also be null."
+  template={`type Nullable<T> = {
+  [K {{0}} {{1}} T]: T[K] | null;
+};`}
+  blanks={[
+    { answer: 'in', placeholder: 'kw' },
+    { answer: 'keyof', placeholder: 'kw' },
+  ]}
+  hint={'Mapped types iterate with [K in keyof T].'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="mapped_types.ts"
+  language="ts"
+  code={`type FeatureFlags<T> = {
+  [K in keyof T]: boolean;
+};
+
+interface Modules {
+  cloudSync: string;
+  liveRunner: string;
+}
+
+const enabled: FeatureFlags<Modules> = {
+  cloudSync: true,
+  liveRunner: true,
+};
+
+console.log("Flags:", JSON.stringify(enabled));`}
+  expectedOutput={`Flags: {"cloudSync":true,"liveRunner":true}`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "How is TypeScript's built-in Readonly<T> utility type implemented?",
+      options: [
+        "As a mapped type: { readonly [K in keyof T]: T[K] }",
+        "With a runtime Proxy loop",
+        "Using Object.seal() at compile time"
+      ],
+      answer: 0,
+      explanation: "Mapped types iterate over every key in keyof T and apply modifiers like readonly or ?."
+    }
+  ]}
+/>

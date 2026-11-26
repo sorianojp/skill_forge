@@ -1,0 +1,86 @@
+---
+title: "Middleware Pipelines & Centralized Errors"
+description: "Compose request logging, auth guards, and centralized error handling using Express/Hono-style middleware pipelines."
+course: "nodejs-essentials"
+module: "Backend APIs"
+order: 6
+durationMinutes: 8
+objectives:
+  - "Understand how middleware functions wrap requests with next()"
+  - "Short-circuit unauthorized requests cleanly with 401/403"
+  - "Centralize unexpected error formatting so stack traces never leak to clients"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+**Middleware** is a chain of functions `(req, res, next)` that run before your route handler: logging request timing, parsing JSON bodies, verifying auth tokens, and catching thrown errors in one central place.
+
+<Callout type="warning" title="Never Leak Stack Traces in Production">
+  Log full error stacks on the server, but return a clean JSON error like <code>&#123; "error": "Internal server error" &#125;</code> to external HTTP callers.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Auth Middleware Guard"
+  prompt="Return 401 if the Authorization header is missing, otherwise call next()."
+  template={`function requireAuth(req, res, {{0}}) {
+  if (!req.headers.authorization) return res.status({{1}}).json({ error: "Unauthorized" });
+  next();
+}`}
+  blanks={[
+    { answer: 'next', placeholder: 'fn' },
+    { answer: '401', placeholder: 'code' },
+  ]}
+  hint={'Middleware receives next as its third parameter and returns 401 for missing credentials.'}
+/>
+
+## Live Code Lab (Node.js 20)
+
+<CodeLab
+  client:visible
+  title="middleware.js"
+  language="node"
+  code={`function runPipeline(req, middlewares) {
+  let idx = 0;
+  function next() {
+    const fn = middlewares[idx++];
+    if (fn) fn(req, next);
+  }
+  next();
+}
+
+const logMw = (req, next) => { console.log("-> " + req.method + " " + req.path); next(); };
+const authMw = (req, next) => {
+  if (!req.token) return console.log("401 Unauthorized");
+  next();
+};
+const handler = (req) => console.log("200 OK for user:", req.token);
+
+runPipeline({ method: "GET", path: "/api/progress", token: "valid" }, [logMw, authMw, handler]);
+runPipeline({ method: "GET", path: "/api/progress" }, [logMw, authMw, handler]);`}
+  expectedOutput={`-> GET /api/progress
+200 OK for user: valid
+-> GET /api/progress
+401 Unauthorized`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What happens if an authentication middleware rejects a request without calling next()?",
+      options: [
+        "The pipeline stops immediately and the downstream route handler never runs",
+        "The route handler still runs automatically",
+        "Node.js crashes"
+      ],
+      answer: 0,
+      explanation: "Short-circuiting by sending a 401 response without calling next() protects downstream routes."
+    }
+  ]}
+/>

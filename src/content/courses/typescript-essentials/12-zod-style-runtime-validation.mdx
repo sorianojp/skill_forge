@@ -1,0 +1,80 @@
+---
+title: "Runtime Validation at API Boundaries"
+description: "Combine TypeScript static types with runtime schema checks so untrusted JSON from APIs or forms never crashes your app."
+course: "typescript-essentials"
+module: "Production TypeScript"
+order: 11
+durationMinutes: 8
+objectives:
+  - "Understand why TypeScript types vanish at runtime"
+  - "Validate external JSON boundaries (fetch responses, request bodies) before trusting them"
+  - "Return typed Result objects from boundary parsers"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+Because TypeScript erases all types during compilation, `JSON.parse(raw) as User` does **not** actually check the data at runtime! Always validate untrusted data at your app's boundaries (using a small validator function or libraries like Zod / Valibot) so internal code can trust its types 100%.
+
+<Callout type="warning" title="Avoid Blind 'as MyType' on JSON.parse">
+  Type assertions (<code>as User</code>) tell the compiler to stop checking. Parse into <code>unknown</code> first and validate required fields before returning a typed object.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Safe Boundary Parse"
+  prompt="Treat parsed JSON as unknown and check typeof before trusting fields."
+  template={`const raw: {{0}} = JSON.parse(input);
+if (typeof raw === "object" && raw !== null && "name" {{1}} raw) {
+  console.log("Valid object");
+}`}
+  blanks={[
+    { answer: 'unknown', placeholder: 'type' },
+    { answer: 'in', placeholder: 'op' },
+  ]}
+  hint={'Type external JSON as unknown and use the in operator to check property presence.'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="boundary_validation.ts"
+  language="ts"
+  code={`interface CertPayload {
+  id: string;
+  score: number;
+}
+
+function parseCert(raw: unknown): CertPayload | null {
+  if (typeof raw !== "object" || raw === null) return null;
+  const obj = raw as Record<string, unknown>;
+  if (typeof obj.id !== "string" || typeof obj.score !== "number") return null;
+  return { id: obj.id, score: obj.score };
+}
+
+console.log("Valid:", parseCert({ id: "DP-TS-101", score: 92 }));
+console.log("Bad:  ", parseCert({ id: 123 }));`}
+  expectedOutput={`Valid: { id: 'DP-TS-101', score: 92 }
+Bad:   null`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why is `JSON.parse(str) as User` risky in production TypeScript apps?",
+      options: [
+        "Type assertions perform zero runtime checks, so malformed JSON can still cause runtime crashes",
+        "JSON.parse does not exist in TypeScript",
+        "It makes the JSON twice as large"
+      ],
+      answer: 0,
+      explanation: "Static types are erased at compile time; untrusted inputs need runtime validation at the boundary."
+    }
+  ]}
+/>

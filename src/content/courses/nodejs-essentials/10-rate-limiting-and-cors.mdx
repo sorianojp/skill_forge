@@ -1,0 +1,73 @@
+---
+title: "Rate Limiting, CORS & HTTP Security Headers"
+description: "Protect Node.js APIs from abuse with sliding-window rate limits, explicit CORS origins, and body size caps."
+course: "nodejs-essentials"
+module: "Security & Auth"
+order: 9
+durationMinutes: 8
+objectives:
+  - "Implement a per-IP sliding-window rate limiter returning HTTP 429"
+  - "Understand how CORS headers control browser cross-origin access"
+  - "Cap request body size to defend against memory exhaustion"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+Public API endpoints (like login, signup, or a live code runner) should always enforce **rate limiting** (`429 Too Many Requests`) and **payload size limits** so a single misbehaving client cannot overload your server.
+
+<Callout type="info" title="CORS Is Enforced by Browsers">
+  Setting <code>Access-Control-Allow-Origin</code> to your exact frontend origin (rather than <code>*</code> when credentials are used) keeps cross-origin requests tight and secure.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Rate Limit Status Code"
+  prompt="Return HTTP 429 when a client exceeds the request quota."
+  template={`if (!allowRequest(clientIp)) {
+  return { status: {{0}}, body: { error: "Too many requests" } };
+}`}
+  blanks={[
+    { answer: '429', placeholder: 'code' },
+  ]}
+  hint={'HTTP 429 Too Many Requests is the standard status code for rate limiting.'}
+/>
+
+## Live Code Lab (Node.js 20)
+
+<CodeLab
+  client:visible
+  title="rate_limiter.js"
+  language="node"
+  code={`const buckets = new Map();
+
+function allow(ip, limit = 3) {
+  const count = (buckets.get(ip) ?? 0) + 1;
+  buckets.set(ip, count);
+  return count <= limit;
+}
+
+for (let i = 1; i <= 4; i++) {
+  console.log("Req", i, "->", allow("10.0.0.1") ? "200 OK" : "429 Too Many Requests");
+}`}
+  expectedOutput={`Req 1 -> 200 OK
+Req 2 -> 200 OK
+Req 3 -> 200 OK
+Req 4 -> 429 Too Many Requests`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which HTTP status code should an API return when a client hits a rate limit?",
+      options: ["429 Too Many Requests", "404 Not Found", "204 No Content"],
+      answer: 0,
+      explanation: "429 tells clients and proxies to back off before retrying."
+    }
+  ]}
+/>

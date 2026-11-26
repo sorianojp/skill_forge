@@ -1,0 +1,68 @@
+---
+title: "Image Registries, Tagging & CI Builds"
+description: "Tag images with Git commit SHAs and SemVer, push to GitHub Container Registry (GHCR), and build in CI."
+course: "docker-essentials"
+module: "Production Docker"
+order: 10
+durationMinutes: 8
+objectives:
+  - "Tag images cleanly with registry/owner/repo:version"
+  - "Push immutable commit-SHA tags for instant rollbacks"
+  - "Automate image builds and pushes inside GitHub Actions"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+In production CI/CD, tag every built image with its **Git commit SHA** (`ghcr.io/team/api:9482a50`) or SemVer tag (`v1.4.2`). If a release has a bug, rolling back takes 5 seconds: just deploy the previous immutable tag!
+
+<Callout type="tip" title="Tag Both the Commit SHA and SemVer">
+  Immutable SHA tags let you trace any running production container directly back to the exact Git commit that built it.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Tag & Push to Registry"
+  prompt="Build and push ghcr.io/myorg/api:1.0.0 to the container registry."
+  template={`docker {{0}} -t ghcr.io/myorg/api:1.0.0 .
+docker {{1}} ghcr.io/myorg/api:1.0.0`}
+  blanks={[
+    { answer: 'build', placeholder: 'cmd' },
+    { answer: 'push', placeholder: 'cmd' },
+  ]}
+  hint={'Use docker build -t <image:tag> . followed by docker push <image:tag>.'}
+/>
+
+## Live Tagging Script Lab
+
+<CodeLab
+  client:visible
+  title="tag_release.sh"
+  language="bash"
+  code={`SHA="5298085"
+IMAGE="ghcr.io/devpath/api"
+echo "Building: $IMAGE:$SHA"
+echo "Pushing:  $IMAGE:$SHA"`}
+  expectedOutput={`Building: ghcr.io/devpath/api:5298085
+Pushing:  ghcr.io/devpath/api:5298085`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why do production CI pipelines tag Docker images with the Git commit SHA?",
+      options: [
+        "Every build is immutable, traceable to exact source code, and trivial to roll back",
+        "Docker registries reject version numbers like 1.0.0",
+        "It shrinks the image size by 50%"
+      ],
+      answer: 0,
+      explanation: "Commit-SHA tags make deployments auditable and rollbacks instant."
+    }
+  ]}
+/>

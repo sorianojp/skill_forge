@@ -1,0 +1,65 @@
+---
+title: "Environment Variables, export & PATH"
+description: "Configure CLI tools cleanly with export, PATH lookup order, and safe default parameter expansion (${VAR:-default})."
+course: "linux-cli"
+module: "Shell Basics"
+order: 11
+durationMinutes: 7
+objectives:
+  - "Understand the difference between local shell variables and exported environment variables"
+  - "Inspect executable resolution order with which and echo $PATH"
+  - "Provide safe fallback values in Bash using ${VAR:-default}"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+When you type `python3` or `node`, Linux searches each colon-separated directory in **`$PATH`** from left to right and runs the first matching executable. In Bash scripts, **`${PORT:-8787}`** lets you read an environment variable with a clean fallback if it is unset or empty.
+
+<Callout type="tip" title="No Spaces Around = in Bash">
+  Write <code>PORT=8787</code> (zero spaces around <code>=</code>). Writing <code>PORT = 8787</code> tries to execute a command named <code>PORT</code>!
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Export & Default Expansion"
+  prompt="Export APP_ENV to child processes and fall back to 'prod' if unset."
+  template={`{{0}} APP_ENV="staging"
+echo "\${APP_ENV{{1}}prod}"`}
+  blanks={[
+    { answer: 'export', placeholder: 'kw' },
+    { answer: ':-', placeholder: 'op' },
+  ]}
+  hint={'Use export to pass a variable to child processes and ${VAR:-default} for fallback expansion.'}
+/>
+
+## Live Bash Lab
+
+<CodeLab
+  client:visible
+  title="env_vars.sh"
+  language="bash"
+  code={`#!/usr/bin/env bash
+set -euo pipefail
+
+PORT="\${PORT:-8787}"
+ENV_NAME="\${APP_ENV:-production}"
+echo "Starting in $ENV_NAME on port $PORT"`}
+  expectedOutput={`Starting in production on port 8787`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does ${PORT:-3000} evaluate to in Bash when PORT is unset?",
+      options: ["3000", "An empty string", "A syntax error"],
+      answer: 0,
+      explanation: "${VAR:-default} substitutes default whenever VAR is unset or empty."
+    }
+  ]}
+/>

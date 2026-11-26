@@ -1,0 +1,62 @@
+---
+title: "Text Processing with sed & awk"
+description: "Transform text streams on the fly with sed substitutions and extract/sum columns effortlessly with awk."
+course: "linux-cli"
+module: "Automation"
+order: 7
+durationMinutes: 8
+objectives:
+  - "Perform global text substitutions using sed 's/old/new/g'"
+  - "Extract and aggregate whitespace- or comma-delimited columns using awk"
+  - "Combine grep, sed, and awk into clean one-line pipelines"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+- **`sed`** (stream editor) excels at line-by-line search and replace (`sed 's/http:/https:/g'`).
+- **`awk`** excels at structured columns (`$1`, `$2`, `$NF`) and quick numeric totals (`awk '{sum += $2} END {print sum}'`).
+
+<Callout type="tip" title="Preview sed Output Before Using -i">
+  Run <code>sed 's/foo/bar/g' file.txt</code> to stdout first. Only add <code>-i</code> (in-place edit) once you confirm the replacement looks right.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Global Replace with sed"
+  prompt="Replace every occurrence of http:// with https:// across all lines."
+  template={`{{0}} 's|http://|https://|{{1}}' urls.txt`}
+  blanks={[
+    { answer: 'sed', placeholder: 'cmd' },
+    { answer: 'g', placeholder: 'flag' },
+  ]}
+  hint={'Use sed with the g (global) flag, and alternate delimiter | to avoid escaping slashes.'}
+/>
+
+## Live Bash Lab
+
+<CodeLab
+  client:visible
+  title="sed_awk.sh"
+  language="bash"
+  code={`printf "HTML 16\nCSS 16\nJS 16\n" | awk '{sum += $2} END {print "Total lessons:", sum}'
+echo "http://devpath.mycampus.ph" | sed 's|http://|https://|g'`}
+  expectedOutput={`Total lessons: 48
+https://devpath.mycampus.ph`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "In awk '{print $2}', what does $2 refer to?",
+      options: ["The second whitespace-separated field (column) on each line", "The second file on disk", "The exit status"],
+      answer: 0,
+      explanation: "awk splits each input line into fields $1, $2, ..., $NF ($0 is the entire line)."
+    }
+  ]}
+/>

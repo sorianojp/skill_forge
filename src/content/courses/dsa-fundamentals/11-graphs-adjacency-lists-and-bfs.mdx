@@ -1,0 +1,92 @@
+---
+title: "Graphs, Adjacency Lists & Shortest Path BFS"
+description: "Model networks and dependencies with adjacency lists, track visited nodes to prevent infinite loops, and find shortest paths with BFS."
+course: "dsa-fundamentals"
+module: "Graphs & Greedy"
+order: 10
+durationMinutes: 9
+objectives:
+  - "Represent sparse graphs cleanly using an adjacency list (Map<Node, Node[]>)"
+  - "Prevent infinite cycles by marking nodes in a visited Set when enqueuing"
+  - "Compute shortest unweighted path length in O(V + E) using BFS"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+Unlike trees, **graphs** can contain cycles and disconnected components. Always maintain a **`visited` Set** (and add each neighbor to `visited` the moment you enqueue it, not when you dequeue it!) so BFS runs in linear **$O(V + E)$** time.
+
+<Callout type="warning" title="Mark Visited Upon Enqueue in BFS">
+  If you wait to mark a node visited until it is dequeued, the same node can be pushed onto the queue multiple times by different neighbors, causing slow duplicate work.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Visited Guard in Graph BFS"
+  prompt="Skip already-visited neighbors and mark new neighbors before enqueuing."
+  template={`for (const next of graph[node]) {
+  if (!visited.{{0}}(next)) {
+    visited.{{1}}(next);
+    queue.push([next, dist + 1]);
+  }
+}`}
+  blanks={[
+    { answer: 'has', placeholder: 'method' },
+    { answer: 'add', placeholder: 'method' },
+  ]}
+  hint={'Use Set.has(next) to check and Set.add(next) immediately when enqueuing.'}
+/>
+
+## Live DSA Playground
+
+<Playground
+  client:visible
+  title="Shortest Path Hops via Graph BFS"
+  defaultTab="js"
+  showConsole={true}
+  html={`<p>Find the fewest hops from HTML to React in a skill graph.</p>`}
+  js={`const graph = {
+  HTML: ["CSS", "JS"],
+  CSS: ["HTML"],
+  JS: ["TS", "Node"],
+  TS: ["React"],
+  Node: ["Docker"],
+  React: [],
+  Docker: []
+};
+
+function shortestHops(start, goal) {
+  const visited = new Set([start]);
+  const queue = [[start, 0]];
+  for (let head = 0; head < queue.length; head++) {
+    const [node, dist] = queue[head];
+    if (node === goal) return dist;
+    for (const next of graph[node] ?? []) {
+      if (!visited.has(next)) {
+        visited.add(next);
+        queue.push([next, dist + 1]);
+      }
+    }
+  }
+  return -1;
+}
+
+console.log("HTML -> React hops:", shortestHops("HTML", "React"));
+console.log("HTML -> Docker hops:", shortestHops("HTML", "Docker"));`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What is the time complexity of Breadth-First Search on a graph represented by an adjacency list with V vertices and E edges?",
+      options: ["O(V + E)", "O(V * E)", "O(V^2)"],
+      answer: 0,
+      explanation: "Each vertex is visited at most once and each edge is inspected at most twice, giving O(V + E)."
+    }
+  ]}
+/>

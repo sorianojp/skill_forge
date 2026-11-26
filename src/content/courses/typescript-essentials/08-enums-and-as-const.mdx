@@ -1,0 +1,73 @@
+---
+title: "as const, satisfies & Literal Objects"
+description: "Replace runtime TypeScript enums with zero-overhead `as const` objects and validate shapes with the `satisfies` operator."
+course: "typescript-essentials"
+module: "Advanced TypeScript"
+order: 7
+durationMinutes: 8
+objectives:
+  - "Freeze literal types cleanly with `as const`"
+  - "Derive union types directly from constant objects via `typeof` and `keyof`"
+  - "Validate object shapes without losing narrow literal inference using `satisfies`"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+Modern TypeScript teams often prefer **`as const` objects** over `enum` because `as const` emits zero extra runtime wrapper code while preserving exact literal types. Pairing it with **`satisfies`** validates the structure without widening literal values to plain `string`.
+
+<Callout type="tip" title="satisfies Gives You Both Validation and Narrow Types">
+  <code>const palette = &#123; primary: "#2563eb" &#125; satisfies Record&lt;string, string&gt;;</code> checks that all values are strings while still remembering that <code>palette.primary</code> exists specifically.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="as const Union Derivation"
+  prompt="Mark ROLES as const and derive the Role union from its values."
+  template={`const ROLES = ["learner", "mentor", "admin"] as {{0}};
+type Role = ({{1}} ROLES)[number];`}
+  blanks={[
+    { answer: 'const', placeholder: 'kw' },
+    { answer: 'typeof', placeholder: 'kw' },
+  ]}
+  hint={'Use as const to preserve literal tuple elements and (typeof ROLES)[number] to extract the union.'}
+/>
+
+## Live Code Lab
+
+<CodeLab
+  client:visible
+  title="as_const.ts"
+  language="ts"
+  code={`const STATUS = {
+  IDLE: "idle",
+  RUNNING: "running",
+  DONE: "done",
+} as const;
+
+type Status = (typeof STATUS)[keyof typeof STATUS];
+
+const current: Status = STATUS.DONE;
+console.log("Status:", current);`}
+  expectedOutput={`Status: done`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does the TypeScript `satisfies` operator do?",
+      options: [
+        "Validates that a value matches a type while preserving its narrower inferred literal types",
+        "Casts any type unsafely like `as any`",
+        "Freezes the object at runtime like Object.freeze"
+      ],
+      answer: 0,
+      explanation: "satisfies checks compatibility at compile time without widening specific keys or literals."
+    }
+  ]}
+/>

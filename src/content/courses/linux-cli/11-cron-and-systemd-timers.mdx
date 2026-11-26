@@ -1,0 +1,69 @@
+---
+title: "Cron Jobs & systemd Timers"
+description: "Schedule recurring backups, SSL renewals, and cleanup jobs using 5-field cron expressions and systemd timers."
+course: "linux-cli"
+module: "Automation"
+order: 10
+durationMinutes: 7
+objectives:
+  - "Read and write 5-field cron schedules (minute, hour, day, month, weekday)"
+  - "Inspect active systemd timers like certbot.timer"
+  - "Log cron job output so silent failures are never missed"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+A standard **cron** schedule has five fields: `MINUTE HOUR DAY_OF_MONTH MONTH DAY_OF_WEEK`:
+
+- `0 3 * * *` -> Every day at 3:00 AM (great for nightly SQLite backups).
+- `*/15 * * * *` -> Every 15 minutes.
+- `0 9 * * 1` -> Every Monday at 9:00 AM.
+
+<Callout type="tip" title="Always Use Absolute Paths in Cron">
+  Cron runs with a minimal <code>PATH</code>. Write <code>/usr/bin/python3 /opt/scripts/backup.py</code> instead of assuming <code>python3</code> is on PATH.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Nightly Backup Cron Expression"
+  prompt="Schedule a job to run every day at 02:30."
+  template={`{{0}} {{1}} * * * /usr/local/bin/backup.sh >> /var/log/backup.log 2>&1`}
+  blanks={[
+    { answer: '30', placeholder: 'min' },
+    { answer: '2', placeholder: 'hour' },
+  ]}
+  hint={'Cron puts minute first (30), then hour (2) in 24-hour time.'}
+/>
+
+## Live Bash Lab
+
+<CodeLab
+  client:visible
+  title="cron_guide.sh"
+  language="bash"
+  code={`printf "%-15s %s\n" "SCHEDULE" "MEANING"
+printf "%-15s %s\n" "*/5 * * * *" "Every 5 minutes"
+printf "%-15s %s\n" "0 3 * * *" "Daily at 03:00"
+printf "%-15s %s\n" "0 9 * * 1" "Every Monday at 09:00"`}
+  expectedOutput={`SCHEDULE        MEANING
+*/5 * * * *     Every 5 minutes
+0 3 * * *       Daily at 03:00
+0 9 * * 1       Every Monday at 09:00`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "When does the cron expression `0 4 * * *` run?",
+      options: ["Every day at 4:00 AM", "Every 4 minutes", "Only on April 1st"],
+      answer: 0,
+      explanation: "Minute=0, Hour=4, every day (*), every month (*), every weekday (*)."
+    }
+  ]}
+/>

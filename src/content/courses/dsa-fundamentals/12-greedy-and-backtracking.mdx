@@ -1,0 +1,83 @@
+---
+title: "Greedy Algorithms & Backtracking"
+description: "Make locally optimal choices cleanly with Greedy interval scheduling, and explore combinations systematically with Backtracking."
+course: "dsa-fundamentals"
+module: "Graphs & Greedy"
+order: 11
+durationMinutes: 9
+objectives:
+  - "Solve interval scheduling (non-overlapping meetings) with a Greedy sort-by-end-time strategy"
+  - "Generate subsets and combinations with recursive Backtracking (choose -> explore -> unchoose)"
+  - "Know when Greedy works vs. when Dynamic Programming is required"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+- **Greedy:** At every step, pick the locally best option (for example, sorting meetings by **earliest end time** to fit the maximum number of non-overlapping meetings).
+- **Backtracking:** Explore a decision tree systematically using three lines: **choose** (`path.push(x)`), **explore** (`dfs(i + 1)`), and **unchoose** (`path.pop()`).
+
+<Callout type="tip" title="The 3-Step Backtracking Template">
+  Nearly every subsets, permutations, and combinations problem reduces to <code>path.push(choice); recurse(); path.pop();</code>.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Backtracking Choose & Unchoose"
+  prompt="Push nums[i] onto path, recurse, then pop it to restore state."
+  template={`path.{{0}}(nums[i]);
+backtrack(i + 1);
+path.{{1}}();`}
+  blanks={[
+    { answer: 'push', placeholder: 'method' },
+    { answer: 'pop', placeholder: 'method' },
+  ]}
+  hint={'Push the choice before recursing and pop() immediately after to backtrack cleanly.'}
+/>
+
+## Live DSA Playground
+
+<Playground
+  client:visible
+  title="Generate All Subsets (Backtracking)"
+  defaultTab="js"
+  showConsole={true}
+  html={`<p>Generate all 2^n subsets of ["Git", "Linux", "Docker"].</p>`}
+  js={`function subsets(items) {
+  const result = [], path = [];
+  function dfs(start) {
+    result.push([...path]);
+    for (let i = start; i < items.length; i++) {
+      path.push(items[i]);
+      dfs(i + 1);
+      path.pop();
+    }
+  }
+  dfs(0);
+  return result;
+}
+
+const all = subsets(["Git", "Linux", "Docker"]);
+console.log("Total subsets:", all.length);
+console.log(all);`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "In the classic Greedy activity selection problem (fit the maximum number of non-overlapping meetings), how should you sort the intervals first?",
+      options: [
+        "By earliest end time",
+        "By longest duration",
+        "Alphabetically by meeting title"
+      ],
+      answer: 0,
+      explanation: "Picking the meeting that finishes earliest always leaves the maximum remaining time for future meetings."
+    }
+  ]}
+/>

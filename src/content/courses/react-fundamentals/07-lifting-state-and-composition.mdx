@@ -1,0 +1,83 @@
+---
+title: "Lifting State Up & Component Composition"
+description: "Share state cleanly between sibling components by lifting it to their nearest common parent and composing via children."
+course: "react-fundamentals"
+module: "Hooks & Architecture"
+order: 6
+durationMinutes: 8
+objectives:
+  - "Move shared state to the closest common parent component"
+  - "Pass state values down and update callbacks up"
+  - "Use the children prop to avoid unnecessary prop drilling"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+When two sibling components (like `<SearchBar />` and `<CourseList />`) need to stay in sync, **lift the state up** to their nearest common parent (`<CatalogPage />`). The parent owns `query`, passes `query` and `onChange` to `<SearchBar />`, and passes the filtered list to `<CourseList />`.
+
+<Callout type="tip" title="Composition via children Beats Prop Drilling">
+  Instead of passing <code>user</code> through 4 layout wrappers, pass <code>&lt;Header user=&#123;user&#125; /&gt;</code> directly as <code>children</code> into <code>&lt;PageShell&gt;</code>.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Render Nested Children"
+  prompt="Accept title and children in Card and render children inside the wrapper."
+  template={`function Card({ title, {{0}} }) {
+  return <section><h3>{title}</h3>{{{1}}}</section>;
+}`}
+  blanks={[
+    { answer: 'children', placeholder: 'prop' },
+    { answer: 'children', placeholder: 'prop' },
+  ]}
+  hint={'React passes nested JSX between opening and closing tags via the special children prop.'}
+/>
+
+## Live Composition Playground
+
+<Playground
+  client:visible
+  title="Shared Parent State Between Siblings"
+  defaultTab="js"
+  showConsole={true}
+  html={`<div style="display:flex;gap:8px;margin-bottom:10px">
+  <button data-tab="web" style="padding:6px 12px;border-radius:8px;border:0;background:#0284c7;color:#fff;cursor:pointer">Web</button>
+  <button data-tab="sys" style="padding:6px 12px;border-radius:8px;border:0;background:#e2e8f0;cursor:pointer">Systems</button>
+</div>
+<div id="panel" style="font-weight:600"></div>`}
+  js={`let activeTab = "web";
+const data = { web: "HTML, CSS, JS, React", sys: "C, C++, Java, C#" };
+
+function render() {
+  document.getElementById("panel").textContent = "Tracks: " + data[activeTab];
+}
+
+document.querySelectorAll("button[data-tab]").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    activeTab = btn.dataset.tab;
+    render();
+  });
+});
+render();`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "When two sibling React components need to share and update the same state, where should that state live?",
+      options: [
+        "In their closest common parent component (lifted state)",
+        "Duplicated separately inside both siblings",
+        "Inside window.location.hash only"
+      ],
+      answer: 0,
+      explanation: "Lifting state up keeps a single source of truth so siblings stay automatically synchronized."
+    }
+  ]}
+/>

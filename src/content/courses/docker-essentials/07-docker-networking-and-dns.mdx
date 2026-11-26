@@ -1,0 +1,72 @@
+---
+title: "Docker Networks & Internal DNS"
+description: "Isolate backend databases on private bridge networks so only your reverse proxy is exposed to the public internet."
+course: "docker-essentials"
+module: "Networking & Persistence"
+order: 6
+durationMinutes: 8
+objectives:
+  - "Create custom user-defined bridge networks with docker network create"
+  - "Understand why user-defined bridge networks provide automatic container-name DNS"
+  - "Keep database ports private by omitting ports: on db services"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+In production, your PostgreSQL or Redis container should **never** publish `5432:5432` to the public internet. Instead, attach `api` and `db` to the same private **Docker bridge network** so `api` talks to `db:5432` internally while only Nginx (`80`/`443`) faces the outside world.
+
+<Callout type="tip" title="User-Defined Bridges Beat the Default Bridge">
+  User-defined bridge networks automatically resolve containers by name (<code>ping db</code>), whereas Docker's legacy default bridge does not.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Create & Attach a Private Network"
+  prompt="Create a bridge network named app_net and attach a container to it."
+  template={`docker {{0}} create app_net
+docker run -d --{{1}} app_net --name db postgres:16-alpine`}
+  blanks={[
+    { answer: 'network', placeholder: 'sub' },
+    { answer: 'network', placeholder: 'flag' },
+  ]}
+  hint={'Use docker network create and pass --network <name> to docker run.'}
+/>
+
+## Live Network Reference Lab
+
+<CodeLab
+  client:visible
+  title="docker_network.sh"
+  language="bash"
+  code={`cat << 'EOF'
+# Private backend network: db is unreachable from outside the host
+docker network create app_net
+docker run -d --network app_net --name db postgres:16-alpine
+docker run -d --network app_net -p 8080:8080 --name api my-api:1.0
+EOF`}
+  expectedOutput={`# Private backend network: db is unreachable from outside the host
+docker network create app_net
+docker run -d --network app_net --name db postgres:16-alpine
+docker run -d --network app_net -p 8080:8080 --name api my-api:1.0`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "How do you allow an api container to reach a postgres container on port 5432 without exposing port 5432 to the public internet?",
+      options: [
+        "Put both containers on the same Docker network and omit -p 5432:5432 on postgres",
+        "Run postgres with -p 5432:5432",
+        "Disable firewalls on the host"
+      ],
+      answer: 0,
+      explanation: "Containers on the same Docker network communicate over internal ports without publishing them on the host."
+    }
+  ]}
+/>

@@ -1,0 +1,72 @@
+---
+title: "useRef & Direct DOM Access"
+description: "Store mutable values that do not trigger re-renders (timer IDs) and imperatively focus DOM elements with useRef."
+course: "react-fundamentals"
+module: "Performance & DOM"
+order: 9
+durationMinutes: 8
+objectives:
+  - "Distinguish useRef (mutating .current does NOT re-render) from useState"
+  - "Attach ref={inputRef} to focus inputs or measure DOM dimensions"
+  - "Store interval IDs or previous values cleanly across renders"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+**`useRef(initial)`** returns a persistent box `{ current: initial }` that survives across re-renders. Unlike `useState`, changing `ref.current` does **not** trigger a re-render, making it ideal for DOM element handles (`inputRef.current?.focus()`) and timer IDs.
+
+<Callout type="warning" title="Do Not Use Refs for Rendered UI Data">
+  If a value is displayed on screen in JSX, store it in <code>useState</code> so React re-renders when it changes. Use <code>useRef</code> only for non-visual values or DOM APIs.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Focus an Input via Ref"
+  prompt="Create inputRef with useRef and call .focus() on inputRef.current."
+  template={`const inputRef = {{0}}(null);
+const focusBox = () => inputRef.{{1}}?.focus();`}
+  blanks={[
+    { answer: 'useRef', placeholder: 'hook' },
+    { answer: 'current', placeholder: 'prop' },
+  ]}
+  hint={'useRef(null) returns an object whose DOM node is stored in .current.'}
+/>
+
+## Live Focus Ref Demo
+
+<Playground
+  client:visible
+  title="Imperative Focus Handle"
+  defaultTab="js"
+  showConsole={true}
+  html={`<div style="display:flex;gap:8px">
+  <input id="box" placeholder="Click button to focus me" style="padding:8px 12px;border-radius:10px;border:1px solid #cbd5e1;flex:1" />
+  <button id="btn" style="padding:8px 14px;border-radius:10px;border:0;background:#0284c7;color:#fff;cursor:pointer">Focus Input</button>
+</div>`}
+  js={`const inputRef = { current: document.getElementById("box") };
+document.getElementById("btn").addEventListener("click", () => {
+  inputRef.current?.focus();
+  console.log("Focused input via ref.current!");
+});`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What happens in React when you update ref.current = 42?",
+      options: [
+        "The value is stored across renders without triggering a re-render",
+        "The entire page reloads",
+        "React throws an immutability error"
+      ],
+      answer: 0,
+      explanation: "Refs are mutable escape hatches that persist across renders silently."
+    }
+  ]}
+/>

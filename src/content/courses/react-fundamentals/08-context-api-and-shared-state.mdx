@@ -1,0 +1,80 @@
+---
+title: "Context API & Global App State"
+description: "Share cross-cutting state like theme, locale, or auth session cleanly across deep component trees with React Context."
+course: "react-fundamentals"
+module: "Hooks & Architecture"
+order: 7
+durationMinutes: 8
+objectives:
+  - "Create a context with createContext() and wrap trees in a Provider"
+  - "Consume context cleanly via a custom hook like useTheme()"
+  - "Know when Context fits (theme, auth) vs. when local state is better"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+**React Context** lets a parent component provide values (such as dark/light theme or the signed-in user) to any deeply nested descendant without threading props through every intermediate component.
+
+<Callout type="warning" title="Do Not Put Fast-Changing State in One Giant Context">
+  Every consumer of a Context re-renders when its value changes. Keep contexts focused (e.g., <code>AuthContext</code>, <code>ThemeContext</code>) rather than putting every form keystroke into one global provider.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Create & Read Context"
+  prompt="Create ThemeContext and read it inside a child component with useContext."
+  template={`const ThemeContext = {{0}}("light");
+function Banner() {
+  const theme = {{1}}(ThemeContext);
+  return <p>Theme: {theme}</p>;
+}`}
+  blanks={[
+    { answer: 'createContext', placeholder: 'fn' },
+    { answer: 'useContext', placeholder: 'hook' },
+  ]}
+  hint={'Call createContext(defaultVal) outside components and useContext(Ctx) inside.'}
+/>
+
+## Live Context Simulation
+
+<Playground
+  client:visible
+  title="Theme Provider Pattern"
+  defaultTab="js"
+  showConsole={true}
+  html={`<button id="toggle" style="padding:8px 14px;border-radius:10px;border:0;background:#0f172a;color:#fff;cursor:pointer">Toggle Theme</button>
+<p id="card" style="margin-top:10px;padding:12px;border-radius:10px"></p>`}
+  js={`let theme = "light";
+function render() {
+  const card = document.getElementById("card");
+  card.style.background = theme === "dark" ? "#0f172a" : "#f1f5f9";
+  card.style.color = theme === "dark" ? "#f8fafc" : "#0f172a";
+  card.textContent = "Consumed ThemeContext: " + theme;
+}
+document.getElementById("toggle").addEventListener("click", () => {
+  theme = theme === "light" ? "dark" : "light";
+  render();
+});
+render();`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which kind of data is an ideal fit for React Context?",
+      options: [
+        "App-wide, infrequently changing state like theme, language, or authenticated user",
+        "Every single character typed into a local search input",
+        "Temporary loop counter variables"
+      ],
+      answer: 0,
+      explanation: "Context shines for low-frequency global state needed across many levels of the tree."
+    }
+  ]}
+/>

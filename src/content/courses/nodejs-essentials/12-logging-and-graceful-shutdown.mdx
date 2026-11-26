@@ -1,0 +1,71 @@
+---
+title: "Structured Logging & Graceful Shutdown"
+description: "Emit machine-parseable JSON logs and handle SIGTERM/SIGINT so deployments finish active requests cleanly."
+course: "nodejs-essentials"
+module: "Production Node.js"
+order: 11
+durationMinutes: 8
+objectives:
+  - "Emit structured JSON logs with timestamp, level, and request context"
+  - "Listen for SIGTERM and SIGINT to close HTTP servers and DB pools gracefully"
+  - "Understand why zero-downtime deploys depend on graceful shutdown"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+When Docker, Kubernetes, or `systemd` restarts your Node.js server during a deploy, it sends **`SIGTERM`**. Listening for `process.on("SIGTERM", ...)` and calling `server.close()` lets in-flight HTTP requests finish cleanly instead of dropping connections mid-response.
+
+<Callout type="tip" title="Structured JSON Logs Are Searchable">
+  Logging JSON lines (<code>&#123;"level":"info","path":"/api/run","ms":42&#125;</code>) makes filtering and alerting effortless in journalctl, Datadog, or Grafana Loki.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Handle SIGTERM Gracefully"
+  prompt="Register a SIGTERM listener on process to close the HTTP server."
+  template={`{{0}}.on("{{1}}", () => {
+  server.close(() => process.exit(0));
+});`}
+  blanks={[
+    { answer: 'process', placeholder: 'obj' },
+    { answer: 'SIGTERM', placeholder: 'sig' },
+  ]}
+  hint={'Attach a SIGTERM handler on process and close the server before exiting 0.'}
+/>
+
+## Live Code Lab (Node.js 20)
+
+<CodeLab
+  client:visible
+  title="structured_log.js"
+  language="node"
+  code={`function log(level, event, meta = {}) {
+  console.log(JSON.stringify({ level, event, ...meta }));
+}
+
+log("info", "server_started", { port: 8787 });
+log("info", "http_request", { method: "POST", path: "/api/run", status: 200, ms: 48 });`}
+  expectedOutput={`{"level":"info","event":"server_started","port":8787}
+{"level":"info","event":"http_request","method":"POST","path":"/api/run","status":200,"ms":48}`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Why should production Node.js servers listen for the SIGTERM signal?",
+      options: [
+        "To stop accepting new connections and let in-flight requests finish cleanly before exiting",
+        "To disable HTTPS",
+        "To automatically restart the operating system"
+      ],
+      answer: 0,
+      explanation: "Graceful SIGTERM handling prevents dropped user requests during deploys and restarts."
+    }
+  ]}
+/>

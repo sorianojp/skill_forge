@@ -1,0 +1,83 @@
+---
+title: "Debugging Containers: logs, exec & inspect"
+description: "Diagnose failing containers in seconds using docker logs, docker exec -it, docker inspect, and docker stats."
+course: "docker-essentials"
+module: "Production Docker"
+order: 9
+durationMinutes: 8
+objectives:
+  - "Tail recent container logs with docker logs --tail 100 -f"
+  - "Open an interactive shell inside a running container with docker exec -it"
+  - "Inspect live CPU and RAM usage per container using docker stats"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+When a container exits immediately or misbehaves, follow this 3-step triage checklist:
+
+1. `docker ps -a` -> Check exit code (`Exit 137` = OOM killed; `Exit 1` = app crash).
+2. `docker logs --tail 100 <name>` -> Read the exact crash stack trace.
+3. `docker exec -it <name> sh` -> Step inside a running container to test env vars, DNS, or files.
+
+<Callout type="info" title="Exit Code 137 Means Out-Of-Memory (OOM)">
+  If you see <code>Exited (137)</code>, the Linux kernel killed the container for exceeding its RAM limit. Check <code>docker stats</code> and memory limits.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Open Shell Inside Running Container"
+  prompt="Launch an interactive sh shell inside the running container named api."
+  template={`docker {{0}} -{{1}} api sh`}
+  blanks={[
+    { answer: 'exec', placeholder: 'cmd' },
+    { answer: 'it', placeholder: 'flags' },
+  ]}
+  hint={'docker exec -it <container> sh opens an interactive terminal inside a running container.'}
+/>
+
+## Live Triage Command Lab
+
+<CodeLab
+  client:visible
+  title="debug_docker.sh"
+  language="bash"
+  code={`cat << 'EOF'
+# 1. See exited containers and exit codes
+docker ps -a
+
+# 2. Stream last 50 log lines
+docker logs --tail 50 -f api
+
+# 3. Live CPU/RAM monitor
+docker stats --no-stream
+EOF`}
+  expectedOutput={`# 1. See exited containers and exit codes
+docker ps -a
+
+# 2. Stream last 50 log lines
+docker logs --tail 50 -f api
+
+# 3. Live CPU/RAM monitor
+docker stats --no-stream`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What does Exited (137) on a Docker container usually indicate?",
+      options: [
+        "The process received SIGKILL, most commonly because it exceeded its memory limit (OOM)",
+        "The container succeeded normally",
+        "Port 80 is already in use"
+      ],
+      answer: 0,
+      explanation: "128 + 9 (SIGKILL) = 137, the classic signature of an Out-Of-Memory kill."
+    }
+  ]}
+/>

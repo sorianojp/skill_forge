@@ -1,0 +1,87 @@
+---
+title: "Linked Lists & Fast/Slow Pointers"
+description: "Reverse a singly linked list in O(1) space and detect cycles or find the middle node using Floyd's Fast/Slow pointers."
+course: "dsa-fundamentals"
+module: "Core Data Structures"
+order: 7
+durationMinutes: 9
+objectives:
+  - "Reverse a linked list iteratively with prev, curr, and next pointers"
+  - "Detect cycles in O(n) time and O(1) space using slow (+1) and fast (+2) pointers"
+  - "Know when linked lists win (O(1) head insert/delete) vs. arrays (cache locality & O(1) indexing)"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+Two classic pointer techniques solve 80% of linked list interview problems:
+1. **In-place reversal:** Save `next = curr.next`, flip `curr.next = prev`, advance `prev = curr; curr = next`.
+2. **Fast & Slow pointers (Floyd's Tortoise & Hare):** Move `slow` by 1 step and `fast` by 2 steps. When `fast` reaches the end, `slow` is at the exact **middle**; if there is a **cycle**, `fast` catches up to `slow` in $O(1)$ space!
+
+<Callout type="tip" title="Use a Dummy Head Node">
+  When inserting or deleting nodes that might touch the head of a list, creating a temporary <code>dummy = &#123; next: head &#125;</code> removes special-case edge checks.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Reverse a Linked List"
+  prompt="Save curr.next, reverse the link to prev, and advance both pointers."
+  template={`while (curr) {
+  const next = curr.next;
+  curr.next = {{0}};
+  prev = curr;
+  curr = {{1}};
+}`}
+  blanks={[
+    { answer: 'prev', placeholder: 'ptr' },
+    { answer: 'next', placeholder: 'ptr' },
+  ]}
+  hint={'Point curr.next backward to prev, then move curr forward to the saved next.'}
+/>
+
+## Live DSA Playground
+
+<Playground
+  client:visible
+  title="In-Place Linked List Reversal"
+  defaultTab="js"
+  showConsole={true}
+  html={`<p>Reverse 1 -> 2 -> 3 -> 4 in O(n) time and O(1) extra space.</p>`}
+  js={`let head = { val: 1, next: { val: 2, next: { val: 3, next: { val: 4, next: null } } } };
+
+function reverse(node) {
+  let prev = null, curr = node;
+  while (curr) {
+    const next = curr.next;
+    curr.next = prev;
+    prev = curr;
+    curr = next;
+  }
+  return prev;
+}
+
+function toArray(node) {
+  const out = [];
+  for (let c = node; c; c = c.next) out.push(c.val);
+  return out;
+}
+
+console.log("Before:", toArray(head));
+console.log("After: ", toArray(reverse(head)));`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "How much extra memory does Floyd's Fast & Slow pointer cycle detection require?",
+      options: ["O(1) constant space", "O(n) Hash Set space", "O(n^2) space"],
+      answer: 0,
+      explanation: "It tracks only two pointer references (slow and fast), using O(1) memory."
+    }
+  ]}
+/>

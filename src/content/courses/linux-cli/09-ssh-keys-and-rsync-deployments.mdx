@@ -1,0 +1,73 @@
+---
+title: "SSH Keys & Zero-Friction rsync Deploys"
+description: "Authenticate to Linux servers securely with Ed25519 SSH keys and sync builds fast using rsync -avz --delete."
+course: "linux-cli"
+module: "Server Administration"
+order: 8
+durationMinutes: 8
+objectives:
+  - "Generate strong Ed25519 SSH key pairs with ssh-keygen -t ed25519"
+  - "Understand why public keys (.pub) go into ~/.ssh/authorized_keys while private keys never leave your machine"
+  - "Deploy static or backend builds fast with rsync -avz --delete"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import CodeLab from '@/components/playground/CodeLab';
+import Exercise from '@/components/quiz/Exercise';
+import Quiz from '@/components/quiz/Quiz';
+
+**SSH keys** replace brittle passwords with public-key cryptography. Only your **public key** (`~/.ssh/id_ed25519.pub`) is added to the server's `~/.ssh/authorized_keys`; your private key stays locked down (`chmod 600`) locally. Once SSH works, **`rsync -avz --delete`** uploads only changed files in seconds.
+
+<Callout type="warning" title="Mind the Trailing Slash in rsync">
+  <code>rsync -avz dist/ user@host:/var/www/app/</code> syncs the <em>contents</em> of <code>dist</code> into <code>/var/www/app/</code>. Without the trailing slash, it creates <code>/var/www/app/dist/</code>.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Sync Build Folder with rsync"
+  prompt="Archive, compress, and remove stale remote files when deploying dist/."
+  template={`{{0}} -avz --{{1}} dist/ root@server:/var/www/app/`}
+  blanks={[
+    { answer: 'rsync', placeholder: 'cmd' },
+    { answer: 'delete', placeholder: 'flag' },
+  ]}
+  hint={'Use rsync -avz --delete to mirror dist/ cleanly onto the server.'}
+/>
+
+## Live Bash Lab
+
+<CodeLab
+  client:visible
+  title="deploy_checklist.sh"
+  language="bash"
+  code={`cat << 'EOF'
+# 1. Generate modern Ed25519 deploy key
+ssh-keygen -t ed25519 -C "deploy@devpath"
+
+# 2. Deploy only changed files over SSH
+rsync -avz --delete dist/ root@server:/var/www/app/
+EOF`}
+  expectedOutput={`# 1. Generate modern Ed25519 deploy key
+ssh-keygen -t ed25519 -C "deploy@devpath"
+
+# 2. Deploy only changed files over SSH
+rsync -avz --delete dist/ root@server:/var/www/app/`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "Which SSH key file should you copy into a remote server's ~/.ssh/authorized_keys?",
+      options: [
+        "Only the public key (.pub)",
+        "The private key",
+        "Both private and public keys"
+      ],
+      answer: 0,
+      explanation: "Never copy your private key to a remote server; servers only ever need your .pub public key."
+    }
+  ]}
+/>

@@ -1,0 +1,76 @@
+---
+title: "Sorting: Merge Sort & O(n log n) Trade-Offs"
+description: "Understand Divide & Conquer sorting with Merge Sort, stability, and why comparison sorts have an O(n log n) lower bound."
+course: "dsa-fundamentals"
+module: "Searching & Trees"
+order: 8
+durationMinutes: 9
+objectives:
+  - "Implement Divide & Conquer Merge Sort in O(n log n) guaranteed time"
+  - "Explain what a stable sort preserves when two keys are equal"
+  - "Compare Merge Sort, Quick Sort, and Timsort trade-offs"
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Exercise from '@/components/quiz/Exercise';
+import Playground from '@/components/playground/Playground';
+import Quiz from '@/components/quiz/Quiz';
+
+**Merge Sort** divides an array in half recursively until subarrays have length 1, then merges sorted halves back together in linear time. Unlike Quick Sort (which can degrade to $O(n^2)$ on bad pivots), Merge Sort guarantees **$O(n \log n)$** worst-case time and is **stable** (preserving original relative order for equal keys).
+
+<Callout type="info" title="Built-In Sorts Use Timsort / Introsort">
+  Python, Java, and modern JavaScript engines use <strong>Timsort</strong> (a hybrid of Merge Sort + Insertion Sort) which is stable and runs in <code>O(n)</code> on already-sorted data.
+</Callout>
+
+## Fill-in-the-Blank Exercise
+
+<Exercise
+  client:visible
+  title="Merge Sort Base Case & Midpoint"
+  prompt="Return immediately when length <= 1 and split at the midpoint."
+  template={`if (arr.length <= {{0}}) return arr;
+const mid = Math.floor(arr.length / {{1}});`}
+  blanks={[
+    { answer: '1', placeholder: 'num' },
+    { answer: '2', placeholder: 'num' },
+  ]}
+  hint={'Arrays of length 0 or 1 are already sorted; split in half with / 2.'}
+/>
+
+## Live DSA Playground
+
+<Playground
+  client:visible
+  title="Divide & Conquer Merge Sort"
+  defaultTab="js"
+  showConsole={true}
+  html={`<p>Run Merge Sort on an unsorted array of numbers.</p>`}
+  js={`function merge(a, b) {
+  const out = [];
+  let i = 0, j = 0;
+  while (i < a.length && j < b.length) {
+    out.push(a[i] <= b[j] ? a[i++] : b[j++]);
+  }
+  return out.concat(a.slice(i), b.slice(j));
+}
+
+function mergeSort(arr) {
+  if (arr.length <= 1) return arr;
+  const mid = Math.floor(arr.length / 2);
+  return merge(mergeSort(arr.slice(0, mid)), mergeSort(arr.slice(mid)));
+}
+
+console.log("Sorted:", mergeSort([38, 27, 43, 3, 9, 82, 10]));`}
+/>
+
+<Quiz
+  client:visible
+  questions={[
+    {
+      question: "What is the worst-case time complexity of Merge Sort?",
+      options: ["O(n log n)", "O(n^2)", "O(n)"],
+      answer: 0,
+      explanation: "Merge Sort always splits the array evenly into log n levels with O(n) merge work per level."
+    }
+  ]}
+/>
