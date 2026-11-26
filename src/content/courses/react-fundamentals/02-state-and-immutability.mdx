@@ -13,7 +13,7 @@ objectives:
 
 import Callout from '@/components/mdx/Callout.astro';
 import Exercise from '@/components/quiz/Exercise';
-import Playground from '@/components/playground/Playground';
+import ReactPlayground from '@/components/playground/ReactPlayground';
 import Quiz from '@/components/quiz/Quiz';
 
 React detects state changes by comparing object references (`Object.is`). If you mutate an array in place (`items.push(x); setItems(items)`), React sees the exact same array reference and **skips re-rendering**. Always create a fresh copy: `setItems(prev => [...prev, x])`.
@@ -39,29 +39,27 @@ const increment = () => setCount({{1}} => prev + 1);`}
 
 ## Live Interactive State Demo
 
-<Playground
+<ReactPlayground
   client:visible
-  title="Immutable Counter & List State"
-  defaultTab="js"
-  showConsole={true}
-  html={`<button id="inc" style="padding:8px 14px;border-radius:10px;border:0;background:#0284c7;color:#fff;font-weight:700;cursor:pointer">Add Lesson (+1)</button>
-<p id="out" style="margin-top:12px;font-weight:700"></p>`}
-  js={`let state = { completed: ["Lesson 1"] };
+  title="Live useState & Immutable Array Update"
+  code={`function App() {
+  const [completed, setCompleted] = useState(['Lesson 1']);
 
-function setState(updater) {
-  state = updater(state);
-  document.getElementById("out").textContent =
-    "Completed (" + state.completed.length + "): " + state.completed.join(", ");
-}
+  const addLesson = () => {
+    setCompleted((prev) => [...prev, 'Lesson ' + (prev.length + 1)]);
+  };
 
-document.getElementById("inc").addEventListener("click", () => {
-  setState((prev) => ({
-    ...prev,
-    completed: [...prev.completed, "Lesson " + (prev.completed.length + 1)]
-  }));
-});
-
-setState((s) => s);`}
+  return (
+    <div>
+      <button onClick={addLesson} style={{ padding: '8px 14px', borderRadius: 10, border: 0, background: '#0284c7', color: '#fff', fontWeight: 700 }}>
+        Complete Next Lesson (+1)
+      </button>
+      <p style={{ marginTop: 12, fontWeight: 600 }}>
+        Completed ({completed.length}): {completed.join(', ')}
+      </p>
+    </div>
+  );
+}`}
 />
 
 <Quiz

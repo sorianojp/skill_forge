@@ -13,7 +13,7 @@ objectives:
 
 import Callout from '@/components/mdx/Callout.astro';
 import Exercise from '@/components/quiz/Exercise';
-import Playground from '@/components/playground/Playground';
+import ReactPlayground from '@/components/playground/ReactPlayground';
 import Quiz from '@/components/quiz/Quiz';
 
 When rendering lists in React (`items.map(item => <Row key={item.id} ... />)`), the **`key`** prop lets React match each item across renders so inputs, animations, and local state stay attached to the right row.
@@ -40,30 +40,36 @@ When rendering lists in React (`items.map(item => <Row key={item.id} ... />)`), 
 
 ## Live Derived List Demo
 
-<Playground
+<ReactPlayground
   client:visible
-  title="Derived Filtered List"
-  defaultTab="js"
-  showConsole={true}
-  html={`<input id="q" placeholder="Filter tracks..." style="padding:8px 12px;border-radius:10px;border:1px solid #cbd5e1;width:100%" />
-<ul id="list" style="margin-top:10px;padding-left:18px"></ul>`}
-  js={`const tracks = [
-  { slug: "ts", title: "TypeScript" },
-  { slug: "react", title: "React 19" },
-  { slug: "node", title: "Node.js" }
+  title="Live Keyed List & Derived Filter (JSX)"
+  code={`const TRACKS = [
+  { slug: 'ts', title: 'TypeScript 5' },
+  { slug: 'react', title: 'React 19' },
+  { slug: 'node', title: 'Node.js 20' },
+  { slug: 'docker', title: 'Docker & Compose' },
 ];
 
-function render(query) {
-  const visible = tracks.filter((t) =>
+function App() {
+  const [query, setQuery] = useState('');
+  const visible = TRACKS.filter((t) =>
     t.title.toLowerCase().includes(query.toLowerCase())
   );
-  document.getElementById("list").innerHTML = visible
-    .map((t) => "<li>" + t.title + "</li>")
-    .join("");
-}
 
-document.getElementById("q").addEventListener("input", (e) => render(e.target.value));
-render("");`}
+  return (
+    <div>
+      <input
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Filter tracks..."
+        style={{ padding: '8px 12px', borderRadius: 10, border: '1px solid #cbd5e1', width: '100%' }}
+      />
+      <ul style={{ marginTop: 10, paddingLeft: 18 }}>
+        {visible.map((t) => <li key={t.slug}>{t.title}</li>)}
+      </ul>
+    </div>
+  );
+}`}
 />
 
 <Quiz

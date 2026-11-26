@@ -13,7 +13,7 @@ objectives:
 
 import Callout from '@/components/mdx/Callout.astro';
 import Exercise from '@/components/quiz/Exercise';
-import Playground from '@/components/playground/Playground';
+import ReactPlayground from '@/components/playground/ReactPlayground';
 import Quiz from '@/components/quiz/Quiz';
 
 **React** treats your UI as a pure function of your data: `UI = Component(props, state)`. Instead of manually hunting down DOM elements with `document.querySelector`, you declare *what* the UI should look like for the current state, and React efficiently updates the DOM.
@@ -40,27 +40,23 @@ import Quiz from '@/components/quiz/Quiz';
 
 ## Live Component Playground
 
-<Playground
+<ReactPlayground
   client:visible
-  title="UI = f(props) in Action"
-  defaultTab="js"
-  showConsole={true}
-  html={`<div id="root"></div>`}
-  css={`.card { padding: 14px; border-radius: 12px; background: #f1f5f9; font-family: system-ui; }
-.badge { display: inline-block; padding: 2px 8px; border-radius: 999px; background: #06b6d4; color: white; font-size: 12px; font-weight: 700; }`}
-  js={`// Declarative component function: props -> HTML
-function CourseCard({ title, lessons }) {
-  return \`<div class="card">
-    <span class="badge">\${lessons} lessons</span>
-    <h3 style="margin:8px 0 0">\${title}</h3>
-  </div>\`;
+  title="Live React Component & Props (JSX)"
+  code={`function CourseCard({ title, lessons }) {
+  return (
+    <div style={{ padding: 14, borderRadius: 12, background: '#f1f5f9' }}>
+      <span style={{ padding: '2px 8px', borderRadius: 999, background: '#0891b2', color: '#fff', fontSize: 12, fontWeight: 700 }}>
+        {lessons} lessons
+      </span>
+      <h3 style={{ margin: '8px 0 0' }}>{title}</h3>
+    </div>
+  );
 }
 
-document.getElementById("root").innerHTML = CourseCard({
-  title: "React 19 Fundamentals",
-  lessons: 6
-});
-console.log("Rendered pure component from props!");`}
+function App() {
+  return <CourseCard title="React 19 Fundamentals" lessons={12} />;
+}`}
 />
 
 <Quiz

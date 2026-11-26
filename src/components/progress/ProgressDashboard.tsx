@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, Award, BookOpen, CheckCircle2, Download, ShieldCheck, Trash2 } from 'lucide-react';
+import { ArrowRight, Award, BookOpen, CheckCircle2, Download, Flame, ShieldCheck, Trash2 } from 'lucide-react';
 import CloudSyncPanel from '@/components/progress/CloudSyncPanel';
 import {
   clearAllProgress,
+  getDailyStreak,
   getProgress,
   subscribeProgress,
   type ProgressState,
@@ -39,6 +40,8 @@ export default function ProgressDashboard({ courses }: Props) {
   const earnedCertificates = courses
     .map((c) => ({ course: c, exam: state.exams?.[c.slug] }))
     .filter((x) => x.exam?.passed);
+  const solvedCount = Object.keys(state.solvedChallenges ?? {}).length;
+  const streak = getDailyStreak();
 
   const handleReset = () => {
     if (window.confirm('Reset all local lesson progress and exam records in this browser?')) {
@@ -52,7 +55,7 @@ export default function ProgressDashboard({ courses }: Props) {
       <CloudSyncPanel />
 
       {/* Top Stats */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-3xl bg-[var(--bg-elevated)] p-6">
           <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[var(--text-subtle)]">
             <BookOpen className="h-4 w-4 text-[var(--accent)]" />
@@ -82,6 +85,22 @@ export default function ProgressDashboard({ courses }: Props) {
             <span className="text-base font-medium text-[var(--text-subtle)]">/ {courses.length}</span>
           </p>
         </div>
+
+        <a
+          href="/practice"
+          className="rounded-3xl bg-[var(--bg-elevated)] p-6 transition hover:-translate-y-0.5"
+        >
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[var(--text-subtle)]">
+            <Flame className="h-4 w-4 text-amber-500" />
+            Daily Streak
+          </div>
+          <p className="mt-2 text-3xl font-extrabold text-[var(--text)]">
+            {streak.current}{' '}
+            <span className="text-base font-medium text-[var(--text-subtle)]">
+              day{streak.current === 1 ? '' : 's'} · {solvedCount} solved
+            </span>
+          </p>
+        </a>
       </div>
 
       {/* Earned Certificates */}

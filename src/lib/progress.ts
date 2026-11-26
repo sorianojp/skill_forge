@@ -14,6 +14,8 @@ export interface ExamResultRecord {
 export interface ProgressState {
   completed: Record<string, string>; // key: "course/lesson" -> ISO timestamp
   exams?: Record<string, ExamResultRecord>; // key: courseSlug
+  solvedChallenges?: Record<string, string>; // key: challengeId -> ISO timestamp
+  activityDays?: string[]; // sorted YYYY-MM-DD local dates
   lastVisited?: {
     courseSlug: string;
     lessonSlug: string;
@@ -24,19 +26,35 @@ export interface ProgressState {
   };
 }
 
+function getLocalDay(date = new Date()): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function addTodayActivity(days?: string[]): string[] {
+  const today = getLocalDay();
+  const set = new Set(days ?? []);
+  set.add(today);
+  return Array.from(set).sort();
+}
+
 function readState(): ProgressState {
-  if (typeof window === 'undefined') return { completed: {}, exams: {} };
+  if (typeof window === 'undefined') return { completed: {}, exams: {}, solvedChallenges: {}, activityDays: [] };
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { completed: {}, exams: {} };
+    if (!raw) return { completed: {}, exams: {}, solvedChallenges: {}, activityDays: [] };
     const parsed = JSON.parse(raw) as ProgressState;
     return {
       completed: parsed.completed ?? {},
       exams: parsed.exams ?? {},
+      solvedChallenges: parsed.solvedChallenges ?? {},
+      activityDays: parsed.activityDays ?? [],
       lastVisited: parsed.lastVisited,
     };
   } catch {
-    return { completed: {}, exams: {} };
+    return { completed: {}, exams: {}, solvedChallenges: {}, activityDays: [] };
   }
 }
 
@@ -71,9 +89,15 @@ export function mergeProgressState(remote: ProgressState): ProgressState {
       };
     }
   }
+  const mergedSolved = { ...(remote.solvedChallenges ?? {}), ...(local.solvedChallenges ?? {}) };
+  const mergedDays = Array.from(
+    new Set([...(remote.activityDays ?? []), ...(local.activityDays ?? [])])
+  ).sort();
   const merged: ProgressState = {
     completed: mergedCompleted,
     exams: mergedExams,
+    solvedChallenges: mergedSolved,
+    activityDays: mergedDays,
     lastVisited: local.lastVisited ?? remote.lastVisited,
   };
   writeState(merged, false);
@@ -92,11 +116,42 @@ export function setLessonCompleted(lessonKey: string, completed: boolean): Progr
   const state = readState();
   if (completed) {
     state.completed[lessonKey] = new Date().toISOString();
+    state.activityDays = addTodayActivity(state.activityDays);
   } else {
     delete state.completed[lessonKey];
   }
   writeState(state);
   return state;
+}
+
+export function markChallengeSolved(challengeId: string): ProgressState {
+  const state = readState();
+  state.solvedChallenges = {
+    ...(state.solvedChallenges ?? {}),
+    [challengeId]: new Date().toISOString(),
+  };
+  state.activityDays = addTodayActivity(state.activityDays);
+  writeState(state);
+  return state;
+}
+
+export function getDailyStreak(): { current: number; longest: number; activeToday: boolean } {
+  const days = new Set(readState().activityDays ?? []);
+  const todayStr = getLocalDay();
+  const activeToday = days.has(todayStr);
+
+  // Compute current streak ending today or yesterday
+  let current = 0;
+  const cursor = new Date();
+  if (!activeToday) {
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  while (days.has(getLocalDay(cursor))) {
+    current++;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+
+  return { current, longest: Math.max(current, days.size > 0 ? 1 : 0), activeToday };
 }
 
 export function toggleLessonCompleted(lessonKey: string): boolean {

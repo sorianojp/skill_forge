@@ -5,12 +5,43 @@ import CourseCardFooter from '@/components/progress/CourseCardFooter';
 import TrackIcon from '@/components/ui/TrackIcon.astro';
 import { getAllCoursesSorted, getCourseLessons, getLessonKey, getLessonSlug } from '@/lib/courses';
 
+const CATEGORY_MAP: Record<string, string> = {
+  HTML: 'web',
+  CSS: 'web',
+  JavaScript: 'web',
+  TypeScript: 'web',
+  React: 'web',
+  SQL: 'backend',
+  PHP: 'backend',
+  Python: 'backend',
+  'Node.js': 'backend',
+  OOP: 'systems',
+  C: 'systems',
+  'C++': 'systems',
+  Java: 'systems',
+  'C#': 'systems',
+  Git: 'devops',
+  Linux: 'devops',
+  Docker: 'devops',
+  DSA: 'cs',
+};
+
+const CATEGORIES = [
+  { id: 'all', label: 'All Tracks' },
+  { id: 'web', label: 'Web & Frontend' },
+  { id: 'backend', label: 'Backend & Data' },
+  { id: 'systems', label: 'Systems & OOP' },
+  { id: 'devops', label: 'DevOps & Tools' },
+  { id: 'cs', label: 'CS & DSA' },
+];
+
 const courses = await getAllCoursesSorted();
 const courseCards = await Promise.all(
   courses.map(async (course) => {
     const lessons = await getCourseLessons(course.data.slug);
     return {
       course,
+      category: CATEGORY_MAP[course.data.track] ?? 'web',
       lessonRefs: lessons.map((l) => {
         const slug = getLessonSlug(l);
         return {
@@ -23,22 +54,64 @@ const courseCards = await Promise.all(
 );
 ---
 
-<BaseLayout title="All Courses" description="Explore all free interactive web development courses on DevPath.">
+<BaseLayout title="All Courses" description="Explore all 18 free interactive software engineering courses on DevPath.">
   <div class="mx-auto max-w-[82rem] px-5 py-12 sm:px-6 lg:px-8">
-    <header class="mb-10 max-w-2xl">
+    <header class="mb-8 max-w-2xl">
       <h1 class="text-3xl font-extrabold tracking-tight text-[var(--text)] sm:text-4xl">
         Free Courses
       </h1>
       <p class="mt-2 text-base text-[var(--text-muted)]">
-        Structured, hands-on courses with interactive code playgrounds and quizzes. Learn at your own pace.
+        Structured, hands-on courses with interactive code playgrounds, quizzes, and verifiable certificates.
       </p>
     </header>
 
     <ContinueBanner client:load />
 
-    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {courseCards.map(({ course, lessonRefs }) => (
-        <article class="flex flex-col justify-between rounded-3xl bg-[var(--bg-elevated)] p-7 transition hover:-translate-y-0.5">
+    <!-- Category & Difficulty Filters -->
+    <div class="mb-8 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Filter by category">
+        {CATEGORIES.map((cat, idx) => (
+          <button
+            type="button"
+            data-cat-btn={cat.id}
+            class:list={[
+              'min-h-10 rounded-full px-4 py-2 text-xs font-semibold transition',
+              idx === 0
+                ? 'bg-[var(--accent)] text-white shadow-sm'
+                : 'bg-[var(--bg-elevated)] text-[var(--text-muted)] hover:text-[var(--text)]',
+            ]}
+          >
+            {cat.label}
+          </button>
+        ))}
+      </div>
+
+      <div class="flex items-center gap-1 rounded-2xl bg-[var(--bg-muted)] p-1" role="group" aria-label="Filter by difficulty">
+        {['all', 'Beginner', 'Intermediate'].map((lvl, idx) => (
+          <button
+            type="button"
+            data-lvl-btn={lvl}
+            class:list={[
+              'min-h-9 rounded-xl px-3.5 py-1.5 text-xs font-semibold transition',
+              idx === 0
+                ? 'bg-[var(--bg-elevated)] text-[var(--text)] shadow-xs'
+                : 'text-[var(--text-muted)] hover:text-[var(--text)]',
+            ]}
+          >
+            {lvl === 'all' ? 'All Levels' : lvl}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <div id="courses-grid" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {courseCards.map(({ course, category, lessonRefs }) => (
+        <article
+          data-course-card
+          data-category={category}
+          data-difficulty={course.data.difficulty}
+          class="flex flex-col justify-between rounded-3xl bg-[var(--bg-elevated)] p-7 transition hover:-translate-y-0.5"
+        >
           <div>
             <div class="flex items-start justify-between gap-3">
               <TrackIcon track={course.data.track} size="md" />
@@ -68,5 +141,57 @@ const courseCards = await Promise.all(
         </article>
       ))}
     </div>
+
+    <p id="courses-empty" class="mt-8 hidden rounded-3xl bg-[var(--bg-elevated)] p-8 text-center text-sm text-[var(--text-muted)]">
+      No courses match that category and difficulty combination. Try switching to "All Levels".
+    </p>
   </div>
+
+  <script>
+    const catButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-cat-btn]'));
+    const lvlButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-lvl-btn]'));
+    const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-course-card]'));
+    const emptyMsg = document.getElementById('courses-empty');
+
+    let activeCat = 'all';
+    let activeLvl = 'all';
+
+    function applyFilters() {
+      let visible = 0;
+      cards.forEach((card) => {
+        const matchCat = activeCat === 'all' || card.dataset.category === activeCat;
+        const matchLvl = activeLvl === 'all' || card.dataset.difficulty === activeLvl;
+        const show = matchCat && matchLvl;
+        card.classList.toggle('hidden', !show);
+        if (show) visible++;
+      });
+      emptyMsg?.classList.toggle('hidden', visible > 0);
+    }
+
+    catButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        activeCat = btn.dataset.catBtn || 'all';
+        catButtons.forEach((b) => {
+          const isAct = b === btn;
+          b.className = isAct
+            ? 'min-h-10 rounded-full px-4 py-2 text-xs font-semibold transition bg-[var(--accent)] text-white shadow-sm'
+            : 'min-h-10 rounded-full px-4 py-2 text-xs font-semibold transition bg-[var(--bg-elevated)] text-[var(--text-muted)] hover:text-[var(--text)]';
+        });
+        applyFilters();
+      });
+    });
+
+    lvlButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        activeLvl = btn.dataset.lvlBtn || 'all';
+        lvlButtons.forEach((b) => {
+          const isAct = b === btn;
+          b.className = isAct
+            ? 'min-h-9 rounded-xl px-3.5 py-1.5 text-xs font-semibold transition bg-[var(--bg-elevated)] text-[var(--text)] shadow-xs'
+            : 'min-h-9 rounded-xl px-3.5 py-1.5 text-xs font-semibold transition text-[var(--text-muted)] hover:text-[var(--text)]';
+        });
+        applyFilters();
+      });
+    });
+  </script>
 </BaseLayout>

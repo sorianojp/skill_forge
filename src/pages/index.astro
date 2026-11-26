@@ -8,12 +8,43 @@ import { CAREER_PATHS } from '@/data/paths';
 import { getAllCoursesSorted, getCourseLessons, getLessonKey, getLessonSlug } from '@/lib/courses';
 import { getCollection } from 'astro:content';
 
+const CATEGORY_MAP: Record<string, string> = {
+  HTML: 'web',
+  CSS: 'web',
+  JavaScript: 'web',
+  TypeScript: 'web',
+  React: 'web',
+  SQL: 'backend',
+  PHP: 'backend',
+  Python: 'backend',
+  'Node.js': 'backend',
+  OOP: 'systems',
+  C: 'systems',
+  'C++': 'systems',
+  Java: 'systems',
+  'C#': 'systems',
+  Git: 'devops',
+  Linux: 'devops',
+  Docker: 'devops',
+  DSA: 'cs',
+};
+
+const HOME_CATEGORIES = [
+  { id: 'all', label: 'All (18)' },
+  { id: 'web', label: 'Web & Frontend' },
+  { id: 'backend', label: 'Backend & Data' },
+  { id: 'systems', label: 'Systems & OOP' },
+  { id: 'devops', label: 'DevOps & Tools' },
+  { id: 'cs', label: 'CS & DSA' },
+];
+
 const courses = await getAllCoursesSorted();
 const courseCards = await Promise.all(
   courses.map(async (course) => {
     const lessons = await getCourseLessons(course.data.slug);
     return {
       course,
+      category: CATEGORY_MAP[course.data.track] ?? 'web',
       lessonRefs: lessons.map((l) => {
         const slug = getLessonSlug(l);
         return {
@@ -95,9 +126,30 @@ const references = await getCollection('references');
         </a>
       </div>
 
-      <div class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {courseCards.map(({ course, lessonRefs }) => (
-          <article class="flex flex-col justify-between rounded-3xl bg-[var(--bg-elevated)] p-7 transition hover:-translate-y-0.5">
+      <div class="mt-6 flex flex-wrap items-center gap-2" role="group" aria-label="Filter courses by category">
+        {HOME_CATEGORIES.map((cat, idx) => (
+          <button
+            type="button"
+            data-home-cat={cat.id}
+            class:list={[
+              'min-h-10 rounded-full px-4 py-2 text-xs font-semibold transition',
+              idx === 0
+                ? 'bg-[var(--accent)] text-white shadow-sm'
+                : 'bg-[var(--bg-elevated)] text-[var(--text-muted)] hover:text-[var(--text)]',
+            ]}
+          >
+            {cat.label}
+          </button>
+        ))}
+      </div>
+
+      <div class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {courseCards.map(({ course, category, lessonRefs }) => (
+          <article
+            data-home-card
+            data-category={category}
+            class="flex flex-col justify-between rounded-3xl bg-[var(--bg-elevated)] p-7 transition hover:-translate-y-0.5"
+          >
             <div>
               <div class="flex items-start justify-between gap-3">
                 <TrackIcon track={course.data.track} size="md" />
@@ -268,4 +320,22 @@ btn.addEventListener('click', () => {
       </section>
     )}
   </div>
+
+  <script>
+    const homeCatBtns = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-home-cat]'));
+    const homeCards = Array.from(document.querySelectorAll<HTMLElement>('[data-home-card]'));
+    homeCatBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const cat = btn.dataset.homeCat || 'all';
+        homeCatBtns.forEach((b) => {
+          b.className = b === btn
+            ? 'min-h-10 rounded-full px-4 py-2 text-xs font-semibold transition bg-[var(--accent)] text-white shadow-sm'
+            : 'min-h-10 rounded-full px-4 py-2 text-xs font-semibold transition bg-[var(--bg-elevated)] text-[var(--text-muted)] hover:text-[var(--text)]';
+        });
+        homeCards.forEach((card) => {
+          card.classList.toggle('hidden', cat !== 'all' && card.dataset.category !== cat);
+        });
+      });
+    });
+  </script>
 </BaseLayout>

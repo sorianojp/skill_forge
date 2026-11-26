@@ -13,7 +13,7 @@ objectives:
 
 import Callout from '@/components/mdx/Callout.astro';
 import Exercise from '@/components/quiz/Exercise';
-import Playground from '@/components/playground/Playground';
+import ReactPlayground from '@/components/playground/ReactPlayground';
 import Quiz from '@/components/quiz/Quiz';
 
 In this capstone, you will combine React's core patterns: **single source of truth state**, **immutable updates**, **derived counts**, and **keyed list rendering**.
@@ -36,40 +36,47 @@ In this capstone, you will combine React's core patterns: **single source of tru
 
 ## Capstone Playground
 
-<Playground
+<ReactPlayground
   client:visible
-  title="Interactive Task Board"
-  defaultTab="js"
-  showConsole={true}
-  html={`<div style="font-family:system-ui">
-  <p id="stats" style="font-weight:700;margin:0 0 8px"></p>
-  <ul id="tasks" style="list-style:none;padding:0;margin:0;display:grid;gap:6px"></ul>
-</div>`}
-  js={`let tasks = [
-  { id: 1, title: "Learn Components & Props", done: true },
-  { id: 2, title: "Master Immutable State", done: false },
-  { id: 3, title: "Pass React Final Exam", done: false }
-];
+  title="Interactive React Task Board (Live JSX)"
+  height={290}
+  code={`function App() {
+  const [tasks, setTasks] = useState([
+    { id: 1, title: 'Learn Components & Props', done: true },
+    { id: 2, title: 'Master Immutable State', done: false },
+    { id: 3, title: 'Pass React Final Exam', done: false },
+  ]);
 
-function toggle(id) {
-  tasks = tasks.map((t) => (t.id === id ? { ...t, done: !t.done } : t));
-  render();
-}
+  const toggle = (id) =>
+    setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t)));
 
-function render() {
   const remaining = tasks.filter((t) => !t.done).length;
-  document.getElementById("stats").textContent = remaining + " remaining of " + tasks.length;
-  const ul = document.getElementById("tasks");
-  ul.innerHTML = "";
-  tasks.forEach((t) => {
-    const li = document.createElement("li");
-    li.innerHTML = \`<button style="width:100%;text-align:left;padding:8px 12px;border-radius:10px;border:0;background:\${t.done ? "#dcfce7" : "#f1f5f9"};cursor:pointer">\${t.done ? "✓ " : "○ "}\${t.title}</button>\`;
-    li.querySelector("button").addEventListener("click", () => toggle(t.id));
-    ul.appendChild(li);
-  });
-}
 
-render();`}
+  return (
+    <div>
+      <p style={{ fontWeight: 700, margin: '0 0 8px' }}>
+        {remaining} remaining of {tasks.length}
+      </p>
+      <div style={{ display: 'grid', gap: 6 }}>
+        {tasks.map((t) => (
+          <button
+            key={t.id}
+            onClick={() => toggle(t.id)}
+            style={{
+              textAlign: 'left',
+              padding: '8px 12px',
+              borderRadius: 10,
+              border: 0,
+              background: t.done ? '#dcfce7' : '#f1f5f9',
+            }}
+          >
+            {t.done ? '✓ ' : '○ '}{t.title}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}`}
 />
 
 <Quiz
