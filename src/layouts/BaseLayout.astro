@@ -1,5 +1,6 @@
 ---
 import '@/styles/global.css';
+import FeedbackModal from '@/components/layout/FeedbackModal';
 import SearchModal from '@/components/layout/SearchModal.astro';
 
 interface Props {
@@ -308,6 +309,7 @@ const currentPath = Astro.url.pathname;
           <a href="/courses" class="transition hover:text-white">Courses</a>
           <a href="/projects" class="transition hover:text-white">Projects</a>
           <a href="/practice" class="transition hover:text-white">Practice</a>
+          <a href="/interview" class="transition hover:text-white">Mock Interview</a>
           <a href="/flashcards" class="transition hover:text-white">Flashcards</a>
           <a href="/reference" class="transition hover:text-white">Reference</a>
           <a href="/playground" class="transition hover:text-white">Playground</a>
@@ -315,6 +317,7 @@ const currentPath = Astro.url.pathname;
           <a href="/leaderboard" class="transition hover:text-white">Leaderboard</a>
           <a href="/profile" class="transition hover:text-white">Profiles</a>
           <a href="/verify" class="transition hover:text-white">Verify Certificate</a>
+          <FeedbackModal client:idle />
         </div>
       </div>
     </footer>

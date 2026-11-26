@@ -85,6 +85,15 @@ def init_db() -> None:
             );
             CREATE INDEX IF NOT EXISTS idx_events_type_day ON page_events(event_type, day);
             CREATE INDEX IF NOT EXISTS idx_events_course ON page_events(course_slug);
+
+            CREATE TABLE IF NOT EXISTS feedback (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                kind TEXT NOT NULL,
+                message TEXT NOT NULL,
+                page_path TEXT NOT NULL DEFAULT '',
+                contact TEXT NOT NULL DEFAULT '',
+                created_at TEXT NOT NULL
+            );
             """
         )
         # Safe additive migrations for public learner profiles
@@ -177,6 +186,19 @@ def get_admin_stats() -> dict:
                 "SELECT cert_id, learner_name, course_slug, course_title, score, issued_at FROM certificates ORDER BY rowid DESC LIMIT 12"
             ).fetchall()
         ]
+        recent_feedback = [
+            {
+                "id": r[0],
+                "kind": r[1],
+                "message": r[2],
+                "pagePath": r[3],
+                "contact": r[4],
+                "createdAt": r[5],
+            }
+            for r in conn.execute(
+                "SELECT id, kind, message, page_path, contact, created_at FROM feedback ORDER BY id DESC LIMIT 20"
+            ).fetchall()
+        ]
 
     return {
         "totals": {
@@ -192,6 +214,7 @@ def get_admin_stats() -> dict:
         "topPages": top_pages,
         "runnerBreakdown": runner_breakdown,
         "recentCertificates": recent_certs,
+        "recentFeedback": recent_feedback,
     }
 
 
@@ -506,6 +529,33 @@ class SkillForgeHandler(BaseHTTPRequestHandler):
     def do_POST(self) -> None:
         path = self.path.split("?")[0]
         ip = self.headers.get("X-Forwarded-For", self.client_address[0]).split(",")[0].strip()
+
+        if path == "/api/feedback":
+            if not check_rate_limit(f"fb:{ip}", limit=10, window=300.0):
+                self._send_json(429, {"error": "Too many feedback submissions. Please try again shortly."})
+                return
+            body = self._read_json(8_000)
+            if not body:
+                self._send_json(400, {"error": "Invalid JSON payload"})
+                return
+            kind = str(body.get("kind", "suggestion")).strip().lower()
+            if kind not in {"bug", "track-request", "suggestion", "typo"}:
+                kind = "suggestion"
+            message = str(body.get("message", "")).strip()[:1000]
+            page_path = str(body.get("pagePath", "/")).strip()[:200]
+            contact = str(body.get("contact", "")).strip()[:120]
+            if len(message) < 5:
+                self._send_json(400, {"error": "Please write at least 5 characters."})
+                return
+            created_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+            with DB_LOCK, sqlite3.connect(DB_PATH) as conn:
+                conn.execute(
+                    "INSERT INTO feedback (kind, message, page_path, contact, created_at) VALUES (?, ?, ?, ?, ?)",
+                    (kind, message, page_path, contact, created_at),
+                )
+                conn.commit()
+            self._send_json(201, {"ok": True})
+            return
 
         if path == "/api/analytics/event":
             if not check_rate_limit(f"evt:{ip}", limit=120, window=60.0):

@@ -1,0 +1,95 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import MockInterview, { type InterviewRole, type TaggedQuestion } from '@/components/quiz/MockInterview';
+import { COURSE_EXAMS } from '@/data/exams';
+import { EXTRA_EXAM_QUESTIONS } from '@/data/examsExtra';
+import { getAllCoursesSorted } from '@/lib/courses';
+
+const courses = await getAllCoursesSorted();
+const titleBySlug = new Map(courses.map((c) => [c.data.slug, c.data.shortTitle]));
+
+function buildPool(slugs: string[]): TaggedQuestion[] {
+  return slugs.flatMap((slug) => {
+    const label = titleBySlug.get(slug) ?? slug;
+    const qs = [...(COURSE_EXAMS[slug] ?? []), ...(EXTRA_EXAM_QUESTIONS[slug] ?? [])];
+    return qs.map((q) => ({ ...q, topicSlug: slug, topicLabel: label }));
+  });
+}
+
+const roles: InterviewRole[] = [
+  {
+    id: 'frontend',
+    title: 'Frontend Engineer Mock',
+    description: '20 randomized questions across semantic HTML, modern CSS layout, JavaScript, TypeScript, and React 19.',
+    topics: ['HTML', 'CSS', 'JavaScript', 'TypeScript', 'React'],
+    pool: buildPool([
+      'html-fundamentals',
+      'css-layout',
+      'javascript-essentials',
+      'typescript-essentials',
+      'react-fundamentals',
+    ]),
+  },
+  {
+    id: 'backend',
+    title: 'Backend & Database Engineer Mock',
+    description: '20 randomized questions across Node.js 20, Python 3, Go, SQL querying, and PostgreSQL indexing/ACID design.',
+    topics: ['Node.js', 'Python', 'Go', 'SQL', 'PostgreSQL'],
+    pool: buildPool([
+      'nodejs-essentials',
+      'python-fundamentals',
+      'go-fundamentals',
+      'sql-essentials',
+      'postgresql-design',
+    ]),
+  },
+  {
+    id: 'fullstack',
+    title: 'Full-Stack Web Engineer Mock',
+    description: '20 randomized questions spanning browser JS, React, Node.js APIs, SQL databases, Git, and Docker.',
+    topics: ['JavaScript', 'React', 'Node.js', 'SQL', 'Git', 'Docker'],
+    pool: buildPool([
+      'javascript-essentials',
+      'react-fundamentals',
+      'nodejs-essentials',
+      'sql-essentials',
+      'git-essentials',
+      'docker-essentials',
+    ]),
+  },
+  {
+    id: 'systems-dsa',
+    title: 'Systems, DevOps & DSA Mock',
+    description: '20 randomized questions covering Big-O algorithms, distributed system design, Linux CLI, Docker, and C++.',
+    topics: ['DSA', 'System Design', 'Linux', 'Docker', 'C++'],
+    pool: buildPool([
+      'dsa-fundamentals',
+      'system-design-fundamentals',
+      'linux-cli',
+      'docker-essentials',
+      'cpp-fundamentals',
+    ]),
+  },
+];
+---
+
+<BaseLayout
+  title="Timed Mock Technical Interviews"
+  description="Practice 20-minute timed role-based software engineering mock interviews across Frontend, Backend, Full-Stack, and Systems/DSA with instant topic readiness reports."
+>
+  <div class="mx-auto max-w-5xl px-5 py-12 sm:px-6 lg:px-8">
+    <header class="mb-8 max-w-2xl">
+      <p class="text-xs font-bold uppercase tracking-wider text-[var(--accent)]">
+        Interview Readiness
+      </p>
+      <h1 class="mt-1 text-3xl font-extrabold tracking-tight text-[var(--text)] sm:text-4xl">
+        Timed Mock Technical Interviews
+      </h1>
+      <p class="mt-2 text-base text-[var(--text-muted)]">
+        Pick a target role, complete 20 randomized questions under a 20-minute timer, and get an instant breakdown of which tracks need review.
+      </p>
+    </header>
+
+    <MockInterview client:load roles={roles} />
+  </div>
+</BaseLayout>

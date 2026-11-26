@@ -33,6 +33,14 @@ interface AdminStats {
     score: number;
     issuedAt: string;
   }>;
+  recentFeedback?: Array<{
+    id: number;
+    kind: string;
+    message: string;
+    pagePath: string;
+    contact: string;
+    createdAt: string;
+  }>;
 }
 
 const ADMIN_SESSION_KEY = 'devpath_admin_key_v1';
@@ -275,6 +283,35 @@ export default function AdminDashboard() {
             </ul>
           )}
         </div>
+      </div>
+
+      {/* Recent Feedback & Track Requests */}
+      <div className="rounded-3xl bg-[var(--bg-elevated)] p-6">
+        <h2 className="text-base font-extrabold text-[var(--text)]">
+          Learner Feedback &amp; Track Requests ({stats.recentFeedback?.length ?? 0})
+        </h2>
+        {!stats.recentFeedback || stats.recentFeedback.length === 0 ? (
+          <p className="mt-4 text-sm text-[var(--text-muted)]">No feedback submissions yet.</p>
+        ) : (
+          <ul className="mt-4 space-y-2.5">
+            {stats.recentFeedback.map((fb) => (
+              <li key={fb.id} className="rounded-2xl bg-[var(--bg-muted)] p-4 text-sm">
+                <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <span className="rounded-full bg-[var(--accent-soft)] px-2.5 py-0.5 font-bold uppercase text-[var(--accent)]">
+                    {fb.kind}
+                  </span>
+                  <span className="font-mono text-[var(--text-subtle)]">
+                    {fb.pagePath} · {fb.createdAt}
+                  </span>
+                </div>
+                <p className="mt-2 whitespace-pre-wrap text-[var(--text)]">{fb.message}</p>
+                {fb.contact && (
+                  <p className="mt-1 text-xs text-[var(--text-muted)]">Contact: {fb.contact}</p>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       {/* Recent Certificates */}

@@ -183,11 +183,39 @@ export default function ProgressDashboard({ courses }: Props) {
           </div>
 
           <div className="rounded-3xl bg-[var(--bg-elevated)] p-6">
-            <div className="flex items-center gap-2">
-              <StickyNote className="h-4 w-4 text-[var(--accent)]" />
-              <h2 className="text-lg font-extrabold text-[var(--text)]">
-                Personal Study Notes ({Object.keys(state.notes ?? {}).length})
-              </h2>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <StickyNote className="h-4 w-4 text-[var(--accent)]" />
+                <h2 className="text-lg font-extrabold text-[var(--text)]">
+                  Personal Study Notes ({Object.keys(state.notes ?? {}).length})
+                </h2>
+              </div>
+              {Object.keys(state.notes ?? {}).length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const md = Object.values(state.notes ?? {})
+                      .map(
+                        (n) =>
+                          `## ${n.title} (${n.courseTitle})\nLink: https://devpath.mycampus.ph${n.href}\n\n${n.text}\n`
+                      )
+                      .join('\n---\n\n');
+                    const blob = new Blob([`# DevPath Personal Study Notes\n\n${md}`], {
+                      type: 'text/markdown;charset=utf-8',
+                    });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'devpath-study-notes.md';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                  }}
+                  className="inline-flex min-h-9 items-center gap-1.5 rounded-xl bg-[var(--bg-muted)] px-3 py-1.5 text-xs font-semibold text-[var(--text)] transition hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]"
+                >
+                  <Download className="h-3.5 w-3.5" />
+                  <span>Export .md</span>
+                </button>
+              )}
             </div>
             {Object.keys(state.notes ?? {}).length === 0 ? (
               <p className="mt-3 text-xs text-[var(--text-muted)]">No personal study notes saved yet.</p>
