@@ -1,0 +1,48 @@
+---
+title: "Sharding, Partition Keys & Consistent Hashing"
+description: "Scale write-heavy datasets beyond one machine using horizontal sharding, good shard keys, and consistent hashing."
+course: "system-design-fundamentals"
+module: "Data at Scale"
+order: 5
+durationMinutes: 10
+objectives:
+  - "Choose high-cardinality shard keys to avoid hot partitions"
+  - "Understand cross-shard join and transaction limitations"
+  - "Minimize key movement during resharding with consistent hashing"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Scale write-heavy datasets beyond one machine using horizontal sharding, good shard keys, and consistent hashing.
+
+Great system design is about explicit trade-offs rather than memorizing buzzwords. Every architectural layer you add (caches, replicas, queues, shards) solves one bottleneck while introducing new operational failure modes.
+
+## Design Checklist
+
+| Dimension | Questions to Ask |
+| :--- | :--- |
+| **Traffic & Scale** | What is the read-to-write ratio, peak QPS, and payload size? |
+| **Consistency** | Can users tolerate eventual consistency for a few seconds, or do we need strict ACID? |
+| **Failure Modes** | What happens if a cache node, replica, or downstream API times out? |
+| **Simplicity** | Can a single well-indexed PostgreSQL instance handle the next 12 months of growth? |
+
+<Callout type="tip" title="Interview & Real-World Rule">
+Start simple (single stateless app + relational DB + cache), measure real bottlenecks, and only introduce sharding or distributed queues when the numbers clearly justify the complexity.
+</Callout>
+
+## Key Takeaways
+
+- **Choose high-cardinality shard keys to avoid hot partitions**
+- **Understand cross-shard join and transaction limitations**
+- **Minimize key movement during resharding with consistent hashing**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "What happens if you shard an orders table by `country` when 80% of your users live in one country?", "options": ["A hot shard forms that receives 80% of all traffic while other shards sit mostly idle", "Queries automatically balance evenly across all shards", "Consistent hashing deletes the extra rows"], "answer": 0, "explanation": "Good shard keys distribute load evenly (e.g., hashing user_id) to avoid hot-spot bottlenecks."}]}
+/>

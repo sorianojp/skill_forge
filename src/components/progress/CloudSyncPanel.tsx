@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
-import { CheckCircle2, Cloud, LogIn, LogOut, RefreshCw, UserPlus } from 'lucide-react';
+import { Check, CheckCircle2, Cloud, Copy, ExternalLink, Globe, LogIn, LogOut, RefreshCw, Save, UserPlus } from 'lucide-react';
 import {
+  fetchMyProfile,
   getCloudSession,
   loginCloudAccount,
   pushProgressToCloud,
   registerCloudAccount,
   setCloudSession,
+  updateMyProfile,
   type CloudSession,
 } from '@/lib/cloudSync';
 import { getProgress, mergeProgressState } from '@/lib/progress';
@@ -20,8 +22,25 @@ export default function CloudSyncPanel() {
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Public profile settings
+  const [handle, setHandle] = useState('');
+  const [bio, setBio] = useState('');
+  const [isPublic, setIsPublic] = useState(false);
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [copiedProfile, setCopiedProfile] = useState(false);
+
   useEffect(() => {
-    setSession(getCloudSession());
+    const s = getCloudSession();
+    setSession(s);
+    if (s) {
+      void fetchMyProfile().then((p) => {
+        if (p) {
+          setHandle(p.handle);
+          setBio(p.bio);
+          setIsPublic(p.isPublic);
+        }
+      });
+    }
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -73,45 +92,148 @@ export default function CloudSyncPanel() {
     setMessage('Signed out. Your local browser progress remains intact.');
   };
 
+  const handleSaveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingProfile(true);
+    setError(null);
+    setMessage(null);
+    const res = await updateMyProfile({
+      handle: handle.trim().toLowerCase(),
+      bio: bio.trim(),
+      isPublic,
+    });
+    if (res.ok) {
+      setMessage(
+        isPublic
+          ? `Public portfolio saved! Shareable at /profile?u=${handle.trim().toLowerCase()}`
+          : 'Profile settings saved (currently private).'
+      );
+    } else {
+      setError(res.error);
+    }
+    setSavingProfile(false);
+  };
+
+  const handleCopyProfileUrl = async () => {
+    if (!handle.trim()) return;
+    const url = `${window.location.origin}/profile?u=${encodeURIComponent(handle.trim().toLowerCase())}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopiedProfile(true);
+      setTimeout(() => setCopiedProfile(false), 1600);
+    } catch {}
+  };
+
   if (session) {
     return (
-      <div className="rounded-3xl bg-[var(--bg-elevated)] p-6">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--success-soft)] text-[var(--success)]">
-              <CheckCircle2 className="h-5 w-5" />
+      <div className="space-y-4">
+        <div className="rounded-3xl bg-[var(--bg-elevated)] p-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--success-soft)] text-[var(--success)]">
+                <CheckCircle2 className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wider text-[var(--success)]">
+                  Cloud Sync Active
+                </p>
+                <p className="text-sm font-bold text-[var(--text)]">
+                  {session.user.name} <span className="font-normal text-[var(--text-muted)]">({session.user.email})</span>
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[var(--success)]">
-                Cloud Sync Active
-              </p>
-              <p className="text-sm font-bold text-[var(--text)]">
-                {session.user.name} <span className="font-normal text-[var(--text-muted)]">({session.user.email})</span>
-              </p>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={handleManualSync}
+                disabled={busy}
+                className="inline-flex min-h-11 items-center gap-2 rounded-2xl bg-[var(--bg-muted)] px-4 py-2.5 text-sm font-semibold text-[var(--text)] transition hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]"
+              >
+                <RefreshCw className={`h-4 w-4 ${busy ? 'animate-spin' : ''}`} />
+                <span>Sync Now</span>
+              </button>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="inline-flex min-h-11 items-center gap-2 rounded-2xl bg-[var(--bg-muted)] px-4 py-2.5 text-sm font-semibold text-[var(--text-muted)] transition hover:text-[var(--text)]"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Sign Out</span>
+              </button>
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={handleManualSync}
-              disabled={busy}
-              className="inline-flex min-h-11 items-center gap-2 rounded-2xl bg-[var(--bg-muted)] px-4 py-2.5 text-sm font-semibold text-[var(--text)] transition hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]"
-            >
-              <RefreshCw className={`h-4 w-4 ${busy ? 'animate-spin' : ''}`} />
-              <span>Sync Now</span>
-            </button>
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="inline-flex min-h-11 items-center gap-2 rounded-2xl bg-[var(--bg-muted)] px-4 py-2.5 text-sm font-semibold text-[var(--text-muted)] transition hover:text-[var(--text)]"
-            >
-              <LogOut className="h-4 w-4" />
-              <span>Sign Out</span>
-            </button>
-          </div>
+
+          {/* Public Portfolio Profile Settings */}
+          <form onSubmit={handleSaveProfile} className="mt-6 border-t border-[var(--border)] pt-5">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Globe className="h-4 w-4 text-[var(--accent)]" />
+                <h3 className="text-sm font-extrabold text-[var(--text)]">Public Portfolio Profile</h3>
+              </div>
+              <label className="inline-flex cursor-pointer items-center gap-2 text-xs font-semibold text-[var(--text)]">
+                <input
+                  type="checkbox"
+                  checked={isPublic}
+                  onChange={(e) => setIsPublic(e.target.checked)}
+                  className="h-4 w-4 accent-[var(--accent)]"
+                />
+                <span>Make profile public</span>
+              </label>
+            </div>
+
+            <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <input
+                type="text"
+                value={handle}
+                onChange={(e) => setHandle(e.target.value)}
+                placeholder="Handle (e.g. jp-dev)"
+                className="min-h-11 rounded-2xl bg-[var(--bg-muted)] px-4 py-2.5 font-mono text-sm text-[var(--text)] outline-none focus:ring-2 focus:ring-[var(--accent)]"
+              />
+              <input
+                type="text"
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                placeholder="Short bio (e.g. Full-stack learner & CS student)"
+                maxLength={200}
+                className="min-h-11 rounded-2xl bg-[var(--bg-muted)] px-4 py-2.5 text-sm text-[var(--text)] outline-none focus:ring-2 focus:ring-[var(--accent)]"
+              />
+            </div>
+
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <button
+                type="submit"
+                disabled={savingProfile}
+                className="inline-flex min-h-10 items-center gap-1.5 rounded-2xl bg-[var(--accent)] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[var(--accent-strong)] disabled:opacity-60"
+              >
+                <Save className="h-3.5 w-3.5" />
+                <span>{savingProfile ? 'Saving...' : 'Save Profile'}</span>
+              </button>
+
+              {isPublic && handle.trim().length >= 3 && (
+                <>
+                  <a
+                    href={`/profile?u=${encodeURIComponent(handle.trim().toLowerCase())}`}
+                    className="inline-flex min-h-10 items-center gap-1.5 rounded-2xl bg-[var(--bg-muted)] px-4 py-2 text-xs font-semibold text-[var(--text)] transition hover:text-[var(--accent)]"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" />
+                    <span>Open Public Profile</span>
+                  </a>
+                  <button
+                    type="button"
+                    onClick={handleCopyProfileUrl}
+                    className="inline-flex min-h-10 items-center gap-1.5 rounded-2xl bg-[var(--bg-muted)] px-4 py-2 text-xs font-semibold text-[var(--text-muted)] transition hover:text-[var(--text)]"
+                  >
+                    {copiedProfile ? <Check className="h-3.5 w-3.5 text-[var(--success)]" /> : <Copy className="h-3.5 w-3.5" />}
+                    <span>{copiedProfile ? 'Link Copied' : 'Copy Share Link'}</span>
+                  </button>
+                </>
+              )}
+            </div>
+          </form>
+
+          {message && <p className="mt-3 text-xs font-medium text-[var(--success)]">{message}</p>}
+          {error && <p className="mt-3 text-xs font-medium text-rose-600">{error}</p>}
         </div>
-        {message && <p className="mt-3 text-xs font-medium text-[var(--success)]">{message}</p>}
-        {error && <p className="mt-3 text-xs font-medium text-rose-600">{error}</p>}
       </div>
     );
   }

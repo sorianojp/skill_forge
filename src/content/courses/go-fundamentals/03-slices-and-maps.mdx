@@ -1,0 +1,56 @@
+---
+title: "Slices, Capacity & Maps"
+description: "Understand how Go slices wrap backing arrays, grow with append, and how maps store key-value pairs safely."
+course: "go-fundamentals"
+module: "Core Syntax"
+order: 3
+durationMinutes: 9
+objectives:
+  - "Distinguish fixed-size arrays from dynamic slices"
+  - "Inspect len() and cap() during append operations"
+  - "Use the comma-ok idiom when reading from maps"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Understand how Go slices wrap backing arrays, grow with append, and how maps store key-value pairs safely.
+
+Go prioritizes simplicity, explicit control flow, fast compilation, and safe concurrency. Every feature in this lesson is part of Go's minimal standard toolkit used across cloud infrastructure, CLI tools, and high-throughput APIs.
+
+## Idiomatic Go Example
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    tracks := []string{"Go", "PostgreSQL"}
+    tracks = append(tracks, "System Design")
+    scores := map[string]int{"go": 95}
+    if val, ok := scores["go"]; ok {
+        fmt.Println(len(tracks), val)
+    }
+}
+```
+
+<Callout type="tip" title="Production Habit">
+Run `gofmt -w .` and `go vet ./...` before every commit. Go ships formatting and static analysis directly in the toolchain so teams never argue over style.
+</Callout>
+
+## Key Takeaways
+
+- **Distinguish fixed-size arrays from dynamic slices**
+- **Inspect len() and cap() during append operations**
+- **Use the comma-ok idiom when reading from maps**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "What does `val, ok := m[key]` tell you when reading from a Go map?", "options": ["Whether key actually exists in the map vs returning the zero value", "Whether the map is sorted", "The memory address of the map"], "answer": 0, "explanation": "The comma-ok idiom distinguishes a missing key from a key whose stored value happens to be the zero value."}]}
+/>

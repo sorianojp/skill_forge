@@ -35,10 +35,12 @@ COMPILERS = {
     "c": {"compiler": "gcc-13.2.0-c", "options": "warning,c11"},
     "cpp": {"compiler": "gcc-13.2.0", "options": "warning,c++20"},
     "java": {"compiler": "openjdk-jdk-21+35", "options": ""},
-    "csharp": {"compiler": "dotnetcore-8.0.402", "options": ""},
+    "csharp": {"compiler": "mono-6.12.0.199", "options": ""},
     "ts": {"compiler": "typescript-5.6.2", "options": ""},
     "node": {"compiler": "nodejs-20.17.0", "options": ""},
     "bash": {"compiler": "bash", "options": ""},
+    "go": {"compiler": "go-1.22.8", "options": ""},
+    "rust": {"compiler": "rust-1.85.1", "options": ""},
 }
 
 RATE_LOCK = threading.Lock()
@@ -84,6 +86,19 @@ def init_db() -> None:
             CREATE INDEX IF NOT EXISTS idx_events_type_day ON page_events(event_type, day);
             CREATE INDEX IF NOT EXISTS idx_events_course ON page_events(course_slug);
             """
+        )
+        # Safe additive migrations for public learner profiles
+        for col_sql in [
+            "ALTER TABLE users ADD COLUMN handle TEXT",
+            "ALTER TABLE users ADD COLUMN bio TEXT NOT NULL DEFAULT ''",
+            "ALTER TABLE users ADD COLUMN is_public INTEGER NOT NULL DEFAULT 0",
+        ]:
+            try:
+                conn.execute(col_sql)
+            except sqlite3.OperationalError:
+                pass
+        conn.execute(
+            "CREATE UNIQUE INDEX IF NOT EXISTS idx_users_handle ON users(handle) WHERE handle IS NOT NULL AND handle != ''"
         )
         conn.commit()
 
@@ -206,6 +221,24 @@ def run_wandbox(language: str, code: str) -> dict:
     if language == "java":
         # Wandbox compiles prog.java, so remove `public` before top-level class declarations.
         source = re.sub(r"\bpublic\s+class\b", "class", source)
+    elif language == "csharp":
+        # Mono C# requires a class + static void Main entry point; auto-wrap top-level snippets.
+        if not re.search(r"\bstatic\s+(?:void|int|async\s+Task)\s+Main\s*\(", source):
+            using_lines = []
+            body_lines = []
+            for ln in source.splitlines():
+                if re.match(r"^\s*using\s+[A-Za-z0-9_.]+;\s*$", ln):
+                    using_lines.append(ln.strip())
+                else:
+                    body_lines.append(ln)
+            if not any(u == "using System;" for u in using_lines):
+                using_lines.insert(0, "using System;")
+            if not any(u == "using System.Linq;" for u in using_lines):
+                using_lines.append("using System.Linq;")
+            if not any(u == "using System.Collections.Generic;" for u in using_lines):
+                using_lines.append("using System.Collections.Generic;")
+            body = "\n".join("        " + l for l in body_lines)
+            source = "\n".join(using_lines) + "\n\nclass Program {\n    static void Main() {\n" + body + "\n    }\n}\n"
 
     payload = {
         "code": source,
@@ -320,6 +353,91 @@ class SkillForgeHandler(BaseHTTPRequestHandler):
                     "score": row[4],
                     "total": row[5],
                     "issuedAt": row[6],
+                },
+            )
+            return
+
+        if path == "/api/profile/me":
+            token = self._bearer_token()
+            if not token:
+                self._send_json(401, {"error": "Unauthorized"})
+                return
+            with DB_LOCK, sqlite3.connect(DB_PATH) as conn:
+                row = conn.execute(
+                    "SELECT email, name, handle, bio, is_public FROM users WHERE token = ?",
+                    (token,),
+                ).fetchone()
+            if not row:
+                self._send_json(401, {"error": "Invalid session token"})
+                return
+            self._send_json(
+                200,
+                {
+                    "email": row[0],
+                    "name": row[1],
+                    "handle": row[2] or "",
+                    "bio": row[3] or "",
+                    "isPublic": bool(row[4]),
+                },
+            )
+            return
+
+        if path.startswith("/api/profiles/"):
+            handle = path[len("/api/profiles/"):].strip().lower()
+            if not re.match(r"^[a-z0-9][a-z0-9-]{2,23}$", handle):
+                self._send_json(404, {"error": "Profile not found"})
+                return
+            with DB_LOCK, sqlite3.connect(DB_PATH) as conn:
+                row = conn.execute(
+                    "SELECT name, handle, bio, progress_json, updated_at FROM users WHERE handle = ? AND is_public = 1",
+                    (handle,),
+                ).fetchone()
+                if not row:
+                    self._send_json(404, {"error": "Profile not found or private"})
+                    return
+                progress = json.loads(row[3] or "{}")
+                completed = progress.get("completed") or {}
+                solved = progress.get("solvedChallenges") or {}
+                exams = progress.get("exams") or {}
+                days = sorted(set(progress.get("activityDays") or []))
+                certs = []
+                for slug, rec in exams.items():
+                    if isinstance(rec, dict) and rec.get("passed") and rec.get("certificateId"):
+                        cid = rec.get("certificateId")
+                        crow = conn.execute(
+                            "SELECT course_title, score, issued_at FROM certificates WHERE cert_id = ?",
+                            (cid,),
+                        ).fetchone()
+                        certs.append(
+                            {
+                                "certId": cid,
+                                "courseSlug": slug,
+                                "courseTitle": crow[0] if crow else slug.replace("-", " ").title(),
+                                "score": crow[1] if crow else rec.get("bestScore", 100),
+                                "issuedAt": crow[2] if crow else (rec.get("passedAt") or "")[:10],
+                            }
+                        )
+            # Compute completed tracks summary
+            by_course: dict[str, int] = {}
+            for k in completed.keys():
+                if "/" in k:
+                    cslug = k.split("/", 1)[0]
+                    by_course[cslug] = by_course.get(cslug, 0) + 1
+            self._send_json(
+                200,
+                {
+                    "name": row[0],
+                    "handle": row[1],
+                    "bio": row[2] or "",
+                    "updatedAt": row[4],
+                    "stats": {
+                        "completedLessons": len(completed),
+                        "solvedChallenges": len(solved),
+                        "activeDays": len(days),
+                        "totalCertificates": len(certs),
+                    },
+                    "coursesProgress": by_course,
+                    "certificates": certs,
                 },
             )
             return
@@ -483,6 +601,50 @@ class SkillForgeHandler(BaseHTTPRequestHandler):
 
     def do_PUT(self) -> None:
         path = self.path.split("?")[0]
+        if path == "/api/profile/me":
+            token = self._bearer_token()
+            if not token:
+                self._send_json(401, {"error": "Unauthorized"})
+                return
+            body = self._read_json(16_000)
+            if not body:
+                self._send_json(400, {"error": "Invalid JSON payload"})
+                return
+            handle = str(body.get("handle", "")).strip().lower()
+            bio = str(body.get("bio", "")).strip()[:200]
+            is_public = 1 if body.get("isPublic") else 0
+            name = str(body.get("name", "")).strip()[:80]
+            if handle and not re.match(r"^[a-z0-9][a-z0-9-]{2,23}$", handle):
+                self._send_json(
+                    400,
+                    {"error": "Handle must be 3-24 lowercase letters, numbers, or hyphens."},
+                )
+                return
+            if is_public and not handle:
+                self._send_json(400, {"error": "Choose a handle before enabling your public profile."})
+                return
+            try:
+                with DB_LOCK, sqlite3.connect(DB_PATH) as conn:
+                    if name:
+                        cur = conn.execute(
+                            "UPDATE users SET handle = ?, bio = ?, is_public = ?, name = ?, updated_at = ? WHERE token = ?",
+                            (handle or None, bio, is_public, name, int(time.time()), token),
+                        )
+                    else:
+                        cur = conn.execute(
+                            "UPDATE users SET handle = ?, bio = ?, is_public = ?, updated_at = ? WHERE token = ?",
+                            (handle or None, bio, is_public, int(time.time()), token),
+                        )
+                    conn.commit()
+                    if cur.rowcount == 0:
+                        self._send_json(401, {"error": "Invalid session token"})
+                        return
+            except sqlite3.IntegrityError:
+                self._send_json(409, {"error": "That handle is already taken. Try another one."})
+                return
+            self._send_json(200, {"ok": True, "handle": handle, "bio": bio, "isPublic": bool(is_public)})
+            return
+
         if path == "/api/progress":
             token = self._bearer_token()
             if not token:

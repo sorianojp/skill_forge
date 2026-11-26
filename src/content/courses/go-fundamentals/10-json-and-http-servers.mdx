@@ -1,0 +1,60 @@
+---
+title: "JSON Encoding & net/http REST Servers"
+description: "Build fast, dependency-free HTTP servers with Go's standard net/http router and encoding/json struct tags."
+course: "go-fundamentals"
+module: "Production Go"
+order: 10
+durationMinutes: 10
+objectives:
+  - "Serialize and deserialize structs with json struct tags"
+  - "Register routes with http.NewServeMux"
+  - "Set proper Content-Type and HTTP status codes"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Build fast, dependency-free HTTP servers with Go's standard net/http router and encoding/json struct tags.
+
+Go prioritizes simplicity, explicit control flow, fast compilation, and safe concurrency. Every feature in this lesson is part of Go's minimal standard toolkit used across cloud infrastructure, CLI tools, and high-throughput APIs.
+
+## Idiomatic Go Example
+
+```go
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+)
+
+type Course struct {
+    Slug  string `json:"slug"`
+    Hours int    `json:"hours"`
+}
+
+func main() {
+    b, _ := json.Marshal(Course{Slug: "go-fundamentals", Hours: 6})
+    fmt.Println(string(b))
+}
+```
+
+<Callout type="tip" title="Production Habit">
+Run `gofmt -w .` and `go vet ./...` before every commit. Go ships formatting and static analysis directly in the toolchain so teams never argue over style.
+</Callout>
+
+## Key Takeaways
+
+- **Serialize and deserialize structs with json struct tags**
+- **Register routes with http.NewServeMux**
+- **Set proper Content-Type and HTTP status codes**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Why must Go struct fields start with an uppercase letter to be encoded by `encoding/json`?", "options": ["Only exported (capitalized) fields are visible to external packages like encoding/json", "Lowercase fields cannot hold strings", "Go syntax forbids lowercase fields in structs"], "answer": 0, "explanation": "In Go, capitalization controls visibility across packages; unexported fields are ignored by encoding/json."}]}
+/>

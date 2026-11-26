@@ -1,0 +1,48 @@
+---
+title: "Case Study: Design a Social News Feed"
+description: "Compare fan-out-on-write (push) vs fan-out-on-read (pull) and design a hybrid feed that handles celebrity accounts cleanly."
+course: "system-design-fundamentals"
+module: "Real-World Designs"
+order: 11
+durationMinutes: 10
+objectives:
+  - "Contrast push fan-out vs pull fan-out latency and write amplification"
+  - "Design a hybrid model for normal users vs high-follower accounts"
+  - "Paginate feeds reliably with cursor pagination instead of OFFSET"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Compare fan-out-on-write (push) vs fan-out-on-read (pull) and design a hybrid feed that handles celebrity accounts cleanly.
+
+Great system design is about explicit trade-offs rather than memorizing buzzwords. Every architectural layer you add (caches, replicas, queues, shards) solves one bottleneck while introducing new operational failure modes.
+
+## Design Checklist
+
+| Dimension | Questions to Ask |
+| :--- | :--- |
+| **Traffic & Scale** | What is the read-to-write ratio, peak QPS, and payload size? |
+| **Consistency** | Can users tolerate eventual consistency for a few seconds, or do we need strict ACID? |
+| **Failure Modes** | What happens if a cache node, replica, or downstream API times out? |
+| **Simplicity** | Can a single well-indexed PostgreSQL instance handle the next 12 months of growth? |
+
+<Callout type="tip" title="Interview & Real-World Rule">
+Start simple (single stateless app + relational DB + cache), measure real bottlenecks, and only introduce sharding or distributed queues when the numbers clearly justify the complexity.
+</Callout>
+
+## Key Takeaways
+
+- **Contrast push fan-out vs pull fan-out latency and write amplification**
+- **Design a hybrid model for normal users vs high-follower accounts**
+- **Paginate feeds reliably with cursor pagination instead of OFFSET**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Why does pure fan-out-on-write break down when a celebrity with 20 million followers posts an update?", "options": ["Writing the post ID to 20 million follower timelines causes massive write amplification and delay", "Celebrities cannot use JSON", "Databases only allow 100 followers"], "answer": 0, "explanation": "Hybrid feeds push for normal accounts and merge celebrity posts on read (pull) to avoid write storms."}]}
+/>

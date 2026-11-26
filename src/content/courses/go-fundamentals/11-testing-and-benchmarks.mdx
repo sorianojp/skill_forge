@@ -1,0 +1,56 @@
+---
+title: "Table-Driven Tests & Benchmarks"
+description: "Write idiomatic table-driven unit tests with testing.T and measure allocations with testing.B benchmarks."
+course: "go-fundamentals"
+module: "Production Go"
+order: 11
+durationMinutes: 9
+objectives:
+  - "Structure test cases as slices of structs (table-driven tests)"
+  - "Run targeted subtests with t.Run"
+  - "Detect data races with go test -race"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Write idiomatic table-driven unit tests with testing.T and measure allocations with testing.B benchmarks.
+
+Go prioritizes simplicity, explicit control flow, fast compilation, and safe concurrency. Every feature in this lesson is part of Go's minimal standard toolkit used across cloud infrastructure, CLI tools, and high-throughput APIs.
+
+## Idiomatic Go Example
+
+```go
+package mathutil
+
+import "testing"
+
+func TestAdd(t *testing.T) {
+    cases := []struct{ a, b, want int }{{2, 3, 5}, {-1, 1, 0}}
+    for _, tc := range cases {
+        if got := tc.a + tc.b; got != tc.want {
+            t.Fatalf("got %d, want %d", got, tc.want)
+        }
+    }
+}
+```
+
+<Callout type="tip" title="Production Habit">
+Run `gofmt -w .` and `go vet ./...` before every commit. Go ships formatting and static analysis directly in the toolchain so teams never argue over style.
+</Callout>
+
+## Key Takeaways
+
+- **Structure test cases as slices of structs (table-driven tests)**
+- **Run targeted subtests with t.Run**
+- **Detect data races with go test -race**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Which command runs Go unit tests with the built-in concurrency race detector enabled?", "options": ["go test -race ./...", "go run --safe", "go build -threads"], "answer": 0, "explanation": "go test -race instruments memory accesses to catch unsynchronized concurrent reads and writes."}]}
+/>

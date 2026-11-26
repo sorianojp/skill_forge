@@ -1,0 +1,50 @@
+---
+title: "ACID Transactions, COMMIT & ROLLBACK"
+description: "Group multi-step mutations into atomic transactions so partial failures never corrupt business state."
+course: "postgresql-design"
+module: "Transactions & Concurrency"
+order: 7
+durationMinutes: 9
+objectives:
+  - "Explain Atomicity, Consistency, Isolation, and Durability (ACID)"
+  - "Wrap multi-table writes in BEGIN / COMMIT / ROLLBACK"
+  - "Handle constraint failures cleanly without partial writes"
+hasPlayground: true
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import SqlPlayground from '@/components/playground/SqlPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Group multi-step mutations into atomic transactions so partial failures never corrupt business state.
+
+Strong database design pays dividends for years: clean constraints catch bugs before application code does, and well-chosen indexes keep response times predictable as tables grow from thousands to millions of rows.
+
+## Try It Live (Interactive SQL Sandbox)
+
+<SqlPlayground
+  client:visible
+  title="ACID Transactions, COMMIT & ROLLBACK"
+  height={220}
+  schemaSql={"CREATE TABLE wallets (id INTEGER PRIMARY KEY, name TEXT, cents INTEGER);\nINSERT INTO wallets VALUES (1, 'Alice', 5000), (2, 'Bob', 1000);"}
+  query={"SELECT name, cents / 100.0 AS balance FROM wallets ORDER BY id;"}
+/>
+
+<Callout type="note" title="PostgreSQL Production Tip">
+Always inspect realistic table sizes with `EXPLAIN (ANALYZE, BUFFERS)` before assuming an index is being used. Small tables often prefer sequential scans because reading one memory page is faster than traversing a tree.
+</Callout>
+
+## Key Takeaways
+
+- **Explain Atomicity, Consistency, Isolation, and Durability (ACID)**
+- **Wrap multi-table writes in BEGIN / COMMIT / ROLLBACK**
+- **Handle constraint failures cleanly without partial writes**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "What does Atomicity in ACID guarantee for a bank transfer transaction (debit A, credit B)?", "options": ["Either both the debit and credit commit together, or neither takes effect on failure", "The transfer runs in under 1 millisecond", "Both rows are stored in the same CPU register"], "answer": 0, "explanation": "Atomicity ensures all-or-nothing execution so crashes mid-transaction never leave money missing or duplicated."}]}
+/>

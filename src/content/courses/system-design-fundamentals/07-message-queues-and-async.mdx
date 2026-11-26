@@ -1,0 +1,48 @@
+---
+title: "Message Queues, Event Streams & Backpressure"
+description: "Decouple slow background jobs (emails, video encoding, webhooks) using queues, dead-letter queues, and idempotent consumers."
+course: "system-design-fundamentals"
+module: "Async & Reliability"
+order: 7
+durationMinutes: 10
+objectives:
+  - "Offload slow work from HTTP request threads to async workers"
+  - "Use dead-letter queues (DLQ) for poison messages"
+  - "Make consumers idempotent to survive at-least-once delivery"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Decouple slow background jobs (emails, video encoding, webhooks) using queues, dead-letter queues, and idempotent consumers.
+
+Great system design is about explicit trade-offs rather than memorizing buzzwords. Every architectural layer you add (caches, replicas, queues, shards) solves one bottleneck while introducing new operational failure modes.
+
+## Design Checklist
+
+| Dimension | Questions to Ask |
+| :--- | :--- |
+| **Traffic & Scale** | What is the read-to-write ratio, peak QPS, and payload size? |
+| **Consistency** | Can users tolerate eventual consistency for a few seconds, or do we need strict ACID? |
+| **Failure Modes** | What happens if a cache node, replica, or downstream API times out? |
+| **Simplicity** | Can a single well-indexed PostgreSQL instance handle the next 12 months of growth? |
+
+<Callout type="tip" title="Interview & Real-World Rule">
+Start simple (single stateless app + relational DB + cache), measure real bottlenecks, and only introduce sharding or distributed queues when the numbers clearly justify the complexity.
+</Callout>
+
+## Key Takeaways
+
+- **Offload slow work from HTTP request threads to async workers**
+- **Use dead-letter queues (DLQ) for poison messages**
+- **Make consumers idempotent to survive at-least-once delivery**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Why must queue consumers be idempotent when using at-least-once delivery?", "options": ["A message may be delivered more than once after a worker crash or timeout, so reprocessing must not duplicate side effects", "Queues delete messages before delivery", "Idempotency makes JSON smaller"], "answer": 0, "explanation": "Using an idempotency key (or unique constraint) ensures retries never double-charge or send duplicate emails."}]}
+/>

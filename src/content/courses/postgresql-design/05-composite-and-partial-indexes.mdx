@@ -1,0 +1,50 @@
+---
+title: "Composite Indexes, Column Order & Partial Indexes"
+description: "Master leftmost-prefix ordering in multi-column indexes and shrink index size dramatically with partial indexes."
+course: "postgresql-design"
+module: "Indexing & Performance"
+order: 5
+durationMinutes: 10
+objectives:
+  - "Order composite index columns (equality columns first, range columns next)"
+  - "Use partial indexes (WHERE status = 'pending') for hot subsets"
+  - "Build covering indexes with INCLUDE"
+hasPlayground: true
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import SqlPlayground from '@/components/playground/SqlPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Master leftmost-prefix ordering in multi-column indexes and shrink index size dramatically with partial indexes.
+
+Strong database design pays dividends for years: clean constraints catch bugs before application code does, and well-chosen indexes keep response times predictable as tables grow from thousands to millions of rows.
+
+## Try It Live (Interactive SQL Sandbox)
+
+<SqlPlayground
+  client:visible
+  title="Composite Indexes, Column Order & Partial Indexes"
+  height={220}
+  schemaSql={"CREATE TABLE jobs (id INTEGER PRIMARY KEY, status TEXT, priority INTEGER, created_at TEXT);\nCREATE INDEX idx_jobs_open ON jobs(status, priority);\nINSERT INTO jobs VALUES (1,'done',1,'2026-01-01'),(2,'pending',5,'2026-01-02'),(3,'pending',9,'2026-01-03');"}
+  query={"SELECT id, status, priority FROM jobs WHERE status = 'pending' ORDER BY priority DESC;"}
+/>
+
+<Callout type="note" title="PostgreSQL Production Tip">
+Always inspect realistic table sizes with `EXPLAIN (ANALYZE, BUFFERS)` before assuming an index is being used. Small tables often prefer sequential scans because reading one memory page is faster than traversing a tree.
+</Callout>
+
+## Key Takeaways
+
+- **Order composite index columns (equality columns first, range columns next)**
+- **Use partial indexes (WHERE status = 'pending') for hot subsets**
+- **Build covering indexes with INCLUDE**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "For a composite index on `(tenant_id, created_at)`, which query uses the index most effectively?", "options": ["WHERE tenant_id = 42 AND created_at >= '2026-01-01'", "WHERE created_at >= '2026-01-01' alone (without tenant_id)", "WHERE lower(tenant_id) = '42'"], "answer": 0, "explanation": "Composite B-Tree indexes follow the leftmost-prefix rule: equality on the leading column unlocks efficient range scans on the second."}]}
+/>

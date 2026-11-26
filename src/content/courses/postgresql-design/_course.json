@@ -1,0 +1,21 @@
+{
+  "slug": "postgresql-design",
+  "title": "PostgreSQL & Database Design",
+  "shortTitle": "PostgreSQL",
+  "description": "Master relational database modeling, normalization, B-Tree and GIN indexes, EXPLAIN query plans, ACID transactions, JSONB, CTEs, and window functions.",
+  "track": "PostgreSQL",
+  "difficulty": "Intermediate",
+  "estimatedHours": 6,
+  "accentColor": "#336791",
+  "prerequisites": [
+    "SQL Essentials"
+  ],
+  "outcomes": [
+    "Design normalized 3NF schemas with foreign keys and check constraints",
+    "Read EXPLAIN plans and choose composite, partial, and covering indexes",
+    "Prevent race conditions using transactions, isolation levels, and row locks",
+    "Write production analytics queries using CTEs, window functions, and JSONB"
+  ],
+  "featured": true,
+  "order": 20
+}

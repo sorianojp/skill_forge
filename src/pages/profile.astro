@@ -1,0 +1,26 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PublicProfileView from '@/components/progress/PublicProfileView';
+---
+
+<BaseLayout
+  title="Learner Portfolio"
+  description="View verified DevPath certificates, completed software engineering tracks, and coding challenge stats."
+>
+  <div class="mx-auto max-w-4xl px-5 py-12 sm:px-6 lg:px-8">
+    <header class="mb-8">
+      <p class="text-xs font-bold uppercase tracking-wider text-[var(--accent)]">
+        Public Portfolio
+      </p>
+      <h1 class="mt-1 text-3xl font-extrabold tracking-tight text-[var(--text)] sm:text-4xl">
+        DevPath Learner Profile
+      </h1>
+      <p class="mt-2 text-base text-[var(--text-muted)]">
+        Explore verified certificates, completed lessons, and coding arena milestones. Enable your own shareable profile in{' '}
+        <a href="/progress" class="font-semibold text-[var(--accent)] hover:underline">My Progress</a>.
+      </p>
+    </header>
+
+    <PublicProfileView client:load />
+  </div>
+</BaseLayout>

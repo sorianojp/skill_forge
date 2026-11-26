@@ -137,3 +137,81 @@ export async function fetchVerifiedCertificate(
     return null;
   }
 }
+
+export interface MyProfileSettings {
+  email: string;
+  name: string;
+  handle: string;
+  bio: string;
+  isPublic: boolean;
+}
+
+export interface PublicProfileData {
+  name: string;
+  handle: string;
+  bio: string;
+  updatedAt: number;
+  stats: {
+    completedLessons: number;
+    solvedChallenges: number;
+    activeDays: number;
+    totalCertificates: number;
+  };
+  coursesProgress: Record<string, number>;
+  certificates: Array<{
+    certId: string;
+    courseSlug: string;
+    courseTitle: string;
+    score: number;
+    issuedAt: string;
+  }>;
+}
+
+export async function fetchMyProfile(): Promise<MyProfileSettings | null> {
+  const session = getCloudSession();
+  if (!session) return null;
+  try {
+    const res = await fetch(`${getApiBase()}/api/profile/me`, {
+      headers: { Authorization: `Bearer ${session.token}` },
+    });
+    if (!res.ok) return null;
+    return (await res.json()) as MyProfileSettings;
+  } catch {
+    return null;
+  }
+}
+
+export async function updateMyProfile(payload: {
+  handle: string;
+  bio: string;
+  isPublic: boolean;
+  name?: string;
+}): Promise<{ ok: true } | { ok: false; error: string }> {
+  const session = getCloudSession();
+  if (!session) return { ok: false, error: 'Sign in first.' };
+  try {
+    const res = await fetch(`${getApiBase()}/api/profile/me`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    if (!res.ok) return { ok: false, error: data.error || 'Could not update profile.' };
+    return { ok: true };
+  } catch {
+    return { ok: false, error: 'Could not reach DevPath API.' };
+  }
+}
+
+export async function fetchPublicProfile(handle: string): Promise<PublicProfileData | null> {
+  try {
+    const res = await fetch(`${getApiBase()}/api/profiles/${encodeURIComponent(handle.trim().toLowerCase())}`);
+    if (!res.ok) return null;
+    return (await res.json()) as PublicProfileData;
+  } catch {
+    return null;
+  }
+}

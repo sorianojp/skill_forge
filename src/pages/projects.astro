@@ -1,0 +1,25 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ProjectsBoard from '@/components/projects/ProjectsBoard';
+---
+
+<BaseLayout
+  title="Guided Portfolio Projects"
+  description="Build 8 real-world software engineering portfolio projects with architecture guidance, starter code, and interactive milestone checklists."
+>
+  <div class="mx-auto max-w-[82rem] px-5 py-12 sm:px-6 lg:px-8">
+    <header class="mb-8 max-w-2xl">
+      <p class="text-xs font-bold uppercase tracking-wider text-[var(--accent)]">
+        Portfolio Capstones
+      </p>
+      <h1 class="mt-1 text-3xl font-extrabold tracking-tight text-[var(--text)] sm:text-4xl">
+        Guided Portfolio Projects
+      </h1>
+      <p class="mt-2 text-base text-[var(--text-muted)]">
+        Turn what you learned into real, resume-ready software. Pick a capstone, check off each engineering milestone, and launch straight into the Playground.
+      </p>
+    </header>
+
+    <ProjectsBoard client:load />
+  </div>
+</BaseLayout>

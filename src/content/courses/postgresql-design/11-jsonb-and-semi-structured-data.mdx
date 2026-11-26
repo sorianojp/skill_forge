@@ -1,0 +1,50 @@
+---
+title: "JSONB, GIN Indexes & Hybrid Schemas"
+description: "Store flexible metadata alongside relational columns using JSONB and query nested keys cleanly."
+course: "postgresql-design"
+module: "Advanced SQL"
+order: 11
+durationMinutes: 9
+objectives:
+  - "Know when to use relational columns vs JSONB attributes"
+  - "Extract JSON fields cleanly in queries"
+  - "Accelerate JSONB containment queries (@>) with GIN indexes"
+hasPlayground: true
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import SqlPlayground from '@/components/playground/SqlPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Store flexible metadata alongside relational columns using JSONB and query nested keys cleanly.
+
+Strong database design pays dividends for years: clean constraints catch bugs before application code does, and well-chosen indexes keep response times predictable as tables grow from thousands to millions of rows.
+
+## Try It Live (Interactive SQL Sandbox)
+
+<SqlPlayground
+  client:visible
+  title="JSONB, GIN Indexes & Hybrid Schemas"
+  height={220}
+  schemaSql={"CREATE TABLE events (id INTEGER PRIMARY KEY, payload TEXT);\nINSERT INTO events VALUES (1, '{\"type\":\"signup\",\"plan\":\"free\"}'), (2, '{\"type\":\"cert\",\"track\":\"go\"}');"}
+  query={"SELECT id, json_extract(payload, '$.type') AS event_type, json_extract(payload, '$.track') AS track FROM events;"}
+/>
+
+<Callout type="note" title="PostgreSQL Production Tip">
+Always inspect realistic table sizes with `EXPLAIN (ANALYZE, BUFFERS)` before assuming an index is being used. Small tables often prefer sequential scans because reading one memory page is faster than traversing a tree.
+</Callout>
+
+## Key Takeaways
+
+- **Know when to use relational columns vs JSONB attributes**
+- **Extract JSON fields cleanly in queries**
+- **Accelerate JSONB containment queries (@>) with GIN indexes**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Which PostgreSQL index type is designed for fast JSONB containment (`@>`) and full-text search?", "options": ["GIN (Generalized Inverted Index)", "HASH index only", "Unindexed heap scan"], "answer": 0, "explanation": "GIN indexes index internal elements of composite values like JSONB keys/values, arrays, and tsvectors."}]}
+/>

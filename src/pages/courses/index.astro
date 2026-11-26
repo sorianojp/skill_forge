@@ -24,6 +24,9 @@ const CATEGORY_MAP: Record<string, string> = {
   Linux: 'devops',
   Docker: 'devops',
   DSA: 'cs',
+  Go: 'backend',
+  PostgreSQL: 'backend',
+  'System Design': 'cs',
 };
 
 const CATEGORIES = [
@@ -52,9 +55,25 @@ const courseCards = await Promise.all(
     };
   })
 );
+const catalogJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'DevPath Free Software Engineering Courses',
+  numberOfItems: courses.length,
+  itemListElement: courses.map((c, idx) => ({
+    '@type': 'ListItem',
+    position: idx + 1,
+    name: c.data.title,
+    url: new URL(`/courses/${c.data.slug}/`, Astro.site).toString(),
+  })),
+};
 ---
 
-<BaseLayout title="All Courses" description="Explore all 18 free interactive software engineering courses on DevPath.">
+<BaseLayout
+  title="All Courses"
+  description={`Explore all ${courses.length} free interactive software engineering courses on DevPath.`}
+  jsonLd={catalogJsonLd}
+>
   <div class="mx-auto max-w-[82rem] px-5 py-12 sm:px-6 lg:px-8">
     <header class="mb-8 max-w-2xl">
       <h1 class="text-3xl font-extrabold tracking-tight text-[var(--text)] sm:text-4xl">

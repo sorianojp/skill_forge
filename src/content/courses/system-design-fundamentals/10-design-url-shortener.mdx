@@ -1,0 +1,48 @@
+---
+title: "Case Study: Design a URL Shortener"
+description: "Walk through a complete system design: API contracts, Base62 ID encoding, cache-first redirects, and async click analytics."
+course: "system-design-fundamentals"
+module: "Real-World Designs"
+order: 10
+durationMinutes: 10
+objectives:
+  - "Design POST /shorten and GET /:code with 301 vs 302 trade-offs"
+  - "Generate collision-free Base62 short codes"
+  - "Cache hot links in Redis for sub-5ms redirect latency"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Walk through a complete system design: API contracts, Base62 ID encoding, cache-first redirects, and async click analytics.
+
+Great system design is about explicit trade-offs rather than memorizing buzzwords. Every architectural layer you add (caches, replicas, queues, shards) solves one bottleneck while introducing new operational failure modes.
+
+## Design Checklist
+
+| Dimension | Questions to Ask |
+| :--- | :--- |
+| **Traffic & Scale** | What is the read-to-write ratio, peak QPS, and payload size? |
+| **Consistency** | Can users tolerate eventual consistency for a few seconds, or do we need strict ACID? |
+| **Failure Modes** | What happens if a cache node, replica, or downstream API times out? |
+| **Simplicity** | Can a single well-indexed PostgreSQL instance handle the next 12 months of growth? |
+
+<Callout type="tip" title="Interview & Real-World Rule">
+Start simple (single stateless app + relational DB + cache), measure real bottlenecks, and only introduce sharding or distributed queues when the numbers clearly justify the complexity.
+</Callout>
+
+## Key Takeaways
+
+- **Design POST /shorten and GET /:code with 301 vs 302 trade-offs**
+- **Generate collision-free Base62 short codes**
+- **Cache hot links in Redis for sub-5ms redirect latency**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Why do URL shorteners that track click analytics typically return HTTP 302 (Temporary Redirect) instead of 301 (Permanent)?", "options": ["301 is aggressively cached by browsers, bypassing the shortener server on repeat clicks so analytics miss them", "302 is faster to compress", "Browsers do not support 301"], "answer": 0, "explanation": "302 ensures the browser hits your redirect endpoint so clicks are counted accurately (trading slightly more server load)."}]}
+/>

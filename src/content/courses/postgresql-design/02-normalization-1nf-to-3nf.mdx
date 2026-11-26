@@ -1,0 +1,50 @@
+---
+title: "Normalization (1NF, 2NF, 3NF) & Denormalization"
+description: "Eliminate update anomalies with First, Second, and Third Normal Form, and know when controlled denormalization makes sense."
+course: "postgresql-design"
+module: "Schema Design"
+order: 2
+durationMinutes: 9
+objectives:
+  - "Eliminate repeating comma-separated columns (1NF)"
+  - "Remove partial and transitive dependencies (2NF/3NF)"
+  - "Recognize valid cases for read-optimized denormalization"
+hasPlayground: true
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import SqlPlayground from '@/components/playground/SqlPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Eliminate update anomalies with First, Second, and Third Normal Form, and know when controlled denormalization makes sense.
+
+Strong database design pays dividends for years: clean constraints catch bugs before application code does, and well-chosen indexes keep response times predictable as tables grow from thousands to millions of rows.
+
+## Try It Live (Interactive SQL Sandbox)
+
+<SqlPlayground
+  client:visible
+  title="Normalization (1NF, 2NF, 3NF) & Denormalization"
+  height={220}
+  schemaSql={"CREATE TABLE products (id INTEGER PRIMARY KEY, name TEXT, unit_price INTEGER);\nCREATE TABLE order_items (order_id INTEGER, product_id INTEGER REFERENCES products(id), qty INTEGER, price_at_purchase INTEGER);\nINSERT INTO products VALUES (1, 'Mechanical Keyboard', 4500), (2, 'USB-C Hub', 1500);\nINSERT INTO order_items VALUES (10, 1, 1, 4500), (10, 2, 2, 1500);"}
+  query={"SELECT oi.order_id, p.name, oi.qty, oi.price_at_purchase * oi.qty AS line_total FROM order_items oi JOIN products p ON p.id = oi.product_id;"}
+/>
+
+<Callout type="note" title="PostgreSQL Production Tip">
+Always inspect realistic table sizes with `EXPLAIN (ANALYZE, BUFFERS)` before assuming an index is being used. Small tables often prefer sequential scans because reading one memory page is faster than traversing a tree.
+</Callout>
+
+## Key Takeaways
+
+- **Eliminate repeating comma-separated columns (1NF)**
+- **Remove partial and transitive dependencies (2NF/3NF)**
+- **Recognize valid cases for read-optimized denormalization**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Why is storing `price_at_purchase` on `order_items` (even though `products` has `unit_price`) good design?", "options": ["Historical orders must keep the exact price paid even if product prices change later", "SQL cannot join two integer columns", "It violates 1NF on purpose"], "answer": 0, "explanation": "Capturing point-in-time historical snapshots prevents past invoices from changing when catalog prices update."}]}
+/>

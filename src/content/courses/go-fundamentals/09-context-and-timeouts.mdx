@@ -1,0 +1,58 @@
+---
+title: "Context Propagation & Cancellation"
+description: "Cancel long-running work and enforce request deadlines cleanly across call trees using the context package."
+course: "go-fundamentals"
+module: "Concurrency"
+order: 9
+durationMinutes: 9
+objectives:
+  - "Pass context.Context as the first parameter to I/O functions"
+  - "Enforce deadlines with context.WithTimeout"
+  - "Always call cancel() with defer to avoid leaks"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Cancel long-running work and enforce request deadlines cleanly across call trees using the context package.
+
+Go prioritizes simplicity, explicit control flow, fast compilation, and safe concurrency. Every feature in this lesson is part of Go's minimal standard toolkit used across cloud infrastructure, CLI tools, and high-throughput APIs.
+
+## Idiomatic Go Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "time"
+)
+
+func main() {
+    ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
+    defer cancel()
+    <-ctx.Done()
+    fmt.Println("Stopped:", ctx.Err())
+}
+```
+
+<Callout type="tip" title="Production Habit">
+Run `gofmt -w .` and `go vet ./...` before every commit. Go ships formatting and static analysis directly in the toolchain so teams never argue over style.
+</Callout>
+
+## Key Takeaways
+
+- **Pass context.Context as the first parameter to I/O functions**
+- **Enforce deadlines with context.WithTimeout**
+- **Always call cancel() with defer to avoid leaks**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Why should you always `defer cancel()` after calling `context.WithTimeout`?", "options": ["To release internal timer resources as soon as the function finishes", "To double the timeout duration", "To restart the HTTP server"], "answer": 0, "explanation": "Deferring cancel() guarantees the underlying timer is freed immediately even if the work finishes early."}]}
+/>

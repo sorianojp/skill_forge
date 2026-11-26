@@ -1,0 +1,21 @@
+{
+  "slug": "go-fundamentals",
+  "title": "Go (Golang) Essentials",
+  "shortTitle": "Go",
+  "description": "Write fast, statically typed backend services with Go: slices, structs, interfaces, explicit errors, goroutines, channels, and net/http APIs.",
+  "track": "Go",
+  "difficulty": "Intermediate",
+  "estimatedHours": 6,
+  "accentColor": "#06b6d4",
+  "prerequisites": [
+    "Basic programming in any language"
+  ],
+  "outcomes": [
+    "Build clean, idiomatic Go packages with strong static typing",
+    "Model data with structs, methods, and implicit interfaces",
+    "Write concurrent pipelines using goroutines, channels, and sync.WaitGroup",
+    "Ship a JSON REST API with standard-library net/http and context cancellation"
+  ],
+  "featured": true,
+  "order": 19
+}

@@ -1,0 +1,48 @@
+---
+title: "Rate Limiting, Retries & Circuit Breakers"
+description: "Protect services from abuse and cascading failures using Token Bucket rate limiters, exponential backoff with jitter, and circuit breakers."
+course: "system-design-fundamentals"
+module: "Async & Reliability"
+order: 8
+durationMinutes: 10
+objectives:
+  - "Compare Token Bucket vs Sliding Window rate limiting"
+  - "Add exponential backoff with random jitter on retries"
+  - "Trip circuit breakers to fail fast when a dependency is down"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Protect services from abuse and cascading failures using Token Bucket rate limiters, exponential backoff with jitter, and circuit breakers.
+
+Great system design is about explicit trade-offs rather than memorizing buzzwords. Every architectural layer you add (caches, replicas, queues, shards) solves one bottleneck while introducing new operational failure modes.
+
+## Design Checklist
+
+| Dimension | Questions to Ask |
+| :--- | :--- |
+| **Traffic & Scale** | What is the read-to-write ratio, peak QPS, and payload size? |
+| **Consistency** | Can users tolerate eventual consistency for a few seconds, or do we need strict ACID? |
+| **Failure Modes** | What happens if a cache node, replica, or downstream API times out? |
+| **Simplicity** | Can a single well-indexed PostgreSQL instance handle the next 12 months of growth? |
+
+<Callout type="tip" title="Interview & Real-World Rule">
+Start simple (single stateless app + relational DB + cache), measure real bottlenecks, and only introduce sharding or distributed queues when the numbers clearly justify the complexity.
+</Callout>
+
+## Key Takeaways
+
+- **Compare Token Bucket vs Sliding Window rate limiting**
+- **Add exponential backoff with random jitter on retries**
+- **Trip circuit breakers to fail fast when a dependency is down**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Why should retry delays include random jitter on top of exponential backoff?", "options": ["To spread out retries so thousands of clients do not hammer a recovering server at the exact same instant", "To increase total bandwidth usage", "To disable TLS handshakes"], "answer": 0, "explanation": "Synchronized retries create thundering herds; jitter desynchronizes clients smoothly."}]}
+/>

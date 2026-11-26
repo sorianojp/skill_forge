@@ -1,0 +1,50 @@
+---
+title: "Window Functions: ROW_NUMBER, RANK & Running Totals"
+description: "Compute rankings, top-N per group, running totals, and moving averages without collapsing rows via OVER (PARTITION BY ...)."
+course: "postgresql-design"
+module: "Advanced SQL"
+order: 10
+durationMinutes: 10
+objectives:
+  - "Distinguish GROUP BY aggregation from window functions"
+  - "Use ROW_NUMBER(), RANK(), and DENSE_RANK()"
+  - "Calculate running totals with SUM() OVER (ORDER BY ...)"
+hasPlayground: true
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import SqlPlayground from '@/components/playground/SqlPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Compute rankings, top-N per group, running totals, and moving averages without collapsing rows via OVER (PARTITION BY ...).
+
+Strong database design pays dividends for years: clean constraints catch bugs before application code does, and well-chosen indexes keep response times predictable as tables grow from thousands to millions of rows.
+
+## Try It Live (Interactive SQL Sandbox)
+
+<SqlPlayground
+  client:visible
+  title="Window Functions: ROW_NUMBER, RANK & Running Totals"
+  height={220}
+  schemaSql={"CREATE TABLE scores (track TEXT, student TEXT, score INTEGER);\nINSERT INTO scores VALUES ('Go','Ana',94),('Go','Ben',88),('SQL','Cara',97),('SQL','Dan',91);"}
+  query={"SELECT track, student, score, ROW_NUMBER() OVER (PARTITION BY track ORDER BY score DESC) AS rnk FROM scores;"}
+/>
+
+<Callout type="note" title="PostgreSQL Production Tip">
+Always inspect realistic table sizes with `EXPLAIN (ANALYZE, BUFFERS)` before assuming an index is being used. Small tables often prefer sequential scans because reading one memory page is faster than traversing a tree.
+</Callout>
+
+## Key Takeaways
+
+- **Distinguish GROUP BY aggregation from window functions**
+- **Use ROW_NUMBER(), RANK(), and DENSE_RANK()**
+- **Calculate running totals with SUM() OVER (ORDER BY ...)**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "How does a window function (`OVER (...)`) differ from `GROUP BY`?", "options": ["Window functions preserve every individual row while adding computed group/running metrics", "Window functions can only run on tables with 1 column", "Window functions delete rows that do not match"], "answer": 0, "explanation": "Unlike GROUP BY which collapses rows into one per group, window functions keep row-level detail intact."}]}
+/>

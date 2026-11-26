@@ -5,6 +5,7 @@ import {
   CheckCircle2,
   Clock,
   Download,
+  ExternalLink,
   Lock,
   Printer,
   RotateCcw,
@@ -252,6 +253,14 @@ export default function CourseExam({
 
   const certId = record?.certificateId ?? `DP-${courseSlug.slice(0, 4).toUpperCase()}-VERIFIED`;
   const certScore = Math.max(record?.bestScore ?? 0, submitted ? currentPercent : 0);
+  const issuedDateObj = record?.passedAt ? new Date(record.passedAt) : new Date();
+  const linkedInUrl = `https://www.linkedin.com/profile/add?startTask=CERTIFICATION_NAME&name=${encodeURIComponent(
+    `${courseTitle} Certificate`
+  )}&organizationName=${encodeURIComponent('DevPath')}&issueYear=${issuedDateObj.getFullYear()}&issueMonth=${
+    issuedDateObj.getMonth() + 1
+  }&certUrl=${encodeURIComponent(
+    `https://devpath.mycampus.ph/verify?id=${certId}`
+  )}&certId=${encodeURIComponent(certId)}`;
 
   const svgMarkup = buildCertificateSvg({
     learnerName,
@@ -446,6 +455,16 @@ export default function CourseExam({
             >
               <ShieldCheck className="h-4 w-4" />
               Public Verify Link
+            </a>
+
+            <a
+              href={linkedInUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-2xl bg-[#0a66c2] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#004182]"
+            >
+              <ExternalLink className="h-4 w-4" />
+              Add to LinkedIn
             </a>
           </div>
 

@@ -1,0 +1,50 @@
+---
+title: "Zero-Downtime Migrations & Backups"
+description: "Evolve live production schemas safely using expand-and-contract migrations, concurrent index builds, and tested backups."
+course: "postgresql-design"
+module: "Production DB"
+order: 12
+durationMinutes: 9
+objectives:
+  - "Apply expand-and-contract steps for safe column renames"
+  - "Use CREATE INDEX CONCURRENTLY to avoid blocking writes"
+  - "Verify backups regularly with pg_dump and restore drills"
+hasPlayground: true
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import SqlPlayground from '@/components/playground/SqlPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Evolve live production schemas safely using expand-and-contract migrations, concurrent index builds, and tested backups.
+
+Strong database design pays dividends for years: clean constraints catch bugs before application code does, and well-chosen indexes keep response times predictable as tables grow from thousands to millions of rows.
+
+## Try It Live (Interactive SQL Sandbox)
+
+<SqlPlayground
+  client:visible
+  title="Zero-Downtime Migrations & Backups"
+  height={220}
+  schemaSql={"CREATE TABLE schema_migrations (version TEXT PRIMARY KEY, applied_at TEXT);\nINSERT INTO schema_migrations VALUES ('20260101_init', '2026-01-01'), ('20260215_add_profiles', '2026-02-15');"}
+  query={"SELECT version, applied_at FROM schema_migrations ORDER BY version DESC;"}
+/>
+
+<Callout type="note" title="PostgreSQL Production Tip">
+Always inspect realistic table sizes with `EXPLAIN (ANALYZE, BUFFERS)` before assuming an index is being used. Small tables often prefer sequential scans because reading one memory page is faster than traversing a tree.
+</Callout>
+
+## Key Takeaways
+
+- **Apply expand-and-contract steps for safe column renames**
+- **Use CREATE INDEX CONCURRENTLY to avoid blocking writes**
+- **Verify backups regularly with pg_dump and restore drills**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Why is `CREATE INDEX CONCURRENTLY` preferred on large live PostgreSQL tables?", "options": ["It builds the index without holding a write-blocking lock on the table", "It skips indexing half the rows", "It automatically drops old columns"], "answer": 0, "explanation": "Standard CREATE INDEX blocks INSERT/UPDATE/DELETE until finished; CONCURRENTLY allows writes to continue."}]}
+/>

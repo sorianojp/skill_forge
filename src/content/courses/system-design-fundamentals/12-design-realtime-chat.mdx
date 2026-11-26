@@ -1,0 +1,48 @@
+---
+title: "Case Study: Design a Real-Time Chat System"
+description: "Design WebSocket gateways, presence heartbeats, message ordering with Snowflake IDs, and offline push notifications."
+course: "system-design-fundamentals"
+module: "Real-World Designs"
+order: 12
+durationMinutes: 10
+objectives:
+  - "Maintain persistent WebSocket connections via stateful chat gateways"
+  - "Order messages reliably using time-sortable IDs"
+  - "Deliver messages when recipients are offline via push queues"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Design WebSocket gateways, presence heartbeats, message ordering with Snowflake IDs, and offline push notifications.
+
+Great system design is about explicit trade-offs rather than memorizing buzzwords. Every architectural layer you add (caches, replicas, queues, shards) solves one bottleneck while introducing new operational failure modes.
+
+## Design Checklist
+
+| Dimension | Questions to Ask |
+| :--- | :--- |
+| **Traffic & Scale** | What is the read-to-write ratio, peak QPS, and payload size? |
+| **Consistency** | Can users tolerate eventual consistency for a few seconds, or do we need strict ACID? |
+| **Failure Modes** | What happens if a cache node, replica, or downstream API times out? |
+| **Simplicity** | Can a single well-indexed PostgreSQL instance handle the next 12 months of growth? |
+
+<Callout type="tip" title="Interview & Real-World Rule">
+Start simple (single stateless app + relational DB + cache), measure real bottlenecks, and only introduce sharding or distributed queues when the numbers clearly justify the complexity.
+</Callout>
+
+## Key Takeaways
+
+- **Maintain persistent WebSocket connections via stateful chat gateways**
+- **Order messages reliably using time-sortable IDs**
+- **Deliver messages when recipients are offline via push queues**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Why are WebSockets preferred over rapid HTTP polling for real-time chat?", "options": ["WebSockets maintain a full-duplex persistent connection, eliminating repeated HTTP headers and polling delay", "WebSockets work without TCP", "HTTP polling cannot send UTF-8 text"], "answer": 0, "explanation": "Persistent bidirectional connections deliver messages instantaneously with far lower server overhead."}]}
+/>

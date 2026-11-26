@@ -27,18 +27,21 @@ const CATEGORY_MAP: Record<string, string> = {
   Linux: 'devops',
   Docker: 'devops',
   DSA: 'cs',
+  Go: 'backend',
+  PostgreSQL: 'backend',
+  'System Design': 'cs',
 };
 
+const courses = await getAllCoursesSorted();
+
 const HOME_CATEGORIES = [
-  { id: 'all', label: 'All (18)' },
+  { id: 'all', label: `All (${courses.length})` },
   { id: 'web', label: 'Web & Frontend' },
   { id: 'backend', label: 'Backend & Data' },
   { id: 'systems', label: 'Systems & OOP' },
   { id: 'devops', label: 'DevOps & Tools' },
   { id: 'cs', label: 'CS & DSA' },
 ];
-
-const courses = await getAllCoursesSorted();
 const courseCards = await Promise.all(
   courses.map(async (course) => {
     const lessons = await getCourseLessons(course.data.slug);
@@ -57,11 +60,21 @@ const courseCards = await Promise.all(
 );
 
 const references = await getCollection('references');
+
+const siteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'DevPath',
+  url: 'https://devpath.mycampus.ph',
+  description:
+    'Free interactive software engineering courses, live multi-language playgrounds, portfolio projects, and verifiable certificates.',
+};
 ---
 
 <BaseLayout
   title="Free Interactive Software Engineering Courses"
   description="Learn web development, backend, systems programming, DevOps, and algorithms with structured guides, live code sandboxes, and free verifiable certificates."
+  jsonLd={siteJsonLd}
 >
   <!-- Hero -->
   <section>

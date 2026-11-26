@@ -1,0 +1,19 @@
+---
+title: "System Design Quick Reference"
+category: "System Design"
+syntax: "Client -> DNS -> CDN -> LB -> App -> Cache / DB / Queue"
+summary: "Latency numbers, scaling building blocks, caching patterns, replication vs sharding, and rate limiting formulas."
+browserSupport: "Distributed Systems"
+---
+
+## Architecture Building Blocks
+
+| Problem | Go-To Pattern |
+| :--- | :--- |
+| Static assets & global latency | CDN + immutable hashed filenames |
+| High read throughput | Redis cache-aside + DB read replicas |
+| High write throughput | Horizontal sharding + consistent hashing |
+| Slow background jobs | Message queue + idempotent workers + DLQ |
+| API abuse / traffic spikes | Token Bucket / Sliding Window rate limiter |
+| Cascading dependency failures | Timeouts + exponential backoff with jitter + circuit breaker |
+| Reliable pagination at scale | Keyset / cursor pagination (avoid large `OFFSET`) |

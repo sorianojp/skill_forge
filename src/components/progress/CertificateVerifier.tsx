@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Award, CheckCircle2, Search, ShieldAlert } from 'lucide-react';
+import { Award, CheckCircle2, ExternalLink, Search, ShieldAlert } from 'lucide-react';
 import { fetchVerifiedCertificate, type VerifiedCertificate } from '@/lib/cloudSync';
 
 export default function CertificateVerifier() {
@@ -106,6 +106,24 @@ export default function CertificateVerifier() {
               </p>
               <p className="mt-1 font-mono text-sm font-bold text-[var(--text)]">{result.certId}</p>
             </div>
+          </div>
+
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            <a
+              href={`https://www.linkedin.com/profile/add?startTask=CERTIFICATION_NAME&name=${encodeURIComponent(
+                `${result.courseTitle} Certificate`
+              )}&organizationName=DevPath&issueYear=${(result.issuedAt || '2026').slice(0, 4)}&issueMonth=${
+                parseInt((result.issuedAt || '2026-01').slice(5, 7), 10) || 1
+              }&certUrl=${encodeURIComponent(
+                `https://devpath.mycampus.ph/verify?id=${result.certId}`
+              )}&certId=${encodeURIComponent(result.certId)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-11 items-center gap-2 rounded-2xl bg-[#0a66c2] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#004182]"
+            >
+              <ExternalLink className="h-4 w-4" />
+              <span>Add to LinkedIn</span>
+            </a>
           </div>
         </div>
       )}

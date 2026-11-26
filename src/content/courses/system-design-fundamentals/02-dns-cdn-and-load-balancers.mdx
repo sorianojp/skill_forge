@@ -1,0 +1,48 @@
+---
+title: "DNS, CDNs & L4/L7 Load Balancers"
+description: "Route global traffic efficiently using DNS, edge CDNs, reverse proxies, and health-checked L4/L7 load balancers."
+course: "system-design-fundamentals"
+module: "Core Foundations"
+order: 2
+durationMinutes: 9
+objectives:
+  - "Trace a request from DNS lookup through CDN and load balancer"
+  - "Compare L4 (TCP) vs L7 (HTTP) load balancing"
+  - "Configure health checks and stateless app servers"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Route global traffic efficiently using DNS, edge CDNs, reverse proxies, and health-checked L4/L7 load balancers.
+
+Great system design is about explicit trade-offs rather than memorizing buzzwords. Every architectural layer you add (caches, replicas, queues, shards) solves one bottleneck while introducing new operational failure modes.
+
+## Design Checklist
+
+| Dimension | Questions to Ask |
+| :--- | :--- |
+| **Traffic & Scale** | What is the read-to-write ratio, peak QPS, and payload size? |
+| **Consistency** | Can users tolerate eventual consistency for a few seconds, or do we need strict ACID? |
+| **Failure Modes** | What happens if a cache node, replica, or downstream API times out? |
+| **Simplicity** | Can a single well-indexed PostgreSQL instance handle the next 12 months of growth? |
+
+<Callout type="tip" title="Interview & Real-World Rule">
+Start simple (single stateless app + relational DB + cache), measure real bottlenecks, and only introduce sharding or distributed queues when the numbers clearly justify the complexity.
+</Callout>
+
+## Key Takeaways
+
+- **Trace a request from DNS lookup through CDN and load balancer**
+- **Compare L4 (TCP) vs L7 (HTTP) load balancing**
+- **Configure health checks and stateless app servers**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "What is the primary reason to keep web application servers stateless behind a load balancer?", "options": ["Any server can handle any request, enabling effortless horizontal autoscaling and failover", "Stateless servers do not need a database", "Load balancers cannot route HTTP POST requests otherwise"], "answer": 0, "explanation": "Externalizing session state to Redis or a database lets you add or replace app instances freely."}]}
+/>

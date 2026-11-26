@@ -43,6 +43,9 @@ const palette: Record<string, string> = {
   Linux: 'from-[#52525b] to-[#27272a]',
   Docker: 'from-[#38bdf8] to-[#0284c7]',
   DSA: 'from-[#f43f5e] to-[#be123c]',
+  Go: 'from-[#06b6d4] to-[#0e7490]',
+  PostgreSQL: 'from-[#336791] to-[#1e3a5f]',
+  'System Design': 'from-[#7c3aed] to-[#5b21b6]',
 };
 
 const gradient = palette[track] ?? 'from-[#3b82f6] to-[#2563eb]';
@@ -96,8 +99,18 @@ const gradient = palette[track] ?? 'from-[#3b82f6] to-[#2563eb]';
       <path d="m3.3 7 8.7 5 8.7-5" />
       <path d="M12 22V12" />
     </svg>
-  ) : track === 'C' || track === 'C++' || track === 'C#' || track === 'DSA' ? (
+  ) : track === 'C' || track === 'C++' || track === 'C#' || track === 'DSA' || track === 'Go' ? (
     <span class={`font-mono font-black tracking-tighter ${textDims}`}>{track}</span>
+  ) : track === 'PostgreSQL' ? (
+    <span class={`font-mono font-black tracking-tighter ${textDims}`}>PG</span>
+  ) : track === 'System Design' ? (
+    <svg class={iconDims} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="3" width="6" height="6" rx="1.5" />
+      <rect x="16" y="3" width="6" height="6" rx="1.5" />
+      <rect x="9" y="15" width="6" height="6" rx="1.5" />
+      <path d="M5 9v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9" />
+      <path d="M12 14v1" />
+    </svg>
   ) : track === 'TypeScript' ? (
     <span class={`font-mono font-black tracking-tighter ${textDims}`}>TS</span>
   ) : track === 'React' ? (

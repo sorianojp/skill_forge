@@ -1,0 +1,48 @@
+---
+title: "Choosing SQL vs NoSQL (Key-Value, Document, Wide-Column)"
+description: "Match storage engines to access patterns instead of hype: relational ACID vs key-value, document, and time-series stores."
+course: "system-design-fundamentals"
+module: "Data at Scale"
+order: 6
+durationMinutes: 9
+objectives:
+  - "Default to relational SQL when relationships and ACID transactions matter"
+  - "Pick key-value stores (Redis/DynamoDB) for ultra-low-latency lookups"
+  - "Evaluate consistency, schema evolution, and operational complexity"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Match storage engines to access patterns instead of hype: relational ACID vs key-value, document, and time-series stores.
+
+Great system design is about explicit trade-offs rather than memorizing buzzwords. Every architectural layer you add (caches, replicas, queues, shards) solves one bottleneck while introducing new operational failure modes.
+
+## Design Checklist
+
+| Dimension | Questions to Ask |
+| :--- | :--- |
+| **Traffic & Scale** | What is the read-to-write ratio, peak QPS, and payload size? |
+| **Consistency** | Can users tolerate eventual consistency for a few seconds, or do we need strict ACID? |
+| **Failure Modes** | What happens if a cache node, replica, or downstream API times out? |
+| **Simplicity** | Can a single well-indexed PostgreSQL instance handle the next 12 months of growth? |
+
+<Callout type="tip" title="Interview & Real-World Rule">
+Start simple (single stateless app + relational DB + cache), measure real bottlenecks, and only introduce sharding or distributed queues when the numbers clearly justify the complexity.
+</Callout>
+
+## Key Takeaways
+
+- **Default to relational SQL when relationships and ACID transactions matter**
+- **Pick key-value stores (Redis/DynamoDB) for ultra-low-latency lookups**
+- **Evaluate consistency, schema evolution, and operational complexity**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Which database category is usually the safest default for financial ledgers and multi-table relational business data?", "options": ["ACID-compliant relational SQL (such as PostgreSQL)", "An unindexed in-memory cache with no persistence", "Flat CSV files on local disk"], "answer": 0, "explanation": "Relational databases provide strong ACID guarantees, constraints, and flexible ad-hoc querying."}]}
+/>

@@ -1,0 +1,50 @@
+---
+title: "CTEs (WITH Clauses) & Recursive Queries"
+description: "Break complex multi-stage SQL into readable Common Table Expressions (CTEs) and traverse trees with WITH RECURSIVE."
+course: "postgresql-design"
+module: "Advanced SQL"
+order: 9
+durationMinutes: 9
+objectives:
+  - "Refactor nested subqueries into readable WITH blocks"
+  - "Chain multiple CTEs for analytics pipelines"
+  - "Traverse hierarchical categories or org charts with WITH RECURSIVE"
+hasPlayground: true
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import SqlPlayground from '@/components/playground/SqlPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Break complex multi-stage SQL into readable Common Table Expressions (CTEs) and traverse trees with WITH RECURSIVE.
+
+Strong database design pays dividends for years: clean constraints catch bugs before application code does, and well-chosen indexes keep response times predictable as tables grow from thousands to millions of rows.
+
+## Try It Live (Interactive SQL Sandbox)
+
+<SqlPlayground
+  client:visible
+  title="CTEs (WITH Clauses) & Recursive Queries"
+  height={220}
+  schemaSql={"CREATE TABLE sales (region TEXT, amount INTEGER);\nINSERT INTO sales VALUES ('North', 400), ('North', 600), ('South', 350), ('East', 900);"}
+  query={"WITH regional AS (SELECT region, SUM(amount) AS total FROM sales GROUP BY region)\nSELECT region, total FROM regional WHERE total >= 500 ORDER BY total DESC;"}
+/>
+
+<Callout type="note" title="PostgreSQL Production Tip">
+Always inspect realistic table sizes with `EXPLAIN (ANALYZE, BUFFERS)` before assuming an index is being used. Small tables often prefer sequential scans because reading one memory page is faster than traversing a tree.
+</Callout>
+
+## Key Takeaways
+
+- **Refactor nested subqueries into readable WITH blocks**
+- **Chain multiple CTEs for analytics pipelines**
+- **Traverse hierarchical categories or org charts with WITH RECURSIVE**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "What is the primary readability advantage of a CTE (`WITH ... AS (...)`) over deeply nested subqueries?", "options": ["It lets you name intermediate result sets top-to-bottom like variables in a pipeline", "It automatically deletes duplicate rows", "It removes the need for a SELECT statement"], "answer": 0, "explanation": "Named CTEs make multi-step transformations dramatically easier to read, debug, and maintain."}]}
+/>

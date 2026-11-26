@@ -1,0 +1,20 @@
+---
+title: "Go (Golang) Quick Reference"
+category: "Go"
+syntax: "func name(arg T) (R, error)"
+summary: "Essential Go syntax for slices, maps, structs, interfaces, error wrapping, goroutines, channels, and testing."
+browserSupport: "Go 1.22+"
+---
+
+## Core Syntax & Idioms
+
+| Concept | Example |
+| :--- | :--- |
+| Short declaration | `name := "DevPath"` |
+| Slice append | `items = append(items, "Go")` |
+| Map comma-ok | `val, ok := m["key"]` |
+| Error wrapping | `fmt.Errorf("load user: %w", err)` |
+| Goroutine + WaitGroup | `wg.Add(1); go func() { defer wg.Done(); work() }()` |
+| Buffered channel | `ch := make(chan int, 16)` |
+| Context timeout | `ctx, cancel := context.WithTimeout(ctx, 2*time.Second)` |
+| Race detector | `go test -race ./...` |

@@ -25,12 +25,32 @@ const jsonLd = {
   '@type': 'Course',
   name: course.data.title,
   description: course.data.description,
+  url: new URL(`/courses/${course.data.slug}/`, Astro.site).toString(),
   isAccessibleForFree: true,
   educationalLevel: course.data.difficulty,
+  timeRequired: `PT${course.data.estimatedHours}H`,
+  inLanguage: 'en',
   provider: {
     '@type': 'Organization',
     name: 'DevPath',
+    sameAs: 'https://devpath.mycampus.ph',
   },
+  offers: {
+    '@type': 'Offer',
+    category: 'Free',
+    price: '0',
+    priceCurrency: 'USD',
+  },
+  hasCourseInstance: {
+    '@type': 'CourseInstance',
+    courseMode: 'Online',
+    courseWorkload: `PT${course.data.estimatedHours}H`,
+  },
+  syllabusSections: modules.map((m) => ({
+    '@type': 'Syllabus',
+    name: m.name,
+    description: m.lessons.map((l) => l.entry.data.title).join(', '),
+  })),
 };
 ---
 

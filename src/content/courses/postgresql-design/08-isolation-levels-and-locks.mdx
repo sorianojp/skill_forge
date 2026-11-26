@@ -1,0 +1,50 @@
+---
+title: "MVCC, Isolation Levels & Row-Level Locking"
+description: "Prevent lost updates and double-spending using PostgreSQL MVCC, READ COMMITTED vs SERIALIZABLE, and SELECT FOR UPDATE."
+course: "postgresql-design"
+module: "Transactions & Concurrency"
+order: 8
+durationMinutes: 10
+objectives:
+  - "Explain how MVCC lets readers never block writers"
+  - "Recognize lost updates and phantom reads"
+  - "Use SELECT ... FOR UPDATE to serialize concurrent balance updates"
+hasPlayground: true
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import SqlPlayground from '@/components/playground/SqlPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Prevent lost updates and double-spending using PostgreSQL MVCC, READ COMMITTED vs SERIALIZABLE, and SELECT FOR UPDATE.
+
+Strong database design pays dividends for years: clean constraints catch bugs before application code does, and well-chosen indexes keep response times predictable as tables grow from thousands to millions of rows.
+
+## Try It Live (Interactive SQL Sandbox)
+
+<SqlPlayground
+  client:visible
+  title="MVCC, Isolation Levels & Row-Level Locking"
+  height={220}
+  schemaSql={"CREATE TABLE inventory (sku TEXT PRIMARY KEY, stock INTEGER);\nINSERT INTO inventory VALUES ('LAPTOP-14', 5), ('MOUSE-PRO', 12);"}
+  query={"SELECT sku, stock FROM inventory WHERE stock > 0 ORDER BY stock ASC;"}
+/>
+
+<Callout type="note" title="PostgreSQL Production Tip">
+Always inspect realistic table sizes with `EXPLAIN (ANALYZE, BUFFERS)` before assuming an index is being used. Small tables often prefer sequential scans because reading one memory page is faster than traversing a tree.
+</Callout>
+
+## Key Takeaways
+
+- **Explain how MVCC lets readers never block writers**
+- **Recognize lost updates and phantom reads**
+- **Use SELECT ... FOR UPDATE to serialize concurrent balance updates**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Why do readers not block writers in PostgreSQL?", "options": ["PostgreSQL uses MVCC (Multi-Version Concurrency Control) so readers see a consistent snapshot while writers create new row versions", "PostgreSQL disables concurrent connections", "PostgreSQL stores all tables in RAM only"], "answer": 0, "explanation": "MVCC keeps snapshots per transaction, allowing high read concurrency without read locks blocking writes."}]}
+/>

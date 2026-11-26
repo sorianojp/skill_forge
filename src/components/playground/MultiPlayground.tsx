@@ -268,14 +268,15 @@ public class Main {
 
       {active === 'csharp' && (
         <CodeLab
-          title="Program.cs (.NET 8 / C# 12)"
+          title="Program.cs (C#)"
           language="csharp"
           height={340}
-          code={`using System.Linq;
+          code={`using System;
+using System.Linq;
 
-int[] scores = [82, 95, 88, 91];
+int[] scores = new[] { 82, 95, 88, 91 };
 var top = scores.Where(s => s >= 90).ToList();
-Console.WriteLine($"Scores >= 90: {string.Join(", ", top)}");`}
+Console.WriteLine("Scores >= 90: " + string.Join(", ", top));`}
           expectedOutput={`Scores >= 90: 95, 91`}
         />
       )}

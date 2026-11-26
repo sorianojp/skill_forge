@@ -1,0 +1,48 @@
+---
+title: "Observability: Logs, Metrics, Traces & SLOs"
+description: "Debug distributed systems rapidly using structured logs, RED metrics (Rate, Errors, Duration), distributed trace IDs, and error budgets."
+course: "system-design-fundamentals"
+module: "Async & Reliability"
+order: 9
+durationMinutes: 9
+objectives:
+  - "Track the RED method: Request Rate, Error Rate, and Duration"
+  - "Propagate correlation / trace IDs across services"
+  - "Define actionable SLOs instead of noisy CPU alerts"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Debug distributed systems rapidly using structured logs, RED metrics (Rate, Errors, Duration), distributed trace IDs, and error budgets.
+
+Great system design is about explicit trade-offs rather than memorizing buzzwords. Every architectural layer you add (caches, replicas, queues, shards) solves one bottleneck while introducing new operational failure modes.
+
+## Design Checklist
+
+| Dimension | Questions to Ask |
+| :--- | :--- |
+| **Traffic & Scale** | What is the read-to-write ratio, peak QPS, and payload size? |
+| **Consistency** | Can users tolerate eventual consistency for a few seconds, or do we need strict ACID? |
+| **Failure Modes** | What happens if a cache node, replica, or downstream API times out? |
+| **Simplicity** | Can a single well-indexed PostgreSQL instance handle the next 12 months of growth? |
+
+<Callout type="tip" title="Interview & Real-World Rule">
+Start simple (single stateless app + relational DB + cache), measure real bottlenecks, and only introduce sharding or distributed queues when the numbers clearly justify the complexity.
+</Callout>
+
+## Key Takeaways
+
+- **Track the RED method: Request Rate, Error Rate, and Duration**
+- **Propagate correlation / trace IDs across services**
+- **Define actionable SLOs instead of noisy CPU alerts**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "In the RED observability framework for services, what do R, E, and D stand for?", "options": ["Rate, Errors, and Duration", "RAM, Ethernet, and Disk", "Read, Execute, and Delete"], "answer": 0, "explanation": "RED metrics directly reflect what users experience: request volume, failure rate, and latency."}]}
+/>

@@ -1,0 +1,50 @@
+---
+title: "Relational Modeling, Primary & Foreign Keys"
+description: "Model real-world entities cleanly using surrogate vs natural keys, foreign key constraints, and ON DELETE actions."
+course: "postgresql-design"
+module: "Schema Design"
+order: 1
+durationMinutes: 9
+objectives:
+  - "Choose appropriate primary keys (BIGINT IDENTITY vs UUID)"
+  - "Enforce referential integrity with FOREIGN KEY constraints"
+  - "Pick between ON DELETE CASCADE and RESTRICT"
+hasPlayground: true
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import SqlPlayground from '@/components/playground/SqlPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Model real-world entities cleanly using surrogate vs natural keys, foreign key constraints, and ON DELETE actions.
+
+Strong database design pays dividends for years: clean constraints catch bugs before application code does, and well-chosen indexes keep response times predictable as tables grow from thousands to millions of rows.
+
+## Try It Live (Interactive SQL Sandbox)
+
+<SqlPlayground
+  client:visible
+  title="Relational Modeling, Primary & Foreign Keys"
+  height={220}
+  schemaSql={"CREATE TABLE users (id INTEGER PRIMARY KEY, email TEXT UNIQUE NOT NULL);\nCREATE TABLE orders (id INTEGER PRIMARY KEY, user_id INTEGER NOT NULL REFERENCES users(id), total_cents INTEGER NOT NULL);\nINSERT INTO users VALUES (1, 'ana@devpath.ph');\nINSERT INTO orders VALUES (101, 1, 2500);"}
+  query={"SELECT u.email, o.id AS order_id, o.total_cents / 100.0 AS total_usd FROM users u JOIN orders o ON o.user_id = u.id;"}
+/>
+
+<Callout type="note" title="PostgreSQL Production Tip">
+Always inspect realistic table sizes with `EXPLAIN (ANALYZE, BUFFERS)` before assuming an index is being used. Small tables often prefer sequential scans because reading one memory page is faster than traversing a tree.
+</Callout>
+
+## Key Takeaways
+
+- **Choose appropriate primary keys (BIGINT IDENTITY vs UUID)**
+- **Enforce referential integrity with FOREIGN KEY constraints**
+- **Pick between ON DELETE CASCADE and RESTRICT**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "What does a `FOREIGN KEY` constraint guarantee?", "options": ["Every child row references a valid parent row, preventing orphaned records", "Queries automatically run 10x faster without indexes", "Columns can store arbitrary JSON arrays"], "answer": 0, "explanation": "Foreign keys enforce referential integrity at the database level regardless of which app writes to the table."}]}
+/>

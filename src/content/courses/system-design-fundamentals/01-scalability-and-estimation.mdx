@@ -1,0 +1,48 @@
+---
+title: "Scalability, Latency & Back-of-the-Envelope Math"
+description: "Learn vertical vs horizontal scaling, throughput (QPS), p95/p99 tail latency, and quick capacity estimation."
+course: "system-design-fundamentals"
+module: "Core Foundations"
+order: 1
+durationMinutes: 9
+objectives:
+  - "Differentiate vertical scaling (bigger box) from horizontal scaling (more nodes)"
+  - "Estimate QPS, peak traffic, and 5-year storage budgets"
+  - "Understand why p99 latency matters more than averages"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Learn vertical vs horizontal scaling, throughput (QPS), p95/p99 tail latency, and quick capacity estimation.
+
+Great system design is about explicit trade-offs rather than memorizing buzzwords. Every architectural layer you add (caches, replicas, queues, shards) solves one bottleneck while introducing new operational failure modes.
+
+## Design Checklist
+
+| Dimension | Questions to Ask |
+| :--- | :--- |
+| **Traffic & Scale** | What is the read-to-write ratio, peak QPS, and payload size? |
+| **Consistency** | Can users tolerate eventual consistency for a few seconds, or do we need strict ACID? |
+| **Failure Modes** | What happens if a cache node, replica, or downstream API times out? |
+| **Simplicity** | Can a single well-indexed PostgreSQL instance handle the next 12 months of growth? |
+
+<Callout type="tip" title="Interview & Real-World Rule">
+Start simple (single stateless app + relational DB + cache), measure real bottlenecks, and only introduce sharding or distributed queues when the numbers clearly justify the complexity.
+</Callout>
+
+## Key Takeaways
+
+- **Differentiate vertical scaling (bigger box) from horizontal scaling (more nodes)**
+- **Estimate QPS, peak traffic, and 5-year storage budgets**
+- **Understand why p99 latency matters more than averages**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Why do engineers track p99 latency instead of relying solely on average latency?", "options": ["Averages hide slow outliers that degrade the experience for the worst 1% of requests (often power users)", "p99 is always lower than the average", "Averages cannot be computed in milliseconds"], "answer": 0, "explanation": "Tail latency (p95/p99) reveals real bottlenecks like GC pauses, cold caches, or lock contention hidden by means."}]}
+/>

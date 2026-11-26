@@ -1,0 +1,21 @@
+{
+  "slug": "system-design-fundamentals",
+  "title": "System Design Essentials",
+  "shortTitle": "System Design",
+  "description": "Architect scalable distributed systems: load balancing, caching, CDNs, database replication and sharding, message queues, rate limiting, and real-world case studies.",
+  "track": "System Design",
+  "difficulty": "Intermediate",
+  "estimatedHours": 6,
+  "accentColor": "#7c3aed",
+  "prerequisites": [
+    "Backend & SQL basics"
+  ],
+  "outcomes": [
+    "Estimate throughput, storage, and latency budgets for web-scale systems",
+    "Apply load balancing, multi-tier caching, and read replicas effectively",
+    "Choose between SQL, NoSQL, sharding, and event-driven message queues",
+    "Design end-to-end systems like URL Shorteners, News Feeds, and Rate Limiters"
+  ],
+  "featured": true,
+  "order": 21
+}

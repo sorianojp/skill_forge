@@ -8,7 +8,7 @@ import { javascript as jsLang } from '@codemirror/lang-javascript';
 import { oneDark } from '@codemirror/theme-one-dark';
 import { Check, Copy, Eye, Loader2, Play, RotateCcw, Terminal } from 'lucide-react';
 
-type Lang = 'c' | 'cpp' | 'java' | 'csharp' | 'ts' | 'node' | 'bash';
+type Lang = 'c' | 'cpp' | 'java' | 'csharp' | 'ts' | 'node' | 'bash' | 'go' | 'rust';
 
 interface CodeLabProps {
   title?: string;
@@ -22,10 +22,12 @@ const LABELS: Record<Lang, { name: string; color: string; runtime: string }> = {
   c: { name: 'C', color: 'bg-slate-700', runtime: 'GCC 13 (C11)' },
   cpp: { name: 'C++', color: 'bg-blue-600', runtime: 'GCC 13 (C++20)' },
   java: { name: 'Java', color: 'bg-amber-600', runtime: 'OpenJDK 21' },
-  csharp: { name: 'C#', color: 'bg-purple-600', runtime: '.NET 8 (C# 12)' },
+  csharp: { name: 'C#', color: 'bg-purple-600', runtime: 'Mono C#' },
   ts: { name: 'TypeScript', color: 'bg-sky-600', runtime: 'TypeScript 5.6' },
   node: { name: 'Node.js', color: 'bg-emerald-600', runtime: 'Node.js 20' },
   bash: { name: 'Bash', color: 'bg-zinc-700', runtime: 'GNU Bash' },
+  go: { name: 'Go', color: 'bg-cyan-600', runtime: 'Go 1.22' },
+  rust: { name: 'Rust', color: 'bg-orange-700', runtime: 'Rust 1.85' },
 };
 
 function getApiBase(): string {

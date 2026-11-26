@@ -1,0 +1,50 @@
+---
+title: "Reading EXPLAIN Plans & Fixing Slow Queries"
+description: "Diagnose slow SQL by inspecting sequential scans, index scans, nested loops, and hash joins with EXPLAIN."
+course: "postgresql-design"
+module: "Indexing & Performance"
+order: 6
+durationMinutes: 10
+objectives:
+  - "Read EXPLAIN QUERY PLAN / EXPLAIN ANALYZE output"
+  - "Spot function-wrapped columns that disable index usage"
+  - "Eliminate N+1 query patterns with JOINs"
+hasPlayground: true
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import SqlPlayground from '@/components/playground/SqlPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Diagnose slow SQL by inspecting sequential scans, index scans, nested loops, and hash joins with EXPLAIN.
+
+Strong database design pays dividends for years: clean constraints catch bugs before application code does, and well-chosen indexes keep response times predictable as tables grow from thousands to millions of rows.
+
+## Try It Live (Interactive SQL Sandbox)
+
+<SqlPlayground
+  client:visible
+  title="Reading EXPLAIN Plans & Fixing Slow Queries"
+  height={220}
+  schemaSql={"CREATE TABLE users (id INTEGER PRIMARY KEY, email TEXT);\nCREATE INDEX idx_users_email ON users(email);\nINSERT INTO users VALUES (1,'a@example.com'),(2,'b@example.com');"}
+  query={"EXPLAIN QUERY PLAN SELECT * FROM users WHERE email = 'a@example.com';"}
+/>
+
+<Callout type="note" title="PostgreSQL Production Tip">
+Always inspect realistic table sizes with `EXPLAIN (ANALYZE, BUFFERS)` before assuming an index is being used. Small tables often prefer sequential scans because reading one memory page is faster than traversing a tree.
+</Callout>
+
+## Key Takeaways
+
+- **Read EXPLAIN QUERY PLAN / EXPLAIN ANALYZE output**
+- **Spot function-wrapped columns that disable index usage**
+- **Eliminate N+1 query patterns with JOINs**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Why does `WHERE LOWER(email) = 'a@b.com'` typically fail to use a standard index on `(email)`?", "options": ["Wrapping an indexed column in a function prevents direct B-Tree lookup unless an expression index on LOWER(email) exists", "LOWER() is not valid SQL", "B-Tree indexes do not support text"], "answer": 0, "explanation": "To index case-insensitive lookups, create an expression index like CREATE INDEX ON users (LOWER(email))."}]}
+/>

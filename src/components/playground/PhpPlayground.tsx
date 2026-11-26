@@ -60,7 +60,11 @@ async function runPhpSnippet(PhpWeb: any, code: string): Promise<{ stdout: strin
 
     php.addEventListener('ready', async () => {
       try {
-        const exitCode = await php.run(code);
+        // php-wasm wraps scripts internally, so declare(strict_types=1) fails with line-2 fatal error
+        const normalized = code
+          .trimStart()
+          .replace(/declare\s*\(\s*strict_types\s*=\s*1\s*\)\s*;/gi, '');
+        const exitCode = await php.run(normalized);
         resolve({ stdout, stderr, exitCode: Number(exitCode ?? 0) });
       } catch (err) {
         reject(err);

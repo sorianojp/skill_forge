@@ -1,0 +1,50 @@
+---
+title: "Data Types, CHECK Constraints & Enums"
+description: "Pick precise PostgreSQL data types (NUMERIC for money, TIMESTAMPTZ for timestamps) and guard data quality with CHECK constraints."
+course: "postgresql-design"
+module: "Schema Design"
+order: 3
+durationMinutes: 8
+objectives:
+  - "Avoid floating-point rounding bugs by using NUMERIC or integer cents"
+  - "Store UTC instants with TIMESTAMPTZ"
+  - "Enforce domain invariants with NOT NULL, UNIQUE, and CHECK"
+hasPlayground: true
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import SqlPlayground from '@/components/playground/SqlPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Pick precise PostgreSQL data types (NUMERIC for money, TIMESTAMPTZ for timestamps) and guard data quality with CHECK constraints.
+
+Strong database design pays dividends for years: clean constraints catch bugs before application code does, and well-chosen indexes keep response times predictable as tables grow from thousands to millions of rows.
+
+## Try It Live (Interactive SQL Sandbox)
+
+<SqlPlayground
+  client:visible
+  title="Data Types, CHECK Constraints & Enums"
+  height={220}
+  schemaSql={"CREATE TABLE accounts (id INTEGER PRIMARY KEY, owner TEXT NOT NULL, balance_cents INTEGER NOT NULL CHECK (balance_cents >= 0));\nINSERT INTO accounts VALUES (1, 'Marco', 12000), (2, 'Lia', 8500);"}
+  query={"SELECT owner, balance_cents / 100.0 AS balance FROM accounts ORDER BY balance_cents DESC;"}
+/>
+
+<Callout type="note" title="PostgreSQL Production Tip">
+Always inspect realistic table sizes with `EXPLAIN (ANALYZE, BUFFERS)` before assuming an index is being used. Small tables often prefer sequential scans because reading one memory page is faster than traversing a tree.
+</Callout>
+
+## Key Takeaways
+
+- **Avoid floating-point rounding bugs by using NUMERIC or integer cents**
+- **Store UTC instants with TIMESTAMPTZ**
+- **Enforce domain invariants with NOT NULL, UNIQUE, and CHECK**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Why should monetary values be stored as `NUMERIC(12,2)` or integer cents instead of `FLOAT` / `REAL`?", "options": ["Binary floating-point types introduce rounding inaccuracies like 0.1 + 0.2 = 0.30000000000000004", "FLOAT cannot store numbers above 100", "NUMERIC is always 1 byte"], "answer": 0, "explanation": "Exact decimal or integer-cent storage prevents subtle penny discrepancies in financial ledgers."}]}
+/>

@@ -833,4 +833,444 @@ export const EXTRA_EXAM_QUESTIONS: Record<string, ExamQuestion[]> = {
       explanation: 'Each vertex and edge is visited a constant number of times.',
     },
   ],
+  'go-fundamentals': [
+    {
+      question: 'What is the default zero value of an uninitialized int variable in Go?',
+      options: ['0', 'nil', 'undefined'],
+      answer: 0,
+      explanation: 'All Go types have deterministic zero values: 0 for numeric types, false for bool, and "" for string.',
+    },
+    {
+      question: 'How does a Go switch case behave by default after matching?',
+      options: [
+        'It breaks automatically without needing an explicit break statement',
+        'It falls through to the next case unless break is written',
+        'It exits the entire program',
+      ],
+      answer: 0,
+      explanation: 'Go prevents accidental fallthrough bugs by breaking automatically at the end of each case.',
+    },
+    {
+      question: 'What does the comma-ok idiom `val, ok := m[key]` check on a Go map?',
+      options: [
+        'Whether key actually exists in the map versus returning the zero value',
+        'Whether the map is sorted alphabetically',
+        'Whether the map is thread-safe',
+      ],
+      answer: 0,
+      explanation: 'ok is true if key is present in the map and false if absent.',
+    },
+    {
+      question: 'When must a Go method use a pointer receiver `(s *Struct)`?',
+      options: [
+        'When the method mutates fields on the receiver or avoids copying a large struct',
+        'Whenever the method returns an integer',
+        'Only inside package main',
+      ],
+      answer: 0,
+      explanation: 'Value receivers work on a copy, so mutating state requires a pointer receiver.',
+    },
+    {
+      question: 'How does a struct satisfy an interface in Go?',
+      options: [
+        'Implicitly, simply by implementing all methods declared in the interface',
+        'By adding an explicit `implements` keyword',
+        'By extending an abstract class',
+      ],
+      answer: 0,
+      explanation: 'Go uses structural typing for interfaces without explicit declarations.',
+    },
+    {
+      question: 'What does `fmt.Errorf("load failed: %w", err)` accomplish?',
+      options: [
+        'Wraps err so callers can inspect it with errors.Is and errors.As',
+        'Converts the error into a warning string only',
+        'Clears the error to nil',
+      ],
+      answer: 0,
+      explanation: 'The %w verb preserves the wrapped error chain while adding call-site context.',
+    },
+    {
+      question: 'When does a `defer` statement execute in Go?',
+      options: [
+        'Right before the surrounding function returns, in LIFO (last-in, first-out) order',
+        'Before the function starts',
+        'Only if a panic occurs',
+      ],
+      answer: 0,
+      explanation: 'Deferred calls always run when the enclosing function returns, making resource cleanup reliable.',
+    },
+    {
+      question: 'Why is `sync.WaitGroup` commonly used with goroutines launched in `main()`?',
+      options: [
+        'To wait for all goroutines to call Done() before main exits and terminates the process',
+        'To limit strings to ASCII characters',
+        'To convert channels into slices',
+      ],
+      answer: 0,
+      explanation: 'When main() returns, the process exits immediately even if other goroutines are still running.',
+    },
+    {
+      question: 'What happens when sending to an unbuffered channel with no active receiver?',
+      options: [
+        'The sending goroutine blocks until another goroutine receives the value',
+        'The value is silently dropped',
+        'Go allocates infinite memory',
+      ],
+      answer: 0,
+      explanation: 'Unbuffered channels synchronize sender and receiver directly.',
+    },
+    {
+      question: 'Why should you always `defer cancel()` after calling `context.WithTimeout`?',
+      options: [
+        'To release internal timer resources immediately when the function exits',
+        'To double the timeout window',
+        'To retry the HTTP request automatically',
+      ],
+      answer: 0,
+      explanation: 'Deferring cancel() prevents leaking timers if work completes before the deadline.',
+    },
+    {
+      question: 'Why must struct fields start with an uppercase letter for `encoding/json` to serialize them?',
+      options: [
+        'Only exported (capitalized) identifiers are visible to external packages like encoding/json',
+        'Lowercase fields cannot hold strings',
+        'JSON only supports uppercase keys',
+      ],
+      answer: 0,
+      explanation: 'In Go, leading capitalization defines package export visibility.',
+    },
+    {
+      question: 'Which command runs Go tests with the built-in concurrency race detector?',
+      options: ['go test -race ./...', 'go vet --threads', 'go run --safe'],
+      answer: 0,
+      explanation: 'go test -race detects unsynchronized concurrent memory accesses during tests.',
+    },
+    {
+      question: 'What does `select` do in Go concurrency?',
+      options: [
+        'Waits on multiple channel send/receive operations and proceeds with whichever becomes ready first',
+        'Queries a SQL database table',
+        'Sorts a slice in place',
+      ],
+      answer: 0,
+      explanation: 'select multiplexes channel operations, timeouts, and cancellation cleanly.',
+    },
+    {
+      question: 'Why do production Go services use bounded worker pools for external HTTP calls?',
+      options: [
+        'To cap open sockets, memory footprint, and downstream rate-limit pressure',
+        'Because Go only allows 2 goroutines per CPU',
+        'Because channels cannot transmit structs',
+      ],
+      answer: 0,
+      explanation: 'Bounding concurrency protects both local file descriptors and external dependencies.',
+    },
+    {
+      question: 'What is the difference between `len(s)` and `cap(s)` on a Go slice?',
+      options: [
+        'len is the current number of elements; cap is the backing array capacity before reallocation',
+        'len is bytes and cap is megabytes',
+        'They are always identical',
+      ],
+      answer: 0,
+      explanation: 'append() grows the slice up to cap before allocating a larger backing array.',
+    },
+  ],
+  'postgresql-design': [
+    {
+      question: 'What does a FOREIGN KEY constraint enforce?',
+      options: [
+        'Referential integrity so every child row points to an existing parent row',
+        'Automatic full-text indexing on every column',
+        'Automatic JSON serialization',
+      ],
+      answer: 0,
+      explanation: 'Foreign keys prevent orphaned records at the database engine level.',
+    },
+    {
+      question: 'Why should monetary amounts be stored as NUMERIC or integer cents instead of FLOAT?',
+      options: [
+        'Binary floating-point introduces rounding errors on decimal fractions like 0.1 + 0.2',
+        'FLOAT cannot store negative numbers',
+        'NUMERIC takes 0 bytes on disk',
+      ],
+      answer: 0,
+      explanation: 'Exact decimal or integer-cent types avoid penny rounding drift in financial data.',
+    },
+    {
+      question: 'Why is copying `price_at_purchase` into `order_items` good relational design?',
+      options: [
+        'Past orders retain the exact price paid even when catalog prices change later',
+        'SQL cannot join numeric columns',
+        'It eliminates the need for primary keys',
+      ],
+      answer: 0,
+      explanation: 'Capturing historical snapshots preserves invoice accuracy over time.',
+    },
+    {
+      question: 'What is the main trade-off of adding many indexes to a write-heavy table?',
+      options: [
+        'Every INSERT, UPDATE, and DELETE must maintain each index, slowing writes and using extra disk',
+        'SELECT queries stop returning sorted rows',
+        'Transactions are disabled',
+      ],
+      answer: 0,
+      explanation: 'Indexes accelerate reads at the cost of write amplification and storage.',
+    },
+    {
+      question: 'For a composite B-Tree index on `(tenant_id, created_at)`, which query uses it best?',
+      options: [
+        "WHERE tenant_id = 7 AND created_at >= '2026-01-01'",
+        "WHERE created_at >= '2026-01-01' without tenant_id",
+        'WHERE tenant_id + 1 = 8',
+      ],
+      answer: 0,
+      explanation: 'Composite B-Tree indexes follow the leftmost-prefix rule: equality on the leading column unlocks range scans on the next.',
+    },
+    {
+      question: 'When is a partial index like `CREATE INDEX ... WHERE status = \'pending\'` most useful?',
+      options: [
+        'When queries frequently target a small hot subset of rows in a large table',
+        'When every row has status = pending',
+        'When the table has no primary key',
+      ],
+      answer: 0,
+      explanation: 'Partial indexes stay tiny in RAM and incur zero maintenance overhead on completed rows.',
+    },
+    {
+      question: 'Why does `WHERE LOWER(email) = \'a@b.com\'` normally bypass a plain index on `(email)`?',
+      options: [
+        'Wrapping the column in a function prevents direct B-Tree lookup unless an expression index on LOWER(email) exists',
+        'B-Tree indexes cannot index text columns',
+        'LOWER() disables WHERE clauses',
+      ],
+      answer: 0,
+      explanation: 'Expression indexes (or citext) allow indexed case-insensitive searches.',
+    },
+    {
+      question: 'What does Atomicity in ACID guarantee?',
+      options: [
+        'All statements in a transaction succeed together or roll back together on failure',
+        'Queries always finish in under 1ms',
+        'Tables never need backups',
+      ],
+      answer: 0,
+      explanation: 'Atomicity prevents half-applied updates if an error or crash occurs mid-transaction.',
+    },
+    {
+      question: 'How does PostgreSQL MVCC prevent readers from blocking writers?',
+      options: [
+        'Each transaction reads a consistent snapshot of row versions while writers append new versions',
+        'PostgreSQL runs only one query at a time',
+        'PostgreSQL disables transactions during SELECTs',
+      ],
+      answer: 0,
+      explanation: 'Multi-Version Concurrency Control enables high concurrent read/write throughput.',
+    },
+    {
+      question: 'What does `SELECT ... FOR UPDATE` do inside a transaction?',
+      options: [
+        'Locks the matched rows so concurrent transactions wait before modifying them',
+        'Deletes the matched rows immediately',
+        'Converts the table to read-only permanently',
+      ],
+      answer: 0,
+      explanation: 'Row-level locking prevents race conditions like double-spending a wallet balance.',
+    },
+    {
+      question: 'How does a window function (`OVER (...)`) differ from `GROUP BY`?',
+      options: [
+        'Window functions keep every individual row while adding group or running calculations',
+        'Window functions delete duplicate rows',
+        'Window functions cannot use ORDER BY',
+      ],
+      answer: 0,
+      explanation: 'GROUP BY collapses rows into one per group; window functions preserve row-level detail.',
+    },
+    {
+      question: 'Which PostgreSQL index type accelerates JSONB containment (`@>`) and full-text search?',
+      options: ['GIN (Generalized Inverted Index)', 'Unindexed sequential scan', 'Hash index only'],
+      answer: 0,
+      explanation: 'GIN indexes map internal keys/tokens inside composite values like JSONB and tsvectors.',
+    },
+    {
+      question: 'Why should you use `CREATE INDEX CONCURRENTLY` on large live tables?',
+      options: [
+        'It builds the index without blocking concurrent INSERT, UPDATE, and DELETE writes',
+        'It skips half the rows to finish faster',
+        'It automatically compresses old backups',
+      ],
+      answer: 0,
+      explanation: 'Standard CREATE INDEX takes a write-blocking lock until the build completes.',
+    },
+    {
+      question: 'What is the main benefit of a CTE (`WITH step AS (...)`) in complex analytics queries?',
+      options: [
+        'Organizes multi-stage logic into readable named steps top-to-bottom',
+        'Removes the need for FROM clauses',
+        'Automatically shards the database',
+      ],
+      answer: 0,
+      explanation: 'CTEs make layered queries far easier to read, test, and refactor than nested subqueries.',
+    },
+    {
+      question: 'What does `EXPLAIN (ANALYZE, BUFFERS)` show that plain `EXPLAIN` does not?',
+      options: [
+        'Actual execution times, actual row counts, and shared buffer cache hits/reads',
+        'Only table creation DDL',
+        'User passwords',
+      ],
+      answer: 0,
+      explanation: 'EXPLAIN ANALYZE actually runs the query to compare planner estimates against real runtime metrics.',
+    },
+  ],
+  'system-design-fundamentals': [
+    {
+      question: 'Why do backend engineers track p95 and p99 latency instead of only average latency?',
+      options: [
+        'Averages hide slow tail outliers that hurt real users experiencing cache misses or lock waits',
+        'p99 is always smaller than the median',
+        'Averages cannot measure milliseconds',
+      ],
+      answer: 0,
+      explanation: 'Tail latency reveals worst-case user experience masked by arithmetic means.',
+    },
+    {
+      question: 'Why should web application servers stay stateless behind a load balancer?',
+      options: [
+        'Any server can handle any request, enabling effortless horizontal autoscaling and failover',
+        'Stateless servers do not need databases',
+        'Load balancers cannot route HTTPS otherwise',
+      ],
+      answer: 0,
+      explanation: 'Storing session state externally in Redis or SQL lets instances scale up or down freely.',
+    },
+    {
+      question: 'What happens on a cache miss in the cache-aside (lazy-loading) pattern?',
+      options: [
+        'The application queries the database, writes the result into the cache with a TTL, and returns it',
+        'The request immediately returns HTTP 500',
+        'The database restarts automatically',
+      ],
+      answer: 0,
+      explanation: 'Cache-aside populates the cache on demand and keeps read-heavy paths fast.',
+    },
+    {
+      question: 'What is a cache stampede (thundering herd)?',
+      options: [
+        'Many concurrent requests miss an expired hot key simultaneously and overwhelm the database',
+        'A CDN serving static images too quickly',
+        'A database backup finishing early',
+      ],
+      answer: 0,
+      explanation: 'Request coalescing, jittered TTLs, or probabilistic early refresh prevent stampedes.',
+    },
+    {
+      question: 'A user updates their profile and refreshes immediately, seeing old data. What is the most likely cause?',
+      options: [
+        'Replication lag on a read replica that has not yet applied the leader write',
+        'DNS expired in 1 second',
+        'The browser disabled CSS',
+      ],
+      answer: 0,
+      explanation: 'Reading a user\'s own recent writes from the leader guarantees read-your-own-writes consistency.',
+    },
+    {
+      question: 'What happens if you shard a global table by `country` when 80% of traffic comes from one country?',
+      options: [
+        'A hot shard forms and bottlenecks 80% of traffic while other shards sit mostly idle',
+        'Traffic splits evenly across all shards automatically',
+        'Cross-shard joins become O(1)',
+      ],
+      answer: 0,
+      explanation: 'Shard keys need high cardinality and uniform distribution to avoid hot spots.',
+    },
+    {
+      question: 'What problem does consistent hashing solve in distributed caches and sharded stores?',
+      options: [
+        'Minimizes the fraction of keys that must move when nodes are added or removed',
+        'Eliminates the need for network sockets',
+        'Compresses JSON payloads by 90%',
+      ],
+      answer: 0,
+      explanation: 'Consistent hashing remaps only ~1/N keys on topology changes instead of rehashing nearly everything.',
+    },
+    {
+      question: 'Why must message queue consumers be idempotent under at-least-once delivery?',
+      options: [
+        'Retries after timeouts or crashes can deliver the same message twice, so reprocessing must not duplicate side effects',
+        'Queues never retry failed jobs',
+        'Idempotency shrinks message headers',
+      ],
+      answer: 0,
+      explanation: 'Idempotency keys or unique DB constraints guarantee safe retries.',
+    },
+    {
+      question: 'What is the purpose of a Dead-Letter Queue (DLQ)?',
+      options: [
+        'Isolates repeatedly failing poison messages so they do not block healthy queue processing',
+        'Deletes all messages after 1 second',
+        'Replaces the primary relational database',
+      ],
+      answer: 0,
+      explanation: 'DLQs let engineers inspect, fix, and replay failed messages without stalling the main queue.',
+    },
+    {
+      question: 'Why should retry logic combine exponential backoff with random jitter?',
+      options: [
+        'To prevent synchronized waves of retrying clients from hammering a recovering service together',
+        'To increase server CPU usage',
+        'To bypass TLS certificates',
+      ],
+      answer: 0,
+      explanation: 'Jitter spreads retry attempts evenly over time so downstream services can recover.',
+    },
+    {
+      question: 'What does a Circuit Breaker pattern do when a downstream dependency keeps failing?',
+      options: [
+        'Fails fast immediately for a cooldown window instead of piling up slow hanging threads',
+        'Shuts down the entire cloud region',
+        'Disables authentication',
+      ],
+      answer: 0,
+      explanation: 'Failing fast prevents thread-pool exhaustion and cascading outages across upstream services.',
+    },
+    {
+      question: 'In service observability, what does the RED method measure?',
+      options: ['Rate, Errors, and Duration', 'RAM, Ethernet, and Disk', 'Read, Execute, and Delete'],
+      answer: 0,
+      explanation: 'RED focuses directly on user-facing request throughput, failure rate, and latency.',
+    },
+    {
+      question: 'Why do analytics-enabled URL shorteners usually return HTTP 302 instead of 301?',
+      options: [
+        '301 is cached aggressively by browsers, bypassing the shortener server so repeat clicks are not counted',
+        '302 is encrypted while 301 is plaintext',
+        'Browsers block 301 redirects',
+      ],
+      answer: 0,
+      explanation: 'HTTP 302 ensures browsers check the redirect endpoint so click analytics stay accurate.',
+    },
+    {
+      question: 'Why do large social networks use a hybrid push/pull model for news feeds?',
+      options: [
+        'Pushing celebrity posts to millions of follower timelines causes extreme write amplification, so celebrity posts are merged on read',
+        'Push fan-out cannot store timestamps',
+        'Pull fan-out requires zero database reads',
+      ],
+      answer: 0,
+      explanation: 'Hybrid fan-out keeps normal feeds instant while protecting writes from high-follower accounts.',
+    },
+    {
+      question: 'Why is keyset (cursor) pagination preferred over large `OFFSET` pagination at scale?',
+      options: [
+        'Large OFFSET scans and discards thousands of skipped rows, whereas cursor pagination jumps directly via an index',
+        'OFFSET is invalid in PostgreSQL',
+        'Cursor pagination requires no indexes',
+      ],
+      answer: 0,
+      explanation: 'Cursor pagination keeps deep-page queries O(log N) and avoids skipped/duplicate items when rows are inserted.',
+    },
+  ],
 };

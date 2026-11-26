@@ -1,0 +1,48 @@
+---
+title: "Database Replication: Leader-Follower & Lag"
+description: "Scale read-heavy workloads with read replicas while handling replication lag and read-your-own-writes consistency."
+course: "system-design-fundamentals"
+module: "Data at Scale"
+order: 4
+durationMinutes: 9
+objectives:
+  - "Route writes to the leader and reads to followers"
+  - "Handle replication lag after a user updates their profile"
+  - "Plan automated failover when a leader goes down"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Scale read-heavy workloads with read replicas while handling replication lag and read-your-own-writes consistency.
+
+Great system design is about explicit trade-offs rather than memorizing buzzwords. Every architectural layer you add (caches, replicas, queues, shards) solves one bottleneck while introducing new operational failure modes.
+
+## Design Checklist
+
+| Dimension | Questions to Ask |
+| :--- | :--- |
+| **Traffic & Scale** | What is the read-to-write ratio, peak QPS, and payload size? |
+| **Consistency** | Can users tolerate eventual consistency for a few seconds, or do we need strict ACID? |
+| **Failure Modes** | What happens if a cache node, replica, or downstream API times out? |
+| **Simplicity** | Can a single well-indexed PostgreSQL instance handle the next 12 months of growth? |
+
+<Callout type="tip" title="Interview & Real-World Rule">
+Start simple (single stateless app + relational DB + cache), measure real bottlenecks, and only introduce sharding or distributed queues when the numbers clearly justify the complexity.
+</Callout>
+
+## Key Takeaways
+
+- **Route writes to the leader and reads to followers**
+- **Handle replication lag after a user updates their profile**
+- **Plan automated failover when a leader goes down**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "A user updates their bio and immediately refreshes the page, but sees their old bio. What is the most likely cause?", "options": ["Replication lag on a read replica that has not yet applied the leader's latest write", "The browser deleted localStorage", "HTTP GET requests cannot read databases"], "answer": 0, "explanation": "Read-your-own-writes can be solved by reading the user's own recently modified data from the leader."}]}
+/>

@@ -1,0 +1,62 @@
+---
+title: "Implicit Interfaces & Struct Embedding"
+description: "Decouple components using Go's small implicit interfaces and compose behavior via struct embedding."
+course: "go-fundamentals"
+module: "Types & Interfaces"
+order: 5
+durationMinutes: 10
+objectives:
+  - "Implement interfaces implicitly without an implements keyword"
+  - "Keep interfaces small (1 to 3 methods)"
+  - "Reuse fields and methods via struct embedding"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Decouple components using Go's small implicit interfaces and compose behavior via struct embedding.
+
+Go prioritizes simplicity, explicit control flow, fast compilation, and safe concurrency. Every feature in this lesson is part of Go's minimal standard toolkit used across cloud infrastructure, CLI tools, and high-throughput APIs.
+
+## Idiomatic Go Example
+
+```go
+package main
+
+import "fmt"
+
+type Notifier interface {
+    Send(msg string) string
+}
+
+type Email struct{}
+
+func (Email) Send(msg string) string {
+    return "Email: " + msg
+}
+
+func main() {
+    var n Notifier = Email{}
+    fmt.Println(n.Send("Welcome"))
+}
+```
+
+<Callout type="tip" title="Production Habit">
+Run `gofmt -w .` and `go vet ./...` before every commit. Go ships formatting and static analysis directly in the toolchain so teams never argue over style.
+</Callout>
+
+## Key Takeaways
+
+- **Implement interfaces implicitly without an implements keyword**
+- **Keep interfaces small (1 to 3 methods)**
+- **Reuse fields and methods via struct embedding**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "How does a concrete type satisfy an interface in Go?", "options": ["Implicitly, simply by implementing all methods declared in the interface", "By writing `implements InterfaceName` on the struct", "By inheriting from an abstract base class"], "answer": 0, "explanation": "Go uses structural (implicit) interface satisfaction, making mocking and decoupling effortless."}]}
+/>

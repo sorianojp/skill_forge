@@ -1,0 +1,50 @@
+---
+title: "B-Tree Indexes & Selectivity"
+description: "Understand how B-Tree indexes turn O(N) sequential scans into O(log N) index lookups and when an index is ignored."
+course: "postgresql-design"
+module: "Indexing & Performance"
+order: 4
+durationMinutes: 10
+objectives:
+  - "Explain how B-Tree balanced trees accelerate equality and range queries"
+  - "Measure selectivity before adding an index"
+  - "Balance read speedups against write amplification"
+hasPlayground: true
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import SqlPlayground from '@/components/playground/SqlPlayground';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Understand how B-Tree indexes turn O(N) sequential scans into O(log N) index lookups and when an index is ignored.
+
+Strong database design pays dividends for years: clean constraints catch bugs before application code does, and well-chosen indexes keep response times predictable as tables grow from thousands to millions of rows.
+
+## Try It Live (Interactive SQL Sandbox)
+
+<SqlPlayground
+  client:visible
+  title="B-Tree Indexes & Selectivity"
+  height={220}
+  schemaSql={"CREATE TABLE logs (id INTEGER PRIMARY KEY, level TEXT, service TEXT, latency_ms INTEGER);\nCREATE INDEX idx_logs_service ON logs(service);\nINSERT INTO logs VALUES (1,'INFO','auth',12),(2,'ERROR','payments',410),(3,'INFO','payments',25);"}
+  query={"SELECT service, level, latency_ms FROM logs WHERE service = 'payments';"}
+/>
+
+<Callout type="note" title="PostgreSQL Production Tip">
+Always inspect realistic table sizes with `EXPLAIN (ANALYZE, BUFFERS)` before assuming an index is being used. Small tables often prefer sequential scans because reading one memory page is faster than traversing a tree.
+</Callout>
+
+## Key Takeaways
+
+- **Explain how B-Tree balanced trees accelerate equality and range queries**
+- **Measure selectivity before adding an index**
+- **Balance read speedups against write amplification**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "What is the main trade-off of adding too many indexes to a write-heavy table?", "options": ["Every INSERT, UPDATE, and DELETE must also update each index, slowing writes and using extra disk", "Indexes make SELECT queries return duplicate rows", "Tables cannot have more than 2 indexes"], "answer": 0, "explanation": "Each index speeds up matching reads but adds maintenance cost on writes and storage overhead."}]}
+/>
