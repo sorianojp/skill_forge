@@ -56,7 +56,7 @@ export default function CertificateVerifier() {
         <button
           type="submit"
           disabled={loading}
-          className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[var(--accent-hover)] disabled:opacity-60"
+          className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[var(--accent-strong)] disabled:opacity-60"
         >
           <Search className="h-4 w-4" />
           <span>{loading ? 'Verifying...' : 'Verify Certificate'}</span>

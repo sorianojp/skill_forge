@@ -95,7 +95,7 @@ export default function CloudSyncPanel() {
               type="button"
               onClick={handleManualSync}
               disabled={busy}
-              className="inline-flex min-h-11 items-center gap-2 rounded-2xl bg-[var(--bg-subtle)] px-4 py-2.5 text-sm font-semibold text-[var(--text)] transition hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]"
+              className="inline-flex min-h-11 items-center gap-2 rounded-2xl bg-[var(--bg-muted)] px-4 py-2.5 text-sm font-semibold text-[var(--text)] transition hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]"
             >
               <RefreshCw className={`h-4 w-4 ${busy ? 'animate-spin' : ''}`} />
               <span>Sync Now</span>
@@ -103,7 +103,7 @@ export default function CloudSyncPanel() {
             <button
               type="button"
               onClick={handleLogout}
-              className="inline-flex min-h-11 items-center gap-2 rounded-2xl bg-[var(--bg-subtle)] px-4 py-2.5 text-sm font-semibold text-[var(--text-muted)] transition hover:text-[var(--text)]"
+              className="inline-flex min-h-11 items-center gap-2 rounded-2xl bg-[var(--bg-muted)] px-4 py-2.5 text-sm font-semibold text-[var(--text-muted)] transition hover:text-[var(--text)]"
             >
               <LogOut className="h-4 w-4" />
               <span>Sign Out</span>
@@ -130,14 +130,14 @@ export default function CloudSyncPanel() {
             </p>
           </div>
         </div>
-        <div className="flex rounded-2xl bg-[var(--bg-subtle)] p-1">
+        <div className="flex items-center gap-1 rounded-2xl bg-[var(--bg-muted)] p-1.5">
           <button
             type="button"
             onClick={() => { setMode('register'); setError(null); }}
-            className={`rounded-xl px-3.5 py-2 text-xs font-semibold transition ${
+            className={`min-h-9 rounded-xl px-4 py-2 text-xs font-semibold transition ${
               mode === 'register'
-                ? 'bg-[var(--bg-elevated)] text-[var(--text)] shadow-xs'
-                : 'text-[var(--text-muted)]'
+                ? 'bg-[var(--accent)] text-white shadow-sm'
+                : 'text-[var(--text-muted)] hover:text-[var(--text)]'
             }`}
           >
             Create Account
@@ -145,10 +145,10 @@ export default function CloudSyncPanel() {
           <button
             type="button"
             onClick={() => { setMode('login'); setError(null); }}
-            className={`rounded-xl px-3.5 py-2 text-xs font-semibold transition ${
+            className={`min-h-9 rounded-xl px-4 py-2 text-xs font-semibold transition ${
               mode === 'login'
-                ? 'bg-[var(--bg-elevated)] text-[var(--text)] shadow-xs'
-                : 'text-[var(--text-muted)]'
+                ? 'bg-[var(--accent)] text-white shadow-sm'
+                : 'text-[var(--text-muted)] hover:text-[var(--text)]'
             }`}
           >
             Sign In
@@ -164,7 +164,7 @@ export default function CloudSyncPanel() {
             onChange={(e) => setName(e.target.value)}
             placeholder="Your name"
             required
-            className="min-h-11 rounded-2xl bg-[var(--bg-subtle)] px-4 py-2.5 text-sm text-[var(--text)] outline-none focus:ring-2 focus:ring-[var(--accent)]"
+            className="min-h-11 rounded-2xl bg-[var(--bg-muted)] px-4 py-2.5 text-sm text-[var(--text)] outline-none focus:ring-2 focus:ring-[var(--accent)]"
           />
         )}
         <input
@@ -173,7 +173,7 @@ export default function CloudSyncPanel() {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Email address"
           required
-          className="min-h-11 rounded-2xl bg-[var(--bg-subtle)] px-4 py-2.5 text-sm text-[var(--text)] outline-none focus:ring-2 focus:ring-[var(--accent)]"
+          className="min-h-11 rounded-2xl bg-[var(--bg-muted)] px-4 py-2.5 text-sm text-[var(--text)] outline-none focus:ring-2 focus:ring-[var(--accent)]"
         />
         <input
           type="password"
@@ -182,12 +182,12 @@ export default function CloudSyncPanel() {
           placeholder="Password (6+ chars)"
           minLength={6}
           required
-          className="min-h-11 rounded-2xl bg-[var(--bg-subtle)] px-4 py-2.5 text-sm text-[var(--text)] outline-none focus:ring-2 focus:ring-[var(--accent)]"
+          className="min-h-11 rounded-2xl bg-[var(--bg-muted)] px-4 py-2.5 text-sm text-[var(--text)] outline-none focus:ring-2 focus:ring-[var(--accent)]"
         />
         <button
           type="submit"
           disabled={busy}
-          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--accent-hover)] disabled:opacity-60 sm:col-span-3 md:col-span-1"
+          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--accent-strong)] disabled:opacity-60 sm:col-span-3 md:col-span-1"
         >
           {mode === 'register' ? <UserPlus className="h-4 w-4" /> : <LogIn className="h-4 w-4" />}
           <span>{busy ? 'Please wait...' : mode === 'register' ? 'Enable Cloud Sync' : 'Sign In & Sync'}</span>
