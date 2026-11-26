@@ -35,6 +35,7 @@ const LANG_META: Record<ChallengeLang, { label: string; badge: string }> = {
   cpp: { label: 'C++20', badge: 'bg-blue-600' },
   java: { label: 'Java 21', badge: 'bg-amber-600' },
   csharp: { label: 'C# 12', badge: 'bg-purple-600' },
+  bash: { label: 'Bash', badge: 'bg-zinc-700' },
 };
 
 function runJsInBrowser(code: string): { stdout: string; stderr: string } {
@@ -53,6 +54,7 @@ function runJsInBrowser(code: string): { stdout: string; stderr: string } {
 
 export default function PracticeArena() {
   const [difficultyFilter, setDifficultyFilter] = useState<'All' | 'Easy' | 'Medium' | 'Hard'>('All');
+  const [langFilter, setLangFilter] = useState<'all' | ChallengeLang>('all');
   const [selectedId, setSelectedId] = useState(PRACTICE_CHALLENGES[0].id);
   const [progress, setProgress] = useState<ProgressState>({ completed: {}, exams: {}, solvedChallenges: {}, activityDays: [] });
   const [codeById, setCodeById] = useState<Record<string, string>>({});
@@ -73,7 +75,9 @@ export default function PracticeArena() {
   }, []);
 
   const filtered = PRACTICE_CHALLENGES.filter(
-    (c) => difficultyFilter === 'All' || c.difficulty === difficultyFilter
+    (c) =>
+      (difficultyFilter === 'All' || c.difficulty === difficultyFilter) &&
+      (langFilter === 'all' || c.language === langFilter)
   );
   const active: PracticeChallenge =
     PRACTICE_CHALLENGES.find((c) => c.id === selectedId) ?? PRACTICE_CHALLENGES[0];
@@ -239,10 +243,39 @@ export default function PracticeArena() {
         </div>
       </div>
 
+      {/* Language Filter Bar */}
+      <div className="flex flex-wrap items-center gap-2 rounded-3xl bg-[var(--bg-elevated)] p-3">
+        <button
+          type="button"
+          onClick={() => setLangFilter('all')}
+          className={`min-h-9 rounded-2xl px-3.5 py-1.5 text-xs font-semibold transition ${
+            langFilter === 'all'
+              ? 'bg-[var(--accent)] text-white shadow-sm'
+              : 'bg-[var(--bg-muted)] text-[var(--text-muted)] hover:text-[var(--text)]'
+          }`}
+        >
+          All Languages ({PRACTICE_CHALLENGES.length})
+        </button>
+        {(Object.keys(LANG_META) as ChallengeLang[]).map((lang) => (
+          <button
+            key={lang}
+            type="button"
+            onClick={() => setLangFilter(lang)}
+            className={`min-h-9 rounded-2xl px-3.5 py-1.5 text-xs font-semibold transition ${
+              langFilter === lang
+                ? 'bg-[var(--accent)] text-white shadow-sm'
+                : 'bg-[var(--bg-muted)] text-[var(--text-muted)] hover:text-[var(--text)]'
+            }`}
+          >
+            {LANG_META[lang].label}
+          </button>
+        ))}
+      </div>
+
       {/* Main Split Arena */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         {/* Challenge List */}
-        <aside className="space-y-2.5 lg:col-span-4">
+        <aside className="max-h-[620px] space-y-2.5 overflow-y-auto pr-1 lg:col-span-4">
           {filtered.map((ch) => {
             const isSolved = Boolean(solvedMap[ch.id]);
             const isSelected = ch.id === active.id;

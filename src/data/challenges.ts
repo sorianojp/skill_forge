@@ -1,4 +1,4 @@
-export type ChallengeLang = 'js' | 'ts' | 'node' | 'c' | 'cpp' | 'java' | 'csharp';
+export type ChallengeLang = 'js' | 'ts' | 'node' | 'c' | 'cpp' | 'java' | 'csharp' | 'bash';
 
 export interface PracticeChallenge {
   id: string;
@@ -253,5 +253,237 @@ console.log(topWord(["git", "docker", "git", "linux", "git", "docker"]));`,
 console.log(maxSubArray([-2, 1, -3, 4, -1, 2, 1, -5, 4]));
 console.log(maxSubArray([5, 4, -1, 7, 8]));`,
     expectedStdout: `6\n23`,
+  },
+  {
+    id: 'js-palindrome-two-ptr',
+    title: 'Valid Palindrome (Two Pointers)',
+    difficulty: 'Easy',
+    language: 'js',
+    topic: 'Two Pointers',
+    prompt:
+      'Complete isPalindrome(s) ignoring case and non-alphanumeric characters using O(1) extra space.',
+    hint: 'Normalize to lowercase alphanumeric with s.toLowerCase().replace(/[^a-z0-9]/g, "") and compare left and right pointers.',
+    starterCode: `function isPalindrome(s) {
+  // TODO: return true if s is a palindrome ignoring punctuation/case
+  return false;
+}
+
+console.log(isPalindrome("A man, a plan, a canal: Panama"));
+console.log(isPalindrome("DevPath 2026"));`,
+    expectedStdout: `true\nfalse`,
+  },
+  {
+    id: 'js-merge-intervals',
+    title: 'Merge Overlapping Intervals',
+    difficulty: 'Medium',
+    language: 'js',
+    topic: 'Sorting & Greedy',
+    prompt:
+      'Sort intervals by start time and merge all overlapping ranges, printing the merged JSON array.',
+    hint: 'Sort by a[0] - b[0]; if cur[0] <= last[1], set last[1] = Math.max(last[1], cur[1]), else push cur.',
+    starterCode: `function mergeIntervals(intervals) {
+  // TODO: merge overlapping [start, end] pairs
+  return [];
+}
+
+console.log(JSON.stringify(mergeIntervals([[1, 3], [8, 10], [2, 6], [15, 18]])));`,
+    expectedStdout: `[[1,6],[8,10],[15,18]]`,
+  },
+  {
+    id: 'js-group-anagrams',
+    title: 'Group Anagrams Count',
+    difficulty: 'Medium',
+    language: 'js',
+    topic: 'Hash Maps',
+    prompt:
+      'Group words that are anagrams of each other and return the sorted sizes of each group.',
+    hint: 'Sort each word\'s characters as the Map key (w.split("").sort().join("")) and count group lengths.',
+    starterCode: `function anagramGroupSizes(words) {
+  // TODO: return sorted array of anagram group sizes
+  return [];
+}
+
+console.log(JSON.stringify(anagramGroupSizes(["eat", "tea", "tan", "ate", "nat", "bat"])));`,
+    expectedStdout: `[1,2,3]`,
+  },
+  {
+    id: 'js-coin-change',
+    title: 'Minimum Coins (DP)',
+    difficulty: 'Hard',
+    language: 'js',
+    topic: 'Dynamic Programming',
+    prompt:
+      'Return the fewest coins needed to make amount (or -1 if impossible) using bottom-up Dynamic Programming.',
+    hint: 'Create dp array of size amount + 1 filled with Infinity, dp[0] = 0, and relax dp[a] = Math.min(dp[a], dp[a - c] + 1).',
+    starterCode: `function coinChange(coins, amount) {
+  // TODO: compute minimum coins to make amount
+  return -1;
+}
+
+console.log(coinChange([1, 2, 5], 11));
+console.log(coinChange([2], 3));`,
+    expectedStdout: `3\n-1`,
+  },
+  {
+    id: 'ts-generic-pick',
+    title: 'Type-Safe Generic Pluck',
+    difficulty: 'Easy',
+    language: 'ts',
+    topic: 'TypeScript Generics',
+    prompt:
+      'Complete pluck<T, K extends keyof T>(items, key) to return an array of the selected property values.',
+    hint: 'Return items.map((item) => item[key]).',
+    starterCode: `function pluck<T, K extends keyof T>(items: T[], key: K): T[K][] {
+  // TODO: extract key from every item
+  return [];
+}
+
+const tracks = [
+  { slug: "ts", hours: 5 },
+  { slug: "react", hours: 5 },
+  { slug: "dsa", hours: 6 },
+];
+console.log(pluck(tracks, "slug").join(", "));`,
+    expectedStdout: `ts, react, dsa`,
+  },
+  {
+    id: 'ts-safe-filter',
+    title: 'Type Predicate Compact Array',
+    difficulty: 'Medium',
+    language: 'ts',
+    topic: 'Type Guards',
+    prompt:
+      'Complete isPresent<T>(v): v is T and use it to strip null and undefined values from raw.',
+    hint: 'Return v !== null && v !== undefined inside isPresent, then return raw.filter(isPresent).',
+    starterCode: `function isPresent<T>(v: T | null | undefined): v is T {
+  // TODO: narrow out null and undefined
+  return false;
+}
+
+const raw: (number | null | undefined)[] = [10, null, 20, undefined, 30];
+const nums: number[] = raw.filter(isPresent);
+console.log(nums.reduce((a, b) => a + b, 0));`,
+    expectedStdout: `60`,
+  },
+  {
+    id: 'c-array-max',
+    title: 'Find Max via Const Pointer',
+    difficulty: 'Easy',
+    language: 'c',
+    topic: 'C Arrays & Pointers',
+    prompt:
+      'Complete find_max(const int *arr, size_t n) in C11 to return the largest element in arr.',
+    hint: 'Initialize int best = arr[0]; loop i from 1 to n - 1, updating best if arr[i] > best.',
+    starterCode: `#include <stdio.h>
+
+int find_max(const int *arr, size_t n) {
+    // TODO: return max element in arr
+    return 0;
+}
+
+int main(void) {
+    int scores[] = {74, 98, 82, 91};
+    printf("%d\\n", find_max(scores, 4));
+    return 0;
+}`,
+    expectedStdout: `98`,
+  },
+  {
+    id: 'cpp-unique-sorted',
+    title: 'Deduplicate & Sort Vector',
+    difficulty: 'Medium',
+    language: 'cpp',
+    topic: 'C++ STL',
+    prompt:
+      'Sort nums and remove duplicates using std::sort + std::unique + erase, then print space-separated values.',
+    hint: 'Call std::sort(nums.begin(), nums.end()); then nums.erase(std::unique(nums.begin(), nums.end()), nums.end());.',
+    starterCode: `#include <algorithm>
+#include <iostream>
+#include <vector>
+
+int main() {
+    std::vector<int> nums = {5, 2, 8, 2, 5, 1};
+    // TODO: sort and remove duplicates from nums
+    for (size_t i = 0; i < nums.size(); i++) {
+        std::cout << nums[i] << (i + 1 < nums.size() ? " " : "");
+    }
+    std::cout << "\\n";
+    return 0;
+}`,
+    expectedStdout: `1 2 5 8`,
+  },
+  {
+    id: 'java-record-total',
+    title: 'Java 21 Record Cart Total',
+    difficulty: 'Easy',
+    language: 'java',
+    topic: 'Java Records & Streams',
+    prompt:
+      'Sum price * qty for every Item record in cart using Java Streams and print the integer total.',
+    hint: 'Use cart.stream().mapToInt(i -> i.price() * i.qty()).sum().',
+    starterCode: `import java.util.List;
+
+public class Main {
+    record Item(String name, int price, int qty) {}
+
+    public static void main(String[] args) {
+        var cart = List.of(new Item("Book", 25, 2), new Item("Pen", 5, 4));
+        int total = 0; // TODO: compute total using Streams
+        System.out.println(total);
+    }
+}`,
+    expectedStdout: `70`,
+  },
+  {
+    id: 'csharp-pattern-grade',
+    title: 'C# Pattern Matching Switch',
+    difficulty: 'Easy',
+    language: 'csharp',
+    topic: 'C# Pattern Matching',
+    prompt:
+      'Complete Grade(int s) using a C# switch expression: >= 90 -> "A", >= 80 -> "B", >= 70 -> "C", otherwise "Review".',
+    hint: 'Use s switch { >= 90 => "A", >= 80 => "B", >= 70 => "C", _ => "Review" }.',
+    starterCode: `static string Grade(int s) => s switch
+{
+    // TODO: add relational pattern arms
+    _ => "Review"
+};
+
+Console.WriteLine($"{Grade(95)} {Grade(82)} {Grade(65)}");`,
+    expectedStdout: `A B Review`,
+  },
+  {
+    id: 'node-url-query',
+    title: 'Parse Query Params (Node 20)',
+    difficulty: 'Easy',
+    language: 'node',
+    topic: 'Node.js URL API',
+    prompt:
+      'Use new URL() to extract the "track" and "page" query parameters (defaulting page to 1) and print them.',
+    hint: 'const u = new URL(raw); read u.searchParams.get("track") and Number(u.searchParams.get("page") ?? 1).',
+    starterCode: `function parseParams(raw) {
+  // TODO: parse track and page using new URL(raw)
+  return { track: "", page: 0 };
+}
+
+console.log(JSON.stringify(parseParams("https://devpath.mycampus.ph/courses?track=node&page=2")));
+console.log(JSON.stringify(parseParams("https://devpath.mycampus.ph/courses?track=dsa")));`,
+    expectedStdout: `{"track":"node","page":2}\n{"track":"dsa","page":1}`,
+  },
+  {
+    id: 'bash-error-count',
+    title: 'Count HTTP 500 Errors in Bash',
+    difficulty: 'Easy',
+    language: 'bash',
+    topic: 'Linux Pipes & grep',
+    prompt:
+      'Pipe $logs through grep and wc -l to print the exact number of lines containing "500".',
+    hint: 'echo "$logs" | grep "500" | wc -l | tr -d " "',
+    starterCode: `#!/usr/bin/env bash
+logs=$'GET / 200\nPOST /api/run 500\nGET /courses 200\nPOST /api/sync 500\nGET /verify 404'
+
+# TODO: print the count of lines containing 500
+echo 0`,
+    expectedStdout: `2`,
   },
 ];
