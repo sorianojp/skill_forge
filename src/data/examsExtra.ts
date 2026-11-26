@@ -1273,4 +1273,148 @@ export const EXTRA_EXAM_QUESTIONS: Record<string, ExamQuestion[]> = {
       explanation: 'Cursor pagination keeps deep-page queries O(log N) and avoids skipped/duplicate items when rows are inserted.',
     },
   ],
+  'nextjs-fullstack': [
+    {
+      question: 'What happens to a shared parent `layout.tsx` when navigating between sibling pages in Next.js App Router?',
+      options: [
+        'It stays mounted and preserves its UI state while only the child page swaps',
+        'It triggers a full browser reload every time',
+        'It is removed in production builds',
+      ],
+      answer: 0,
+      explanation: 'Partial rendering keeps shared layouts mounted across sibling route transitions.',
+    },
+    {
+      question: 'In the Next.js App Router (`app/`), what kind of component is a file by default if no directive is added?',
+      options: ['React Server Component', 'Client Component', 'Web Worker'],
+      answer: 0,
+      explanation: 'All components inside app/ are Server Components by default unless marked with "use client".',
+    },
+    {
+      question: 'Why should `"use client"` boundaries be pushed down to small interactive leaf components?',
+      options: [
+        'To minimize client-side JavaScript bundle size while keeping data fetching and heavy rendering on the server',
+        'Because Server Components cannot output HTML',
+        'Because Tailwind CSS only works in Server Components',
+      ],
+      answer: 0,
+      explanation: 'Smaller client boundaries keep JS downloads low and improve Core Web Vitals.',
+    },
+    {
+      question: 'What does exporting `generateStaticParams()` from `app/courses/[slug]/page.tsx` enable?',
+      options: [
+        'Pre-rendering known dynamic routes as static HTML at build time',
+        'Disabling TypeScript checks on route parameters',
+        'Encrypting query strings in the browser',
+      ],
+      answer: 0,
+      explanation: 'generateStaticParams lists dynamic segments to pre-generate during next build.',
+    },
+    {
+      question: 'How do you prevent sequential data-fetching waterfalls for two independent queries inside an async Server Component?',
+      options: [
+        'Run them concurrently with Promise.all([queryA, queryB])',
+        'Delay the second query with setTimeout',
+        'Move both queries into useEffect on the client',
+      ],
+      answer: 0,
+      explanation: 'Promise.all executes independent async requests in parallel.',
+    },
+    {
+      question: 'Why must `error.tsx` in the App Router declare `"use client"` at the top?',
+      options: [
+        'Error boundaries run on the client so users can catch render failures and click reset() to recover',
+        'Server Components cannot throw errors',
+        'error.tsx only handles CSS syntax issues',
+      ],
+      answer: 0,
+      explanation: 'React Error Boundaries are client components that provide interactive recovery.',
+    },
+    {
+      question: 'What is the purpose of `<Suspense fallback={<Skeleton />}>` around a slow async Server Component?',
+      options: [
+        'Streams the surrounding page shell immediately while the slow widget resolves in the background',
+        'Blocks the entire HTTP response until every query completes',
+        'Caches the component forever in localStorage',
+      ],
+      answer: 0,
+      explanation: 'Streaming with Suspense improves Time to First Byte (TTFB) and perceived speed.',
+    },
+    {
+      question: 'Can a single route segment folder contain both `page.tsx` and `route.ts` at the exact same URL?',
+      options: [
+        'No; they conflict on the same path, so API handlers should live under a separate segment like /api/...',
+        'Yes; Next.js automatically merges both responses',
+        'Only when running in development mode',
+      ],
+      answer: 0,
+      explanation: 'A segment can serve either a UI page or a Route Handler, not both at the exact same URL.',
+    },
+    {
+      question: 'Why must every `"use server"` Server Action re-check authentication and validate inputs on the server?',
+      options: [
+        'Server Actions are exposed as HTTP POST endpoints that attackers can call directly with forged payloads',
+        'HTML forms ignore required attributes in production',
+        'Server Actions cannot return JSON errors',
+      ],
+      answer: 0,
+      explanation: 'Client validation is purely UX; security and authorization must always be enforced on the server.',
+    },
+    {
+      question: 'What does calling `revalidatePath("/tasks")` at the end of a Server Action do?',
+      options: [
+        'Purges cached data for /tasks so the updated list renders immediately',
+        'Deletes the /tasks folder from disk',
+        'Logs the user out of their session',
+      ],
+      answer: 0,
+      explanation: 'revalidatePath refreshes cached route data after mutations cleanly.',
+    },
+    {
+      question: 'Why are `HttpOnly` cookies preferred over `localStorage` for authentication session tokens?',
+      options: [
+        'JavaScript cannot access HttpOnly cookies, protecting session tokens from XSS theft',
+        'localStorage does not persist across page reloads',
+        'HttpOnly cookies bypass HTTPS',
+      ],
+      answer: 0,
+      explanation: 'HttpOnly + Secure + SameSite=Lax cookies defend against client-side token exfiltration.',
+    },
+    {
+      question: 'Why do Next.js apps cache their database client pool on `globalThis` during development?',
+      options: [
+        'To stop Hot Module Replacement (HMR) from spawning new connection pools on every file save',
+        'Because databases run inside the browser window',
+        'To disable SQL parameterization',
+      ],
+      answer: 0,
+      explanation: 'A global singleton prevents exhausting database connection limits during local HMR.',
+    },
+    {
+      question: 'What Core Web Vital does `next/font` help optimize by matching fallback font metrics?',
+      options: ['Cumulative Layout Shift (CLS)', 'Server Disk IOPS', 'TLS Handshake Latency'],
+      answer: 0,
+      explanation: 'Self-hosting fonts with adjusted fallback metrics prevents visible text jumping on load.',
+    },
+    {
+      question: 'What happens if you prefix a private database password or API secret with `NEXT_PUBLIC_`?',
+      options: [
+        'Next.js embeds the secret into client-side JavaScript bundles where anyone can inspect it',
+        'Next.js keeps it strictly on the server',
+        'Next.js hashes it automatically',
+      ],
+      answer: 0,
+      explanation: 'Never expose server secrets with NEXT_PUBLIC_; keep them in server-only environment variables.',
+    },
+    {
+      question: 'What does `output: "standalone"` in `next.config.ts` generate for Docker / VPS hosting?',
+      options: [
+        'A minimal self-contained Node server bundle containing only the traced runtime files needed for production',
+        'A static PDF export of the site',
+        'An automatic Kubernetes cluster',
+      ],
+      answer: 0,
+      explanation: 'Standalone builds drastically reduce container size and startup overhead on self-hosted servers.',
+    },
+  ],
 };

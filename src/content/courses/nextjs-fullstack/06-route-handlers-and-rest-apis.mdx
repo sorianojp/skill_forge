@@ -1,0 +1,50 @@
+---
+title: "Route Handlers (route.ts) & JSON APIs"
+description: "Build REST endpoints, webhooks, and health checks using app/api/.../route.ts with standard Web Request and Response objects."
+course: "nextjs-fullstack"
+module: "Data & Streaming"
+order: 6
+durationMinutes: 9
+objectives:
+  - "Export named HTTP verb handlers (GET, POST, PUT, DELETE) in route.ts"
+  - "Validate request JSON and return proper 400/401/404 status codes"
+  - "Keep webhook signature verification strictly on the server"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Build REST endpoints, webhooks, and health checks using app/api/.../route.ts with standard Web Request and Response objects.
+
+Next.js App Router unifies server rendering, streaming, type-safe mutations, and edge-ready caching inside a single React + TypeScript codebase.
+
+## Production Code Example
+
+```tsx
+// app/api/health/route.ts
+import { NextResponse } from 'next/server';
+
+export async function GET() {
+  return NextResponse.json({ ok: true, timestamp: Date.now() }, { status: 200 });
+}
+```
+
+<Callout type="tip" title="Next.js Best Practice">
+Keep Server Components as your default, validate every Server Action and Route Handler input on the server, and verify your production bundle size with `next build` before shipping.
+</Callout>
+
+## Key Takeaways
+
+- **Export named HTTP verb handlers (GET, POST, PUT, DELETE) in route.ts**
+- **Validate request JSON and return proper 400/401/404 status codes**
+- **Keep webhook signature verification strictly on the server**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Can a single folder in Next.js App Router contain both `page.tsx` and `route.ts` at the exact same URL path?", "options": ["No; they conflict on the same route segment, so API endpoints belong under a distinct path like /api/...", "Yes; Next.js merges them into one HTML file", "Only if you rename route.ts to api.js"], "answer": 0, "explanation": "A route segment can serve either a UI page (page.tsx) or an HTTP Route Handler (route.ts), not both at the same path."}]}
+/>

@@ -1,0 +1,53 @@
+---
+title: "App Router, Layouts & File Conventions"
+description: "Master Next.js App Router folder-based routing, shared nested layouts, and persistent navigation shells."
+course: "nextjs-fullstack"
+module: "App Router & RSC"
+order: 1
+durationMinutes: 9
+objectives:
+  - "Map folder segments under app/ directly to URL routes"
+  - "Share persistent UI with layout.tsx without remounting on navigation"
+  - "Use route groups like (marketing) to organize folders without changing URLs"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Master Next.js App Router folder-based routing, shared nested layouts, and persistent navigation shells.
+
+Next.js App Router unifies server rendering, streaming, type-safe mutations, and edge-ready caching inside a single React + TypeScript codebase.
+
+## Production Code Example
+
+```tsx
+// app/dashboard/layout.tsx
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="grid grid-cols-[240px_1fr] min-h-screen">
+      <aside className="border-r p-4">Sidebar Nav</aside>
+      <main className="p-6">{children}</main>
+    </div>
+  );
+}
+```
+
+<Callout type="tip" title="Next.js Best Practice">
+Keep Server Components as your default, validate every Server Action and Route Handler input on the server, and verify your production bundle size with `next build` before shipping.
+</Callout>
+
+## Key Takeaways
+
+- **Map folder segments under app/ directly to URL routes**
+- **Share persistent UI with layout.tsx without remounting on navigation**
+- **Use route groups like (marketing) to organize folders without changing URLs**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "What happens to a parent `layout.tsx` when navigating between two sibling child pages in Next.js App Router?", "options": ["The layout preserves its state and stays mounted while only the child page swaps", "The entire browser tab reloads from scratch", "Layouts are deleted in production builds"], "answer": 0, "explanation": "Partial rendering keeps shared layouts mounted across sibling route transitions, preserving scroll and UI state."}]}
+/>

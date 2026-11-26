@@ -1,0 +1,52 @@
+---
+title: "Capstone: Standalone Production Deployment"
+description: "Package a slim standalone Next.js build for Docker or a Linux VPS behind Nginx, or deploy seamlessly to Vercel."
+course: "nextjs-fullstack"
+module: "Performance & Deploy"
+order: 12
+durationMinutes: 10
+objectives:
+  - "Enable output: 'standalone' in next.config.ts for tiny Docker images"
+  - "Run a multi-stage Dockerfile as a non-root user with a /api/health check"
+  - "Configure graceful shutdown, logs, and zero-downtime restarts"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Package a slim standalone Next.js build for Docker or a Linux VPS behind Nginx, or deploy seamlessly to Vercel.
+
+Next.js App Router unifies server rendering, streaming, type-safe mutations, and edge-ready caching inside a single React + TypeScript codebase.
+
+## Production Code Example
+
+```tsx
+// next.config.ts
+import type { NextConfig } from 'next';
+
+const nextConfig: NextConfig = {
+  output: 'standalone',
+};
+
+export default nextConfig;
+```
+
+<Callout type="tip" title="Next.js Best Practice">
+Keep Server Components as your default, validate every Server Action and Route Handler input on the server, and verify your production bundle size with `next build` before shipping.
+</Callout>
+
+## Key Takeaways
+
+- **Enable output: 'standalone' in next.config.ts for tiny Docker images**
+- **Run a multi-stage Dockerfile as a non-root user with a /api/health check**
+- **Configure graceful shutdown, logs, and zero-downtime restarts**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "What does setting `output: 'standalone'` in `next.config.ts` produce for Docker / VPS deployments?", "options": ["A minimal self-contained server folder with only the traced production files needed to run node server.js", "A static PDF manual", "A Windows .exe installer"], "answer": 0, "explanation": "Standalone output shrinks Docker images dramatically by excluding devDependencies and unused node_modules."}]}
+/>

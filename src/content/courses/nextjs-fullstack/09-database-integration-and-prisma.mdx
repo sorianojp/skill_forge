@@ -1,0 +1,53 @@
+---
+title: "Database Integration, Pooling & Safe Queries"
+description: "Connect Next.js cleanly to PostgreSQL or SQLite using singleton client pools, parameterized queries, and transactions."
+course: "nextjs-fullstack"
+module: "Mutations & Auth"
+order: 9
+durationMinutes: 10
+objectives:
+  - "Reuse a single global database client in dev to avoid exhausting connections during HMR"
+  - "Prevent SQL injection with parameterized queries or type-safe ORMs (Drizzle/Prisma)"
+  - "Select only the columns your UI actually needs"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Connect Next.js cleanly to PostgreSQL or SQLite using singleton client pools, parameterized queries, and transactions.
+
+Next.js App Router unifies server rendering, streaming, type-safe mutations, and edge-ready caching inside a single React + TypeScript codebase.
+
+## Production Code Example
+
+```tsx
+// lib/db.ts (singleton pattern for Next.js dev HMR)
+const globalForDb = globalThis as unknown as { dbPool?: unknown };
+
+export function getDbPool() {
+  if (!globalForDb.dbPool) {
+    globalForDb.dbPool = { connected: true };
+  }
+  return globalForDb.dbPool;
+}
+```
+
+<Callout type="tip" title="Next.js Best Practice">
+Keep Server Components as your default, validate every Server Action and Route Handler input on the server, and verify your production bundle size with `next build` before shipping.
+</Callout>
+
+## Key Takeaways
+
+- **Reuse a single global database client in dev to avoid exhausting connections during HMR**
+- **Prevent SQL injection with parameterized queries or type-safe ORMs (Drizzle/Prisma)**
+- **Select only the columns your UI actually needs**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Why do Next.js developers attach their database client instance to `globalThis` in development mode?", "options": ["To prevent hot module reloading (HMR) from creating a brand-new connection pool on every file save", "Because PostgreSQL only runs inside browser globals", "To expose database credentials to the client"], "answer": 0, "explanation": "Without a global singleton in dev, repeated HMR reloads quickly exhaust PostgreSQL max_connections."}]}
+/>

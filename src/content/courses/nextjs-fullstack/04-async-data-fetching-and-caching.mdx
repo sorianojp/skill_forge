@@ -1,0 +1,52 @@
+---
+title: "Async Data Fetching & Cache Revalidation"
+description: "Fetch data directly inside async Server Components and refresh stale data cleanly with revalidatePath and revalidateTag."
+course: "nextjs-fullstack"
+module: "Data & Streaming"
+order: 4
+durationMinutes: 10
+objectives:
+  - "Await databases or fetch() directly inside Server Components"
+  - "Eliminate client-side waterfalls with Promise.all()"
+  - "Invalidate cached views on demand via revalidatePath and revalidateTag"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Fetch data directly inside async Server Components and refresh stale data cleanly with revalidatePath and revalidateTag.
+
+Next.js App Router unifies server rendering, streaming, type-safe mutations, and edge-ready caching inside a single React + TypeScript codebase.
+
+## Production Code Example
+
+```tsx
+// app/courses/page.tsx
+import { revalidateTag } from 'next/cache';
+
+export async function CoursesPage() {
+  const res = await fetch('https://api.example.com/courses', { next: { tags: ['courses'] } });
+  const courses = await res.json();
+  return <pre>{JSON.stringify(courses, null, 2)}</pre>;
+}
+```
+
+<Callout type="tip" title="Next.js Best Practice">
+Keep Server Components as your default, validate every Server Action and Route Handler input on the server, and verify your production bundle size with `next build` before shipping.
+</Callout>
+
+## Key Takeaways
+
+- **Await databases or fetch() directly inside Server Components**
+- **Eliminate client-side waterfalls with Promise.all()**
+- **Invalidate cached views on demand via revalidatePath and revalidateTag**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "How can you avoid sequential request waterfalls when a Server Component needs two independent queries?", "options": ["Start both promises together and await them with Promise.all([q1, q2])", "Wrap them in setTimeout", "Move both queries into useEffect on the client"], "answer": 0, "explanation": "Promise.all runs independent I/O calls concurrently so total latency equals the slowest single call, not their sum."}]}
+/>

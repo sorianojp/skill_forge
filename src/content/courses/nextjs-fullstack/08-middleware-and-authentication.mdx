@@ -1,0 +1,54 @@
+---
+title: "Middleware, HttpOnly Cookies & Auth Guards"
+description: "Protect private dashboards using HttpOnly signed session cookies, middleware redirects, and server-side session checks."
+course: "nextjs-fullstack"
+module: "Mutations & Auth"
+order: 8
+durationMinutes: 10
+objectives:
+  - "Store session tokens in HttpOnly, Secure, SameSite=Lax cookies instead of localStorage"
+  - "Use middleware.ts for lightweight optimistic redirects"
+  - "Always re-verify session authorization inside Server Components and Actions"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Protect private dashboards using HttpOnly signed session cookies, middleware redirects, and server-side session checks.
+
+Next.js App Router unifies server rendering, streaming, type-safe mutations, and edge-ready caching inside a single React + TypeScript codebase.
+
+## Production Code Example
+
+```tsx
+// middleware.ts
+import { NextResponse, type NextRequest } from 'next/server';
+
+export function middleware(req: NextRequest) {
+  const hasSession = req.cookies.has('devpath_session');
+  if (!hasSession && req.nextUrl.pathname.startsWith('/dashboard')) {
+    return NextResponse.redirect(new URL('/login', req.url));
+  }
+  return NextResponse.next();
+}
+```
+
+<Callout type="tip" title="Next.js Best Practice">
+Keep Server Components as your default, validate every Server Action and Route Handler input on the server, and verify your production bundle size with `next build` before shipping.
+</Callout>
+
+## Key Takeaways
+
+- **Store session tokens in HttpOnly, Secure, SameSite=Lax cookies instead of localStorage**
+- **Use middleware.ts for lightweight optimistic redirects**
+- **Always re-verify session authorization inside Server Components and Actions**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Why are `HttpOnly` cookies safer than `localStorage` for storing authentication session tokens?", "options": ["Client-side JavaScript cannot read HttpOnly cookies, protecting tokens from XSS theft", "HttpOnly cookies are compressed 100x smaller", "localStorage does not work over HTTPS"], "answer": 0, "explanation": "Setting HttpOnly + Secure + SameSite=Lax dramatically reduces session hijacking risk if an XSS bug ever occurs."}]}
+/>

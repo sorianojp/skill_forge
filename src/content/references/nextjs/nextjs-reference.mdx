@@ -1,0 +1,20 @@
+---
+title: "Next.js App Router Quick Reference"
+category: "Next.js"
+syntax: "app/[slug]/page.tsx + 'use server' + revalidatePath()"
+summary: "Essential Next.js App Router file conventions, Server vs Client boundaries, Route Handlers, Server Actions, caching, and standalone deployment."
+browserSupport: "Next.js 15+"
+---
+
+## App Router File Conventions
+
+| File | Role |
+| :--- | :--- |
+| `app/layout.tsx` | Shared persistent layout wrapping child routes |
+| `app/page.tsx` | Unique UI rendered for a route segment |
+| `app/loading.tsx` | Automatic React Suspense loading skeleton |
+| `app/error.tsx` | Client-side Error Boundary (`'use client'`) with `reset()` |
+| `app/not-found.tsx` | Custom 404 UI triggered by `notFound()` |
+| `app/api/.../route.ts` | Web-standard REST Route Handler (`GET`, `POST`, `PUT`, `DELETE`) |
+| `middleware.ts` | Request-time redirects, headers, and cookie checks |
+| `output: 'standalone'` | Minimal self-contained Node server build for Docker / VPS |

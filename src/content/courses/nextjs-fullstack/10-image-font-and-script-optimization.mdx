@@ -1,0 +1,52 @@
+---
+title: "Optimizing Images, Fonts & Core Web Vitals"
+description: "Eliminate layout shift and speed up Largest Contentful Paint (LCP) using next/image, next/font, and dynamic imports."
+course: "nextjs-fullstack"
+module: "Performance & Deploy"
+order: 10
+durationMinutes: 8
+objectives:
+  - "Serve responsive WebP/AVIF images with intrinsic dimensions via next/image"
+  - "Self-host Google Fonts with zero layout shift using next/font/google"
+  - "Lazy-load heavy client widgets with next/dynamic"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Eliminate layout shift and speed up Largest Contentful Paint (LCP) using next/image, next/font, and dynamic imports.
+
+Next.js App Router unifies server rendering, streaming, type-safe mutations, and edge-ready caching inside a single React + TypeScript codebase.
+
+## Production Code Example
+
+```tsx
+// app/layout.tsx
+import { Inter } from 'next/font/google';
+
+const inter = Inter({ subsets: ['latin'], display: 'swap' });
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return <html lang="en" className={inter.className}><body>{children}</body></html>;
+}
+```
+
+<Callout type="tip" title="Next.js Best Practice">
+Keep Server Components as your default, validate every Server Action and Route Handler input on the server, and verify your production bundle size with `next build` before shipping.
+</Callout>
+
+## Key Takeaways
+
+- **Serve responsive WebP/AVIF images with intrinsic dimensions via next/image**
+- **Self-host Google Fonts with zero layout shift using next/font/google**
+- **Lazy-load heavy client widgets with next/dynamic**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "What Core Web Vital does `next/font` directly protect by generating size-adjusted fallback font metrics?", "options": ["Cumulative Layout Shift (CLS)", "DNS Lookup Time", "Database Lock Wait"], "answer": 0, "explanation": "next/font downloads font files at build time and matches fallback metrics so text does not jump when the font loads."}]}
+/>

@@ -1,0 +1,54 @@
+---
+title: "Server Actions, Progressive Forms & Validation"
+description: "Handle form submissions and database writes securely using 'use server' actions, Zod validation, and revalidatePath."
+course: "nextjs-fullstack"
+module: "Mutations & Auth"
+order: 7
+durationMinutes: 10
+objectives:
+  - "Define server-only mutations with the 'use server' directive"
+  - "Validate every FormData input on the server before touching the DB"
+  - "Call revalidatePath() after mutations so UI refreshes automatically"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Handle form submissions and database writes securely using 'use server' actions, Zod validation, and revalidatePath.
+
+Next.js App Router unifies server rendering, streaming, type-safe mutations, and edge-ready caching inside a single React + TypeScript codebase.
+
+## Production Code Example
+
+```tsx
+// app/tasks/actions.ts
+'use server';
+import { revalidatePath } from 'next/cache';
+
+export async function createTask(formData: FormData) {
+  const title = String(formData.get('title') ?? '').trim();
+  if (title.length < 3) throw new Error('Title too short');
+  // await db.insert(tasks).values({ title });
+  revalidatePath('/tasks');
+}
+```
+
+<Callout type="tip" title="Next.js Best Practice">
+Keep Server Components as your default, validate every Server Action and Route Handler input on the server, and verify your production bundle size with `next build` before shipping.
+</Callout>
+
+## Key Takeaways
+
+- **Define server-only mutations with the 'use server' directive**
+- **Validate every FormData input on the server before touching the DB**
+- **Call revalidatePath() after mutations so UI refreshes automatically**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Why must you validate and authorize every Server Action on the server even if the client form already validates inputs?", "options": ["Server Actions are public HTTP POST endpoints that anyone can invoke directly with forged payloads", "Client validation is disabled in React 19", "Server Actions cannot read FormData"], "answer": 0, "explanation": "Never trust client-side checks alone: always check authentication, permissions, and input schemas inside every Server Action."}]}
+/>

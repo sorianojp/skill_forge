@@ -1,0 +1,52 @@
+---
+title: "Server Components vs 'use client' Boundaries"
+description: "Understand why components in app/ are Server Components by default and where to place 'use client' leaves."
+course: "nextjs-fullstack"
+module: "App Router & RSC"
+order: 2
+durationMinutes: 10
+objectives:
+  - "Keep data fetching and secrets inside Server Components with zero client JS cost"
+  - "Add 'use client' only at interactive leaves that need hooks or browser events"
+  - "Pass Server Components as children props into Client Components cleanly"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Understand why components in app/ are Server Components by default and where to place 'use client' leaves.
+
+Next.js App Router unifies server rendering, streaming, type-safe mutations, and edge-ready caching inside a single React + TypeScript codebase.
+
+## Production Code Example
+
+```tsx
+// app/courses/LikeButton.tsx
+'use client';
+import { useState } from 'react';
+
+export function LikeButton({ initial }: { initial: number }) {
+  const [likes, setLikes] = useState(initial);
+  return <button onClick={() => setLikes((n) => n + 1)}>Likes: {likes}</button>;
+}
+```
+
+<Callout type="tip" title="Next.js Best Practice">
+Keep Server Components as your default, validate every Server Action and Route Handler input on the server, and verify your production bundle size with `next build` before shipping.
+</Callout>
+
+## Key Takeaways
+
+- **Keep data fetching and secrets inside Server Components with zero client JS cost**
+- **Add 'use client' only at interactive leaves that need hooks or browser events**
+- **Pass Server Components as children props into Client Components cleanly**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Why should you push `'use client'` as far down the component tree (to interactive leaves) as possible?", "options": ["To keep the JavaScript bundle shipped to the browser small while keeping heavy rendering on the server", "Because Server Components cannot render HTML", "Because 'use client' disables CSS"], "answer": 0, "explanation": "Every component imported by a 'use client' file becomes part of the client bundle; keeping boundaries small improves LCP and INP."}]}
+/>

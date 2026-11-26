@@ -1,0 +1,58 @@
+---
+title: "Streaming with Suspense, loading.tsx & error.tsx"
+description: "Show instant skeletons and isolate slow widgets or runtime failures with React Suspense, loading.tsx, and error.tsx."
+course: "nextjs-fullstack"
+module: "Data & Streaming"
+order: 5
+durationMinutes: 9
+objectives:
+  - "Add route-level skeleton UI with loading.tsx"
+  - "Stream slow sub-panels independently with <Suspense fallback={...}>"
+  - "Recover gracefully from errors using a 'use client' error.tsx boundary"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Show instant skeletons and isolate slow widgets or runtime failures with React Suspense, loading.tsx, and error.tsx.
+
+Next.js App Router unifies server rendering, streaming, type-safe mutations, and edge-ready caching inside a single React + TypeScript codebase.
+
+## Production Code Example
+
+```tsx
+// app/dashboard/page.tsx
+import { Suspense } from 'react';
+import { SlowStats } from './SlowStats';
+
+export default function DashboardPage() {
+  return (
+    <section>
+      <h1>Dashboard</h1>
+      <Suspense fallback={<p>Loading metrics...</p>}>
+        <SlowStats />
+      </Suspense>
+    </section>
+  );
+}
+```
+
+<Callout type="tip" title="Next.js Best Practice">
+Keep Server Components as your default, validate every Server Action and Route Handler input on the server, and verify your production bundle size with `next build` before shipping.
+</Callout>
+
+## Key Takeaways
+
+- **Add route-level skeleton UI with loading.tsx**
+- **Stream slow sub-panels independently with `<Suspense>` fallbacks**
+- **Recover gracefully from errors using a 'use client' error.tsx boundary**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Why must `error.tsx` in the Next.js App Router include `'use client'` at the top?", "options": ["Error boundaries rely on React client-side lifecycle handling and a reset() button to retry rendering", "Errors only happen in CSS files", "Server Components cannot throw exceptions"], "answer": 0, "explanation": "Next.js wraps route segments in a React Error Boundary on the client so users can recover interactively via reset()."}]}
+/>

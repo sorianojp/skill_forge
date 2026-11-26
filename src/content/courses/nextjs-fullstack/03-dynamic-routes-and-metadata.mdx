@@ -1,0 +1,51 @@
+---
+title: "Dynamic Routes, Static Params & SEO Metadata"
+description: "Create dynamic [slug] pages, pre-render static paths with generateStaticParams, and generate per-page OpenGraph metadata."
+course: "nextjs-fullstack"
+module: "App Router & RSC"
+order: 3
+durationMinutes: 9
+objectives:
+  - "Read dynamic params in async page components"
+  - "Pre-build static pages at build time with generateStaticParams"
+  - "Generate dynamic title, description, and OG tags with generateMetadata"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Create dynamic [slug] pages, pre-render static paths with generateStaticParams, and generate per-page OpenGraph metadata.
+
+Next.js App Router unifies server rendering, streaming, type-safe mutations, and edge-ready caching inside a single React + TypeScript codebase.
+
+## Production Code Example
+
+```tsx
+// app/courses/[slug]/page.tsx
+import type { Metadata } from 'next';
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  return { title: `${slug} | DevPath` };
+}
+```
+
+<Callout type="tip" title="Next.js Best Practice">
+Keep Server Components as your default, validate every Server Action and Route Handler input on the server, and verify your production bundle size with `next build` before shipping.
+</Callout>
+
+## Key Takeaways
+
+- **Read dynamic params in async page components**
+- **Pre-build static pages at build time with generateStaticParams**
+- **Generate dynamic title, description, and OG tags with generateMetadata**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "What does exporting `generateStaticParams()` from a dynamic `[slug]/page.tsx` route enable?", "options": ["Pre-rendering known dynamic routes as static HTML at build time for instant CDN delivery", "Disabling TypeScript checks on route params", "Encrypting URL query strings"], "answer": 0, "explanation": "generateStaticParams tells Next.js which dynamic segments to statically generate during next build."}]}
+/>

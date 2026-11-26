@@ -67,15 +67,16 @@ export const CAREER_PATHS: CareerPath[] = [
   },
   {
     slug: 'modern-react-typescript',
-    title: 'Modern React & Node.js Engineer',
-    tagline: 'JavaScript → TypeScript → React → Node.js → DSA',
+    title: 'Modern React, Next.js & Node.js Engineer',
+    tagline: 'JavaScript → TypeScript → React → Next.js → Node.js',
     description:
-      'Build type-safe full-stack JavaScript applications with TypeScript 5, React 19, Node.js 20, and interview-ready algorithms.',
+      'Build type-safe full-stack web applications with TypeScript 5, React 19, Next.js App Router, Node.js 20, and interview-ready algorithms.',
     accentColor: '#0284c7',
     courseSlugs: [
       'javascript-essentials',
       'typescript-essentials',
       'react-fundamentals',
+      'nextjs-fullstack',
       'nodejs-essentials',
       'dsa-fundamentals',
     ],

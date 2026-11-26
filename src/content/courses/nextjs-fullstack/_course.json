@@ -1,0 +1,22 @@
+{
+  "slug": "nextjs-fullstack",
+  "title": "Next.js & Full-Stack Web",
+  "shortTitle": "Next.js",
+  "description": "Build production full-stack React applications with Next.js App Router, Server Components, Server Actions, Route Handlers, authentication, database integration, and deployment.",
+  "track": "Next.js",
+  "difficulty": "Intermediate",
+  "estimatedHours": 6,
+  "accentColor": "#18181b",
+  "prerequisites": [
+    "React 19",
+    "TypeScript 5"
+  ],
+  "outcomes": [
+    "Structure scalable apps using App Router file conventions, nested layouts, and dynamic routes",
+    "Keep client bundles tiny by composing React Server Components with focused 'use client' islands",
+    "Mutate database records safely using Server Actions, Zod validation, and cache revalidation",
+    "Secure routes with HttpOnly session cookies, middleware, and ship standalone Docker/VPS builds"
+  ],
+  "featured": true,
+  "order": 22
+}
