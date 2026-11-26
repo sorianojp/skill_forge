@@ -9,7 +9,7 @@ import {
   ExternalLink,
   FolderGit2,
   Layers,
-  Sparkles,
+  Target,
 } from 'lucide-react';
 import { GUIDED_PROJECTS, type GuidedProject } from '@/data/projects';
 
@@ -278,7 +278,7 @@ export default function ProjectsBoard() {
             {/* Stretch Goals */}
             <div className="mt-6">
               <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[var(--text-subtle)]">
-                <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+                <Target className="h-3.5 w-3.5 text-amber-500" />
                 <span>Stretch Goals</span>
               </div>
               <ul className="mt-2 space-y-1.5 text-xs text-[var(--text-muted)]">

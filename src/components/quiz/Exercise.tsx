@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Check, CheckCircle2, Eye, Lightbulb, RotateCcw, Sparkles, XCircle } from 'lucide-react';
+import { Check, CheckCircle2, Code2, Eye, Lightbulb, RotateCcw, XCircle } from 'lucide-react';
 
 export interface ExerciseBlank {
   answer: string;
@@ -69,7 +69,7 @@ export default function Exercise({
     <section className="not-prose my-8 rounded-3xl bg-[var(--bg-elevated)] p-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-[var(--accent)]" />
+          <Code2 className="h-4 w-4 text-[var(--accent)]" />
           <h3 className="text-base font-bold text-[var(--text)]">{title}</h3>
         </div>
         {checked && (

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, CheckCircle2, Flame, Sparkles, Terminal } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Flame, Terminal, Zap } from 'lucide-react';
 import { PRACTICE_CHALLENGES } from '@/data/challenges';
 import { getDailyStreak, getProgress, subscribeProgress, type ProgressState } from '@/lib/progress';
 
@@ -26,7 +26,7 @@ export default function DailyChallengeCard() {
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--accent-soft)] px-3 py-1 text-xs font-bold text-[var(--accent)]">
-              <Sparkles className="h-3.5 w-3.5" />
+              <Zap className="h-3.5 w-3.5" />
               <span>Challenge of the Day</span>
             </span>
             <span className="rounded-full bg-[var(--bg-muted)] px-2.5 py-1 text-xs font-semibold uppercase text-[var(--text-muted)]">
