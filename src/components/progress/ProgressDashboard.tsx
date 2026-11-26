@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, Award, BookOpen, CheckCircle2, Download, Flame, ShieldCheck, Trash2 } from 'lucide-react';
+import { ArrowRight, Award, Bookmark, BookOpen, CheckCircle2, Download, Flame, ShieldCheck, StickyNote, Trash2 } from 'lucide-react';
 import CloudSyncPanel from '@/components/progress/CloudSyncPanel';
 import {
   clearAllProgress,
@@ -149,6 +149,69 @@ export default function ProgressDashboard({ courses }: Props) {
           </div>
         )}
       </section>
+
+      {/* Saved Bookmarks & Study Notes */}
+      {(Object.keys(state.bookmarks ?? {}).length > 0 || Object.keys(state.notes ?? {}).length > 0) && (
+        <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <div className="rounded-3xl bg-[var(--bg-elevated)] p-6">
+            <div className="flex items-center gap-2">
+              <Bookmark className="h-4 w-4 text-amber-500" />
+              <h2 className="text-lg font-extrabold text-[var(--text)]">
+                Bookmarked Lessons ({Object.keys(state.bookmarks ?? {}).length})
+              </h2>
+            </div>
+            {Object.keys(state.bookmarks ?? {}).length === 0 ? (
+              <p className="mt-3 text-xs text-[var(--text-muted)]">No bookmarked lessons yet.</p>
+            ) : (
+              <ul className="mt-4 space-y-2">
+                {Object.entries(state.bookmarks ?? {}).map(([key, bm]) => (
+                  <li key={key}>
+                    <a
+                      href={bm.href}
+                      className="flex items-center justify-between gap-3 rounded-2xl bg-[var(--bg-muted)] px-4 py-3 text-sm transition hover:bg-[var(--accent-soft)]"
+                    >
+                      <div className="min-w-0">
+                        <p className="truncate font-bold text-[var(--text)]">{bm.title}</p>
+                        <p className="truncate text-xs text-[var(--text-subtle)]">{bm.courseTitle}</p>
+                      </div>
+                      <ArrowRight className="h-4 w-4 shrink-0 text-[var(--accent)]" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div className="rounded-3xl bg-[var(--bg-elevated)] p-6">
+            <div className="flex items-center gap-2">
+              <StickyNote className="h-4 w-4 text-[var(--accent)]" />
+              <h2 className="text-lg font-extrabold text-[var(--text)]">
+                Personal Study Notes ({Object.keys(state.notes ?? {}).length})
+              </h2>
+            </div>
+            {Object.keys(state.notes ?? {}).length === 0 ? (
+              <p className="mt-3 text-xs text-[var(--text-muted)]">No personal study notes saved yet.</p>
+            ) : (
+              <ul className="mt-4 space-y-2.5">
+                {Object.entries(state.notes ?? {}).map(([key, note]) => (
+                  <li key={key} className="rounded-2xl bg-[var(--bg-muted)] p-4">
+                    <a
+                      href={note.href}
+                      className="text-sm font-bold text-[var(--text)] hover:text-[var(--accent)]"
+                    >
+                      {note.title}{' '}
+                      <span className="font-normal text-xs text-[var(--text-subtle)]">({note.courseTitle})</span>
+                    </a>
+                    <p className="mt-1.5 whitespace-pre-wrap text-xs text-[var(--text-muted)]">
+                      {note.text}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* Course Breakdown */}
       <section>

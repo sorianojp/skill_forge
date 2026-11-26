@@ -357,6 +357,43 @@ class SkillForgeHandler(BaseHTTPRequestHandler):
             )
             return
 
+        if path == "/api/leaderboard":
+            with DB_LOCK, sqlite3.connect(DB_PATH) as conn:
+                rows = conn.execute(
+                    "SELECT name, handle, bio, progress_json FROM users WHERE is_public = 1 AND handle IS NOT NULL AND handle != ''"
+                ).fetchall()
+            leaders = []
+            for name, handle, bio, pjson in rows:
+                try:
+                    prog = json.loads(pjson or "{}")
+                except Exception:
+                    prog = {}
+                completed = len(prog.get("completed") or {})
+                solved = len(prog.get("solvedChallenges") or {})
+                days = len(set(prog.get("activityDays") or []))
+                exams = prog.get("exams") or {}
+                certs = sum(
+                    1
+                    for rec in exams.values()
+                    if isinstance(rec, dict) and rec.get("passed") and rec.get("certificateId")
+                )
+                points = certs * 100 + solved * 25 + completed * 5 + days * 10
+                leaders.append(
+                    {
+                        "name": name,
+                        "handle": handle,
+                        "bio": bio or "",
+                        "points": points,
+                        "completedLessons": completed,
+                        "solvedChallenges": solved,
+                        "totalCertificates": certs,
+                        "activeDays": days,
+                    }
+                )
+            leaders.sort(key=lambda x: (-x["points"], -x["totalCertificates"], x["handle"]))
+            self._send_json(200, {"leaders": leaders[:50]})
+            return
+
         if path == "/api/profile/me":
             token = self._bearer_token()
             if not token:

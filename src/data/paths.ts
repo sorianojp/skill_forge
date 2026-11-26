@@ -36,11 +36,11 @@ export const CAREER_PATHS: CareerPath[] = [
   {
     slug: 'data-and-backend',
     title: 'Data & Backend Foundations',
-    tagline: 'SQL → Python',
+    tagline: 'SQL → PostgreSQL → Python',
     description:
-      'Query relational datasets with SQLite analytics and automate data workflows with Python 3 directly in your browser.',
+      'Query relational datasets, design indexed PostgreSQL schemas, and automate data workflows with Python 3 directly in your browser.',
     accentColor: '#059669',
-    courseSlugs: ['sql-essentials', 'python-fundamentals'],
+    courseSlugs: ['sql-essentials', 'postgresql-design', 'python-fundamentals'],
   },
   {
     slug: 'systems-programming',
@@ -88,5 +88,14 @@ export const CAREER_PATHS: CareerPath[] = [
       'Master Linux server administration, Bash automation, multi-stage Docker containers, and production deployment workflows.',
     accentColor: '#0ea5e9',
     courseSlugs: ['git-essentials', 'linux-cli', 'docker-essentials', 'nodejs-essentials'],
+  },
+  {
+    slug: 'scalable-backend-architect',
+    title: 'Scalable Backend & System Design Engineer',
+    tagline: 'Go → PostgreSQL → Docker → System Design',
+    description:
+      'Build high-throughput concurrent Go services, tune relational databases with indexes and MVCC, containerize with Docker, and architect distributed systems.',
+    accentColor: '#7c3aed',
+    courseSlugs: ['go-fundamentals', 'postgresql-design', 'docker-essentials', 'system-design-fundamentals'],
   },
 ];

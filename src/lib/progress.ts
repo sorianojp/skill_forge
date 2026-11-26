@@ -11,11 +11,28 @@ export interface ExamResultRecord {
   learnerName?: string;
 }
 
+export interface BookmarkRecord {
+  title: string;
+  courseTitle: string;
+  href: string;
+  savedAt: string;
+}
+
+export interface StudyNoteRecord {
+  text: string;
+  title: string;
+  courseTitle: string;
+  href: string;
+  updatedAt: string;
+}
+
 export interface ProgressState {
   completed: Record<string, string>; // key: "course/lesson" -> ISO timestamp
   exams?: Record<string, ExamResultRecord>; // key: courseSlug
   solvedChallenges?: Record<string, string>; // key: challengeId -> ISO timestamp
   activityDays?: string[]; // sorted YYYY-MM-DD local dates
+  bookmarks?: Record<string, BookmarkRecord>; // key: "course/lesson"
+  notes?: Record<string, StudyNoteRecord>; // key: "course/lesson"
   lastVisited?: {
     courseSlug: string;
     lessonSlug: string;
@@ -51,6 +68,8 @@ function readState(): ProgressState {
       exams: parsed.exams ?? {},
       solvedChallenges: parsed.solvedChallenges ?? {},
       activityDays: parsed.activityDays ?? [],
+      bookmarks: parsed.bookmarks ?? {},
+      notes: parsed.notes ?? {},
       lastVisited: parsed.lastVisited,
     };
   } catch {
@@ -90,6 +109,8 @@ export function mergeProgressState(remote: ProgressState): ProgressState {
     }
   }
   const mergedSolved = { ...(remote.solvedChallenges ?? {}), ...(local.solvedChallenges ?? {}) };
+  const mergedBookmarks = { ...(remote.bookmarks ?? {}), ...(local.bookmarks ?? {}) };
+  const mergedNotes = { ...(remote.notes ?? {}), ...(local.notes ?? {}) };
   const mergedDays = Array.from(
     new Set([...(remote.activityDays ?? []), ...(local.activityDays ?? [])])
   ).sort();
@@ -97,6 +118,8 @@ export function mergeProgressState(remote: ProgressState): ProgressState {
     completed: mergedCompleted,
     exams: mergedExams,
     solvedChallenges: mergedSolved,
+    bookmarks: mergedBookmarks,
+    notes: mergedNotes,
     activityDays: mergedDays,
     lastVisited: local.lastVisited ?? remote.lastVisited,
   };
@@ -210,7 +233,46 @@ export function getCourseCompletion(courseSlug: string, totalLessons: number): {
 }
 
 export function clearAllProgress(): void {
-  writeState({ completed: {}, exams: {} });
+  writeState({ completed: {}, exams: {}, solvedChallenges: {}, activityDays: [], bookmarks: {}, notes: {} });
+}
+
+export function toggleLessonBookmark(
+  lessonKey: string,
+  meta: { title: string; courseTitle: string; href: string }
+): boolean {
+  const state = readState();
+  const nextBookmarks = { ...(state.bookmarks ?? {}) };
+  let saved = false;
+  if (nextBookmarks[lessonKey]) {
+    delete nextBookmarks[lessonKey];
+    saved = false;
+  } else {
+    nextBookmarks[lessonKey] = { ...meta, savedAt: new Date().toISOString() };
+    saved = true;
+  }
+  state.bookmarks = nextBookmarks;
+  writeState(state);
+  return saved;
+}
+
+export function saveLessonNote(
+  lessonKey: string,
+  text: string,
+  meta: { title: string; courseTitle: string; href: string }
+): void {
+  const state = readState();
+  const nextNotes = { ...(state.notes ?? {}) };
+  if (!text.trim()) {
+    delete nextNotes[lessonKey];
+  } else {
+    nextNotes[lessonKey] = {
+      text: text.slice(0, 4000),
+      ...meta,
+      updatedAt: new Date().toISOString(),
+    };
+  }
+  state.notes = nextNotes;
+  writeState(state);
 }
 
 export function subscribeProgress(callback: (state: ProgressState) => void): () => void {

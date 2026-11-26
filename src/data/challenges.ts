@@ -1,4 +1,14 @@
-export type ChallengeLang = 'js' | 'ts' | 'node' | 'c' | 'cpp' | 'java' | 'csharp' | 'bash';
+export type ChallengeLang =
+  | 'js'
+  | 'python'
+  | 'sql'
+  | 'ts'
+  | 'node'
+  | 'c'
+  | 'cpp'
+  | 'java'
+  | 'csharp'
+  | 'bash';
 
 export interface PracticeChallenge {
   id: string;
@@ -10,6 +20,7 @@ export interface PracticeChallenge {
   hint: string;
   starterCode: string;
   expectedStdout: string;
+  schemaSql?: string;
 }
 
 export const PRACTICE_CHALLENGES: PracticeChallenge[] = [
@@ -485,5 +496,229 @@ logs=$'GET / 200\nPOST /api/run 500\nGET /courses 200\nPOST /api/sync 500\nGET /
 # TODO: print the count of lines containing 500
 echo 0`,
     expectedStdout: `2`,
+  },
+  // --- Python 3 Challenges (In-Browser Pyodide) ---
+  {
+    id: 'py-dedupe-preserve-order',
+    title: 'Deduplicate While Preserving Order',
+    difficulty: 'Easy',
+    language: 'python',
+    topic: 'Lists & Dicts',
+    prompt:
+      'Complete dedupe(items) so it removes duplicate values while preserving first-seen order. Print the resulting list.',
+    hint: 'In Python 3.7+, dict.fromkeys(items) preserves insertion order: return list(dict.fromkeys(items)).',
+    starterCode: `def dedupe(items):
+    # TODO: return unique items in original order
+    return items
+
+print(dedupe(["go", "sql", "go", "py", "sql", "js"]))`,
+    expectedStdout: `['go', 'sql', 'py', 'js']`,
+  },
+  {
+    id: 'py-word-frequency',
+    title: 'Top 2 Word Frequencies',
+    difficulty: 'Easy',
+    language: 'python',
+    topic: 'Collections & Counter',
+    prompt:
+      'Count case-insensitive word frequencies in text and print the top 2 words formatted as "word:count" separated by commas.',
+    hint: 'Use collections.Counter(text.lower().split()).most_common(2).',
+    starterCode: `from collections import Counter
+
+def top_two(text):
+    # TODO: return "word1:c1,word2:c2"
+    return ""
+
+print(top_two("Go rust go Python python go SQL"))`,
+    expectedStdout: `go:3,python:2`,
+  },
+  {
+    id: 'py-group-anagrams',
+    title: 'Group Anagrams Count',
+    difficulty: 'Medium',
+    language: 'python',
+    topic: 'Hash Maps',
+    prompt:
+      'Group words that are anagrams of each other and print the sorted sizes of each group.',
+    hint: 'Use defaultdict(list) keyed by "".join(sorted(word)), then return sorted(len(g) for g in groups.values()).',
+    starterCode: `from collections import defaultdict
+
+def anagram_group_sizes(words):
+    # TODO: group anagrams and return sorted group sizes
+    return []
+
+print(anagram_group_sizes(["eat", "tea", "tan", "ate", "nat", "bat"]))`,
+    expectedStdout: `[1, 2, 3]`,
+  },
+  {
+    id: 'py-matrix-transpose',
+    title: 'Transpose a 2D Matrix',
+    difficulty: 'Medium',
+    language: 'python',
+    topic: 'List Comprehensions',
+    prompt:
+      'Complete transpose(matrix) to flip rows and columns of a rectangular 2D list using zip(*matrix).',
+    hint: 'return [list(row) for row in zip(*matrix)]',
+    starterCode: `def transpose(matrix):
+    # TODO: return transposed matrix as list of lists
+    return matrix
+
+print(transpose([[1, 2, 3], [4, 5, 6]]))`,
+    expectedStdout: `[[1, 4], [2, 5], [3, 6]]`,
+  },
+  {
+    id: 'py-merge-intervals',
+    title: 'Merge Overlapping Intervals',
+    difficulty: 'Medium',
+    language: 'python',
+    topic: 'Sorting & Intervals',
+    prompt:
+      'Given a list of [start, end] intervals, merge all overlapping intervals and print the sorted result.',
+    hint: 'Sort intervals by start; if current start <= merged[-1][1], extend merged[-1][1] = max(merged[-1][1], end).',
+    starterCode: `def merge_intervals(intervals):
+    # TODO: merge overlapping intervals
+    return intervals
+
+print(merge_intervals([[1, 3], [8, 10], [2, 6], [15, 18]]))`,
+    expectedStdout: `[[1, 6], [8, 10], [15, 18]]`,
+  },
+  {
+    id: 'py-lru-simulation',
+    title: 'LRU Cache Simulation',
+    difficulty: 'Hard',
+    language: 'python',
+    topic: 'OrderedDict / Caching',
+    prompt:
+      'Implement a capacity-2 LRU cache using collections.OrderedDict so accessing a key refreshes recency and inserting a 3rd key evicts the least recently used key.',
+    hint: 'On get: move_to_end(k). On put: set key, move_to_end(k), and if len > cap call popitem(last=False).',
+    starterCode: `from collections import OrderedDict
+
+class LRU:
+    def __init__(self, cap):
+        self.cap = cap
+        self.data = OrderedDict()
+
+    def get(self, k):
+        # TODO: return value or -1 and refresh recency
+        return -1
+
+    def put(self, k, v):
+        # TODO: insert/update and evict LRU when over capacity
+        pass
+
+c = LRU(2)
+c.put("a", 1)
+c.put("b", 2)
+print(c.get("a"))
+c.put("c", 3)
+print(c.get("b"), c.get("c"))`,
+    expectedStdout: `1\n-1 3`,
+  },
+  // --- SQL Challenges (In-Browser SQLite) ---
+  {
+    id: 'sql-top-earners',
+    title: 'Filter & Sort Senior Salaries',
+    difficulty: 'Easy',
+    language: 'sql',
+    topic: 'WHERE & ORDER BY',
+    prompt:
+      'Select name and salary from employees where salary >= 90000, ordered by salary descending. Output rows are graded as "col1 | col2".',
+    hint: 'SELECT name, salary FROM employees WHERE salary >= 90000 ORDER BY salary DESC;',
+    schemaSql: `CREATE TABLE employees (id INTEGER PRIMARY KEY, name TEXT, dept TEXT, salary INTEGER);
+INSERT INTO employees VALUES
+  (1, 'Ana', 'Backend', 110000),
+  (2, 'Ben', 'Frontend', 85000),
+  (3, 'Cara', 'Systems', 125000),
+  (4, 'Dan', 'Backend', 92000);`,
+    starterCode: `-- TODO: return name, salary for employees earning >= 90000 highest first
+SELECT name, salary FROM employees LIMIT 1;`,
+    expectedStdout: `Cara | 125000\nAna | 110000\nDan | 92000`,
+  },
+  {
+    id: 'sql-dept-revenue',
+    title: 'Department Total Spend (GROUP BY)',
+    difficulty: 'Easy',
+    language: 'sql',
+    topic: 'GROUP BY & HAVING',
+    prompt:
+      'Return dept and SUM(amount) AS total for departments with total spend >= 500, ordered by total descending.',
+    hint: 'SELECT dept, SUM(amount) AS total FROM expenses GROUP BY dept HAVING SUM(amount) >= 500 ORDER BY total DESC;',
+    schemaSql: `CREATE TABLE expenses (id INTEGER PRIMARY KEY, dept TEXT, amount INTEGER);
+INSERT INTO expenses VALUES
+  (1, 'Cloud', 400),
+  (2, 'Cloud', 350),
+  (3, 'Design', 200),
+  (4, 'Data', 520);`,
+    starterCode: `-- TODO: group by dept with total >= 500 ordered descending
+SELECT dept, amount FROM expenses LIMIT 1;`,
+    expectedStdout: `Cloud | 750\nData | 520`,
+  },
+  {
+    id: 'sql-unmatched-customers',
+    title: 'Customers With Zero Orders (LEFT JOIN)',
+    difficulty: 'Easy',
+    language: 'sql',
+    topic: 'LEFT JOIN',
+    prompt:
+      'Find all customer names who have never placed an order, ordered alphabetically by name.',
+    hint: 'LEFT JOIN orders o ON o.customer_id = c.id WHERE o.id IS NULL ORDER BY c.name ASC.',
+    schemaSql: `CREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT);
+CREATE TABLE orders (id INTEGER PRIMARY KEY, customer_id INTEGER);
+INSERT INTO customers VALUES (1, 'Lia'), (2, 'Marco'), (3, 'Nadia'), (4, 'Owen');
+INSERT INTO orders VALUES (10, 1), (11, 3);`,
+    starterCode: `-- TODO: select names of customers with no orders, A-Z
+SELECT name FROM customers LIMIT 1;`,
+    expectedStdout: `Marco\nOwen`,
+  },
+  {
+    id: 'sql-running-total',
+    title: 'Cumulative Monthly Revenue',
+    difficulty: 'Medium',
+    language: 'sql',
+    topic: 'Window Functions',
+    prompt:
+      'Select month, revenue, and the running cumulative sum of revenue ordered by month ascending.',
+    hint: 'SELECT month, revenue, SUM(revenue) OVER (ORDER BY month) AS running FROM monthly ORDER BY month;',
+    schemaSql: `CREATE TABLE monthly (month TEXT, revenue INTEGER);
+INSERT INTO monthly VALUES ('2026-01', 100), ('2026-02', 250), ('2026-03', 150);`,
+    starterCode: `-- TODO: select month, revenue, running_total
+SELECT month, revenue, 0 FROM monthly;`,
+    expectedStdout: `2026-01 | 100 | 100\n2026-02 | 250 | 350\n2026-03 | 150 | 500`,
+  },
+  {
+    id: 'sql-top-per-track',
+    title: 'Top Scorer Per Track (ROW_NUMBER)',
+    difficulty: 'Medium',
+    language: 'sql',
+    topic: 'CTEs & Window Functions',
+    prompt:
+      'Return track, student, and score for the #1 highest-scoring student in each track, ordered by track A-Z.',
+    hint: 'Use a CTE with ROW_NUMBER() OVER (PARTITION BY track ORDER BY score DESC) AS rn, then filter WHERE rn = 1.',
+    schemaSql: `CREATE TABLE results (track TEXT, student TEXT, score INTEGER);
+INSERT INTO results VALUES
+  ('Go', 'Ana', 96), ('Go', 'Ben', 89),
+  ('SQL', 'Cara', 92), ('SQL', 'Dan', 98);`,
+    starterCode: `-- TODO: top 1 student per track ordered by track ASC
+SELECT track, student, score FROM results LIMIT 1;`,
+    expectedStdout: `Go | Ana | 96\nSQL | Dan | 98`,
+  },
+  {
+    id: 'sql-repeat-buyers',
+    title: 'Repeat Buyers With Avg Order >= 100',
+    difficulty: 'Hard',
+    language: 'sql',
+    topic: 'CTEs & Aggregation',
+    prompt:
+      'Using a CTE or GROUP BY, return customer_id and COUNT(*) for customers who placed at least 2 paid orders AND have an average paid order total >= 100, ordered by customer_id ASC.',
+    hint: "Filter WHERE status = 'paid', GROUP BY customer_id, HAVING COUNT(*) >= 2 AND AVG(total) >= 100.",
+    schemaSql: `CREATE TABLE orders (id INTEGER PRIMARY KEY, customer_id INTEGER, status TEXT, total INTEGER);
+INSERT INTO orders VALUES
+  (1, 10, 'paid', 120), (2, 10, 'paid', 140),
+  (3, 20, 'paid', 60),  (4, 20, 'paid', 80),
+  (5, 30, 'paid', 200), (6, 30, 'refunded', 200),
+  (7, 40, 'paid', 100), (8, 40, 'paid', 110);`,
+    starterCode: `-- TODO: customer_id, paid_count for >=2 paid orders and avg >= 100
+SELECT customer_id, COUNT(*) FROM orders GROUP BY customer_id LIMIT 1;`,
+    expectedStdout: `10 | 2\n40 | 2`,
   },
 ];

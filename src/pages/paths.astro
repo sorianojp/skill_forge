@@ -1,8 +1,9 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import PathProgressBar from '@/components/progress/PathProgressBar';
 import TrackIcon from '@/components/ui/TrackIcon.astro';
 import { CAREER_PATHS } from '@/data/paths';
-import { getAllCoursesSorted, getCourseLessons, getLessonSlug } from '@/lib/courses';
+import { getAllCoursesSorted, getCourseLessons, getLessonKey, getLessonSlug } from '@/lib/courses';
 
 const allCourses = await getAllCoursesSorted();
 const courseMap = new Map(allCourses.map((c) => [c.data.slug, c]));
@@ -18,6 +19,13 @@ const enrichedPaths = await Promise.all(
         return {
           course,
           lessonCount: lessons.length,
+          lessonRefs: lessons.map((l) => {
+            const lSlug = getLessonSlug(l);
+            return {
+              key: getLessonKey(slug, lSlug),
+              href: `/courses/${slug}/${lSlug}`,
+            };
+          }),
           startHref: first ? `/courses/${slug}/${getLessonSlug(first)}` : `/courses/${slug}`,
         };
       })
@@ -25,7 +33,8 @@ const enrichedPaths = await Promise.all(
     const validSteps = steps.filter((s): s is NonNullable<typeof s> => Boolean(s));
     const totalLessons = validSteps.reduce((sum, s) => sum + s.lessonCount, 0);
     const totalHours = validSteps.reduce((sum, s) => sum + s.course.data.estimatedHours, 0);
-    return { ...path, steps: validSteps, totalLessons, totalHours };
+    const allLessonRefs = validSteps.flatMap((s) => s.lessonRefs);
+    return { ...path, steps: validSteps, totalLessons, totalHours, allLessonRefs };
   })
 );
 ---
@@ -63,20 +72,10 @@ const enrichedPaths = await Promise.all(
               <span class="rounded-full bg-[var(--bg-muted)] px-3 py-1.5">
                 {path.steps.length} courses · {path.totalLessons} lessons · ~{path.totalHours}h
               </span>
-              {path.steps[0] && (
-                <a
-                  href={path.steps[0].startHref}
-                  class="inline-flex min-h-11 items-center gap-1.5 rounded-2xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[var(--accent-strong)]"
-                >
-                  <span>Start Path</span>
-                  <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M5 12h14" />
-                    <path d="m12 5 7 7-7 7" />
-                  </svg>
-                </a>
-              )}
             </div>
           </div>
+
+          <PathProgressBar client:load lessons={path.allLessonRefs} accentColor={path.accentColor} />
 
           <ol class="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {path.steps.map((step, idx) => (

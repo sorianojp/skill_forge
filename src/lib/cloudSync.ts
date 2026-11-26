@@ -215,3 +215,25 @@ export async function fetchPublicProfile(handle: string): Promise<PublicProfileD
     return null;
   }
 }
+
+export interface LeaderboardEntry {
+  name: string;
+  handle: string;
+  bio: string;
+  points: number;
+  completedLessons: number;
+  solvedChallenges: number;
+  totalCertificates: number;
+  activeDays: number;
+}
+
+export async function fetchLeaderboard(): Promise<LeaderboardEntry[]> {
+  try {
+    const res = await fetch(`${getApiBase()}/api/leaderboard`);
+    if (!res.ok) return [];
+    const data = await res.json();
+    return Array.isArray(data.leaders) ? (data.leaders as LeaderboardEntry[]) : [];
+  } catch {
+    return [];
+  }
+}

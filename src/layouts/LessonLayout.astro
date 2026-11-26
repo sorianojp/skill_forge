@@ -2,6 +2,7 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import type { CourseEntry, LessonEntry, ModuleGroup } from '@/lib/courses';
 import LessonCompleteButton from '@/components/progress/LessonCompleteButton';
+import LessonStudyTools from '@/components/progress/LessonStudyTools';
 import SidebarProgress from '@/components/progress/SidebarProgress';
 import type { MarkdownHeading } from 'astro';
 
@@ -147,8 +148,16 @@ const sidebarModules = modules.map((m) => ({
           <slot />
         </div>
 
-        <!-- Lesson Completion & Prev/Next Footer -->
+        <!-- Lesson Completion, Study Notes & Prev/Next Footer -->
         <div class="mt-14 flex flex-col gap-5 pt-4" data-pagefind-ignore>
+          <LessonStudyTools
+            client:load
+            lessonKey={lessonKey}
+            lessonTitle={lesson.data.title}
+            courseTitle={course.data.title}
+            href={`/courses/${course.data.slug}/${lessonSlug}`}
+          />
+
           <LessonCompleteButton
             client:load
             lessonKey={lessonKey}

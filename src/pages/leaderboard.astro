@@ -1,0 +1,25 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import LeaderboardTable from '@/components/progress/LeaderboardTable';
+---
+
+<BaseLayout
+  title="Community Leaderboard"
+  description="Top opted-in DevPath learners ranked by verified certificates, coding practice arena solves, completed lessons, and active days."
+>
+  <div class="mx-auto max-w-4xl px-5 py-12 sm:px-6 lg:px-8">
+    <header class="mb-8">
+      <p class="text-xs font-bold uppercase tracking-wider text-[var(--accent)]">
+        Community Rankings
+      </p>
+      <h1 class="mt-1 text-3xl font-extrabold tracking-tight text-[var(--text)] sm:text-4xl">
+        DevPath Leaderboard
+      </h1>
+      <p class="mt-2 text-base text-[var(--text-muted)]">
+        Opt-in rankings for learners with public portfolios. Earn points by completing lessons, solving Practice Arena challenges, and passing certification exams.
+      </p>
+    </header>
+
+    <LeaderboardTable client:load />
+  </div>
+</BaseLayout>

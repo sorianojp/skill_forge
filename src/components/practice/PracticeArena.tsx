@@ -5,6 +5,8 @@ import { basicSetup } from 'codemirror';
 import { cpp as cppLang } from '@codemirror/lang-cpp';
 import { java as javaLang } from '@codemirror/lang-java';
 import { javascript as jsLang } from '@codemirror/lang-javascript';
+import { python as pyLang } from '@codemirror/lang-python';
+import { sql as sqlLang } from '@codemirror/lang-sql';
 import { oneDark } from '@codemirror/theme-one-dark';
 import {
   CheckCircle2,
@@ -29,14 +31,107 @@ import {
 
 const LANG_META: Record<ChallengeLang, { label: string; badge: string }> = {
   js: { label: 'JavaScript', badge: 'bg-amber-500' },
+  python: { label: 'Python 3', badge: 'bg-emerald-600' },
+  sql: { label: 'SQL', badge: 'bg-violet-600' },
   ts: { label: 'TypeScript', badge: 'bg-sky-600' },
-  node: { label: 'Node.js', badge: 'bg-emerald-600' },
+  node: { label: 'Node.js', badge: 'bg-green-600' },
   c: { label: 'C11', badge: 'bg-slate-700' },
   cpp: { label: 'C++20', badge: 'bg-blue-600' },
   java: { label: 'Java 21', badge: 'bg-amber-600' },
-  csharp: { label: 'C# 12', badge: 'bg-purple-600' },
+  csharp: { label: 'C#', badge: 'bg-purple-600' },
   bash: { label: 'Bash', badge: 'bg-zinc-700' },
 };
+
+const PYODIDE_BASE = 'https://cdn.jsdelivr.net/pyodide/v0.27.5/full/';
+const SQLJS_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.12.0/';
+
+async function runPythonInBrowser(code: string): Promise<{ stdout: string; stderr: string }> {
+  try {
+    const win = window as any;
+    if (!win.__skillforgePyodide) {
+      win.__skillforgePyodide = new Promise((resolve, reject) => {
+        const boot = async () => {
+          try {
+            resolve(await win.loadPyodide({ indexURL: PYODIDE_BASE }));
+          } catch (e) {
+            win.__skillforgePyodide = undefined;
+            reject(e);
+          }
+        };
+        if (win.loadPyodide) {
+          void boot();
+          return;
+        }
+        const s = document.createElement('script');
+        s.src = `${PYODIDE_BASE}pyodide.js`;
+        s.async = true;
+        s.onload = () => void boot();
+        s.onerror = () => {
+          win.__skillforgePyodide = undefined;
+          reject(new Error('Could not load Python WebAssembly runtime.'));
+        };
+        document.head.appendChild(s);
+      });
+    }
+    const py = await win.__skillforgePyodide;
+    const out: string[] = [];
+    const err: string[] = [];
+    py.setStdout({ batched: (msg: string) => out.push(msg) });
+    py.setStderr({ batched: (msg: string) => err.push(msg) });
+    await py.runPythonAsync(code);
+    return { stdout: out.join('\n'), stderr: err.join('\n') };
+  } catch (e: any) {
+    return { stdout: '', stderr: String(e?.message ?? e) };
+  }
+}
+
+async function runSqlInBrowser(
+  schemaSql: string,
+  query: string
+): Promise<{ stdout: string; stderr: string }> {
+  try {
+    const win = window as any;
+    if (!win.__skillforgeSqlJs) {
+      win.__skillforgeSqlJs = new Promise((resolve, reject) => {
+        const boot = async () => {
+          try {
+            resolve(await win.initSqlJs({ locateFile: (f: string) => `${SQLJS_CDN}${f}` }));
+          } catch (e) {
+            win.__skillforgeSqlJs = undefined;
+            reject(e);
+          }
+        };
+        if (win.initSqlJs) {
+          void boot();
+          return;
+        }
+        const s = document.createElement('script');
+        s.src = `${SQLJS_CDN}sql-wasm.js`;
+        s.async = true;
+        s.onload = () => void boot();
+        s.onerror = () => {
+          win.__skillforgeSqlJs = undefined;
+          reject(new Error('Could not load SQLite WebAssembly runtime.'));
+        };
+        document.head.appendChild(s);
+      });
+    }
+    const SQL = await win.__skillforgeSqlJs;
+    const db = new SQL.Database();
+    try {
+      if (schemaSql) db.run(schemaSql);
+      const res = db.exec(query);
+      if (!res || res.length === 0) return { stdout: '', stderr: '' };
+      const last = res[res.length - 1];
+      const rows = (last.values as unknown[][]).map((row) => row.map((v) => String(v ?? 'NULL')).join(' | '));
+      return { stdout: rows.join('\n'), stderr: '' };
+    } finally {
+      db.close();
+    }
+  } catch (e: any) {
+    return { stdout: '', stderr: String(e?.message ?? e) };
+  }
+}
 
 function runJsInBrowser(code: string): { stdout: string; stderr: string } {
   const logs: string[] = [];
@@ -89,9 +184,13 @@ export default function PracticeArena() {
     const langExt =
       active.language === 'c' || active.language === 'cpp'
         ? cppLang()
-        : active.language === 'java' || active.language === 'csharp'
-          ? javaLang()
-          : jsLang({ typescript: active.language === 'ts' });
+        : active.language === 'python'
+          ? pyLang()
+          : active.language === 'sql'
+            ? sqlLang()
+            : active.language === 'java' || active.language === 'csharp'
+              ? javaLang()
+              : jsLang({ typescript: active.language === 'ts' });
 
     const updateListener = EditorView.updateListener.of((update) => {
       if (update.docChanged) {
@@ -148,6 +247,14 @@ export default function PracticeArena() {
 
     if (active.language === 'js') {
       const out = runJsInBrowser(activeCode);
+      stdout = out.stdout;
+      stderr = out.stderr;
+    } else if (active.language === 'python') {
+      const out = await runPythonInBrowser(activeCode);
+      stdout = out.stdout;
+      stderr = out.stderr;
+    } else if (active.language === 'sql') {
+      const out = await runSqlInBrowser(active.schemaSql ?? '', activeCode);
       stdout = out.stdout;
       stderr = out.stderr;
     } else {
@@ -352,6 +459,15 @@ export default function PracticeArena() {
 
             <h2 className="mt-4 text-xl font-extrabold text-[var(--text)]">{active.title}</h2>
             <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted)]">{active.prompt}</p>
+
+            {active.schemaSql && (
+              <div className="mt-4 overflow-hidden rounded-2xl bg-[#0f172a] p-4">
+                <p className="mb-1.5 font-mono text-[11px] font-bold uppercase tracking-wider text-violet-300">
+                  Table Schema & Seed Data
+                </p>
+                <pre className="overflow-x-auto font-mono text-xs text-slate-200">{active.schemaSql}</pre>
+              </div>
+            )}
 
             {showHint && (
               <div className="mt-4 rounded-2xl bg-[var(--accent-soft)] p-4 text-xs leading-relaxed text-[var(--text)]">
