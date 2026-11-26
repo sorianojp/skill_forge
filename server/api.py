@@ -13,7 +13,9 @@ Provides:
 """
 
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from datetime import datetime, timedelta, timezone
 import hashlib
+import hmac
 import json
 import os
 import re
@@ -26,6 +28,7 @@ import urllib.request
 
 PORT = int(os.environ.get("SKILLFORGE_PORT", "8787"))
 DB_PATH = os.environ.get("SKILLFORGE_DB", "/var/lib/skillforge/skillforge.db")
+ADMIN_KEY = os.environ.get("DEVPATH_ADMIN_KEY", "")
 WANDBOX_URL = "https://wandbox.org/api/compile.json"
 
 COMPILERS = {
@@ -68,9 +71,113 @@ def init_db() -> None:
                 total INTEGER NOT NULL,
                 issued_at TEXT NOT NULL
             );
+
+            CREATE TABLE IF NOT EXISTS page_events (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                event_type TEXT NOT NULL,
+                path TEXT NOT NULL,
+                course_slug TEXT NOT NULL DEFAULT '',
+                meta TEXT NOT NULL DEFAULT '',
+                day TEXT NOT NULL,
+                created_at INTEGER NOT NULL
+            );
+            CREATE INDEX IF NOT EXISTS idx_events_type_day ON page_events(event_type, day);
+            CREATE INDEX IF NOT EXISTS idx_events_course ON page_events(course_slug);
             """
         )
         conn.commit()
+
+
+def log_event(event_type: str, path: str, course_slug: str = "", meta: str = "") -> None:
+    day = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    try:
+        with DB_LOCK, sqlite3.connect(DB_PATH) as conn:
+            conn.execute(
+                "INSERT INTO page_events (event_type, path, course_slug, meta, day, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+                (event_type[:24], path[:200], course_slug[:80], meta[:80], day, int(time.time())),
+            )
+            conn.commit()
+    except Exception:
+        pass
+
+
+def get_admin_stats() -> dict:
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    days = [
+        (datetime.now(timezone.utc) - timedelta(days=i)).strftime("%Y-%m-%d")
+        for i in range(13, -1, -1)
+    ]
+    with DB_LOCK, sqlite3.connect(DB_PATH) as conn:
+        total_views = conn.execute(
+            "SELECT COUNT(*) FROM page_events WHERE event_type = 'view'"
+        ).fetchone()[0]
+        today_views = conn.execute(
+            "SELECT COUNT(*) FROM page_events WHERE event_type = 'view' AND day = ?",
+            (today,),
+        ).fetchone()[0]
+        total_runs = conn.execute(
+            "SELECT COUNT(*) FROM page_events WHERE event_type = 'run'"
+        ).fetchone()[0]
+        total_users = conn.execute("SELECT COUNT(*) FROM users").fetchone()[0]
+        total_certs = conn.execute("SELECT COUNT(*) FROM certificates").fetchone()[0]
+        avg_score_row = conn.execute("SELECT ROUND(AVG(score), 1) FROM certificates").fetchone()
+        avg_exam_score = float(avg_score_row[0]) if avg_score_row and avg_score_row[0] is not None else 0.0
+
+        day_rows = dict(
+            conn.execute(
+                "SELECT day, COUNT(*) FROM page_events WHERE event_type = 'view' AND day >= ? GROUP BY day",
+                (days[0],),
+            ).fetchall()
+        )
+        views_by_day = [{"day": d, "views": int(day_rows.get(d, 0))} for d in days]
+
+        top_courses = [
+            {"courseSlug": r[0], "views": int(r[1])}
+            for r in conn.execute(
+                "SELECT course_slug, COUNT(*) AS c FROM page_events WHERE event_type = 'view' AND course_slug != '' GROUP BY course_slug ORDER BY c DESC LIMIT 10"
+            ).fetchall()
+        ]
+        top_pages = [
+            {"path": r[0], "views": int(r[1])}
+            for r in conn.execute(
+                "SELECT path, COUNT(*) AS c FROM page_events WHERE event_type = 'view' GROUP BY path ORDER BY c DESC LIMIT 10"
+            ).fetchall()
+        ]
+        runner_breakdown = [
+            {"language": r[0], "runs": int(r[1])}
+            for r in conn.execute(
+                "SELECT meta, COUNT(*) AS c FROM page_events WHERE event_type = 'run' AND meta != '' GROUP BY meta ORDER BY c DESC LIMIT 10"
+            ).fetchall()
+        ]
+        recent_certs = [
+            {
+                "certId": r[0],
+                "learnerName": r[1],
+                "courseSlug": r[2],
+                "courseTitle": r[3],
+                "score": r[4],
+                "issuedAt": r[5],
+            }
+            for r in conn.execute(
+                "SELECT cert_id, learner_name, course_slug, course_title, score, issued_at FROM certificates ORDER BY rowid DESC LIMIT 12"
+            ).fetchall()
+        ]
+
+    return {
+        "totals": {
+            "totalViews": int(total_views),
+            "todayViews": int(today_views),
+            "totalUsers": int(total_users),
+            "totalCertificates": int(total_certs),
+            "totalRuns": int(total_runs),
+            "avgExamScore": avg_exam_score,
+        },
+        "viewsByDay": views_by_day,
+        "topCourses": top_courses,
+        "topPages": top_pages,
+        "runnerBreakdown": runner_breakdown,
+        "recentCertificates": recent_certs,
+    }
 
 
 def hash_password(password: str, salt: str) -> str:
@@ -152,7 +259,7 @@ class SkillForgeHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(raw)))
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Admin-Key")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS")
         self.end_headers()
         self.wfile.write(raw)
@@ -179,7 +286,15 @@ class SkillForgeHandler(BaseHTTPRequestHandler):
     def do_GET(self) -> None:
         path = self.path.split("?")[0]
         if path == "/api/health":
-            self._send_json(200, {"ok": True, "service": "skillforge-api"})
+            self._send_json(200, {"ok": True, "service": "devpath-api"})
+            return
+
+        if path == "/api/admin/stats":
+            provided = self.headers.get("X-Admin-Key", "").strip()
+            if not ADMIN_KEY or not provided or not hmac.compare_digest(provided, ADMIN_KEY):
+                self._send_json(401, {"error": "Invalid admin key"})
+                return
+            self._send_json(200, get_admin_stats())
             return
 
         if path.startswith("/api/certificates/"):
@@ -237,6 +352,27 @@ class SkillForgeHandler(BaseHTTPRequestHandler):
         path = self.path.split("?")[0]
         ip = self.headers.get("X-Forwarded-For", self.client_address[0]).split(",")[0].strip()
 
+        if path == "/api/analytics/event":
+            if not check_rate_limit(f"evt:{ip}", limit=120, window=60.0):
+                self._send_json(204, {"ok": True})
+                return
+            body = self._read_json(4_000)
+            if not body:
+                self._send_json(400, {"error": "Invalid JSON"})
+                return
+            ev_path = str(body.get("path", "/")).strip() or "/"
+            ev_type = str(body.get("eventType", "view")).strip().lower()
+            if ev_type not in {"view", "run", "exam"}:
+                ev_type = "view"
+            course_slug = str(body.get("courseSlug", "")).strip()
+            if not course_slug and ev_path.startswith("/courses/"):
+                parts = [p for p in ev_path.split("/") if p]
+                if len(parts) >= 2:
+                    course_slug = parts[1]
+            log_event(ev_type, ev_path, course_slug, str(body.get("meta", "")))
+            self._send_json(200, {"ok": True})
+            return
+
         if path == "/api/run":
             if not check_rate_limit(ip):
                 self._send_json(429, {"error": "Rate limit exceeded. Please wait a moment and try again."})
@@ -250,6 +386,7 @@ class SkillForgeHandler(BaseHTTPRequestHandler):
             if not code.strip():
                 self._send_json(400, {"error": "Code cannot be empty"})
                 return
+            log_event("run", "/api/run", "", lang)
             result = run_wandbox(lang, code)
             if "error" in result:
                 self._send_json(502, result)

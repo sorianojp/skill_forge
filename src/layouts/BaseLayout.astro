@@ -6,12 +6,14 @@ interface Props {
   title: string;
   description?: string;
   jsonLd?: Record<string, unknown>;
+  noindex?: boolean;
 }
 
 const {
   title,
-  description = 'Free, interactive, open web development courses with live Try-It-Yourself playgrounds and quizzes.',
+  description = 'Free, interactive software engineering courses with live code playgrounds, quizzes, and verifiable certificates.',
   jsonLd,
+  noindex = false,
 } = Astro.props;
 
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
@@ -34,14 +36,19 @@ const currentPath = Astro.url.pathname;
     </script>
     <title>{title} | DevPath</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:site_name" content="DevPath" />
     <meta property="og:title" content={`${title} | DevPath`} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:image" content={new URL('/og-card.svg', Astro.site)} />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={`${title} | DevPath`} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL('/og-card.svg', Astro.site)} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -247,11 +254,12 @@ const currentPath = Astro.url.pathname;
         <p>
           <strong class="font-semibold text-white">DevPath</strong>: Free, interactive software engineering courses. No login required.
         </p>
-        <div class="flex items-center gap-6">
+        <div class="flex flex-wrap items-center gap-6">
           <a href="/courses" class="transition hover:text-white">Courses</a>
           <a href="/reference" class="transition hover:text-white">Reference</a>
           <a href="/playground" class="transition hover:text-white">Playground</a>
           <a href="/progress" class="transition hover:text-white">My Progress</a>
+          <a href="/verify" class="transition hover:text-white">Verify Certificate</a>
         </div>
       </div>
     </footer>
@@ -294,6 +302,24 @@ const currentPath = Astro.url.pathname;
           meta.content = e.newValue === 'light' || e.newValue === 'dark' ? e.newValue : 'light dark';
         }
       });
+
+      // Privacy-friendly cookieless page-view counter (skips localhost and /admin)
+      if (
+        window.location.hostname !== 'localhost' &&
+        window.location.hostname !== '127.0.0.1' &&
+        !window.location.pathname.startsWith('/admin')
+      ) {
+        try {
+          fetch('/api/analytics/event', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ eventType: 'view', path: window.location.pathname }),
+            keepalive: true,
+          }).catch(() => {});
+        } catch {
+          // ignore analytics errors
+        }
+      }
     </script>
   </body>
 </html>
