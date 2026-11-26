@@ -46,11 +46,14 @@ const currentPath = Astro.url.pathname;
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalUrl} />
-    <meta property="og:image" content={new URL('/og-card.svg', Astro.site)} />
+    <meta property="og:image" content={new URL('/og-card.png', Astro.site)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="DevPath Free Interactive Software Engineering Courses" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={`${title} | DevPath`} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={new URL('/og-card.svg', Astro.site)} />
+    <meta name="twitter:image" content={new URL('/og-card.png', Astro.site)} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -305,6 +308,7 @@ const currentPath = Astro.url.pathname;
           <a href="/courses" class="transition hover:text-white">Courses</a>
           <a href="/projects" class="transition hover:text-white">Projects</a>
           <a href="/practice" class="transition hover:text-white">Practice</a>
+          <a href="/flashcards" class="transition hover:text-white">Flashcards</a>
           <a href="/reference" class="transition hover:text-white">Reference</a>
           <a href="/playground" class="transition hover:text-white">Playground</a>
           <a href="/progress" class="transition hover:text-white">My Progress</a>

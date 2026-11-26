@@ -2,6 +2,7 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import ContinueBanner from '@/components/progress/ContinueBanner';
 import CourseCardFooter from '@/components/progress/CourseCardFooter';
+import DailyChallengeCard from '@/components/practice/DailyChallengeCard';
 import Playground from '@/components/playground/Playground';
 import TrackIcon from '@/components/ui/TrackIcon.astro';
 import { CAREER_PATHS } from '@/data/paths';
@@ -115,6 +116,8 @@ const siteJsonLd = {
       </div>
     </div>
   </section>
+
+  <DailyChallengeCard client:load />
 
   <!-- Main Content -->
   <div class="mx-auto max-w-[82rem] px-5 py-10 sm:px-6 lg:px-8">

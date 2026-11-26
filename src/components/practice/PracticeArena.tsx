@@ -166,6 +166,12 @@ export default function PracticeArena() {
 
   useEffect(() => {
     setProgress(getProgress());
+    if (typeof window !== 'undefined') {
+      const chParam = new URLSearchParams(window.location.search).get('challenge');
+      if (chParam && PRACTICE_CHALLENGES.some((c) => c.id === chParam)) {
+        setSelectedId(chParam);
+      }
+    }
     return subscribeProgress(setProgress);
   }, []);
 

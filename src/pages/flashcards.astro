@@ -1,0 +1,40 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import FlashcardsDeck, { type FlashcardDeckTrack } from '@/components/quiz/FlashcardsDeck';
+import { COURSE_EXAMS } from '@/data/exams';
+import { EXTRA_EXAM_QUESTIONS } from '@/data/examsExtra';
+import { getAllCoursesSorted } from '@/lib/courses';
+
+const courses = await getAllCoursesSorted();
+const tracks: FlashcardDeckTrack[] = courses
+  .map((c) => ({
+    slug: c.data.slug,
+    title: c.data.title,
+    shortTitle: c.data.shortTitle,
+    cards: [...(COURSE_EXAMS[c.data.slug] ?? []), ...(EXTRA_EXAM_QUESTIONS[c.data.slug] ?? [])],
+  }))
+  .filter((t) => t.cards.length > 0);
+
+const totalCards = tracks.reduce((sum, t) => sum + t.cards.length, 0);
+---
+
+<BaseLayout
+  title="Exam Review Flashcards"
+  description={`Study ${totalCards} interactive software engineering flashcards across all ${tracks.length} DevPath tracks before taking certification exams.`}
+>
+  <div class="mx-auto max-w-[82rem] px-5 py-12 sm:px-6 lg:px-8">
+    <header class="mb-8 max-w-2xl">
+      <p class="text-xs font-bold uppercase tracking-wider text-[var(--accent)]">
+        Quick Mobile Study Mode
+      </p>
+      <h1 class="mt-1 text-3xl font-extrabold tracking-tight text-[var(--text)] sm:text-4xl">
+        Exam Review Flashcards
+      </h1>
+      <p class="mt-2 text-base text-[var(--text-muted)]">
+        Flip through {totalCards} engineering review cards across all {tracks.length} tracks. Use Spacebar to flip and Arrow keys to navigate.
+      </p>
+    </header>
+
+    <FlashcardsDeck client:load tracks={tracks} />
+  </div>
+</BaseLayout>

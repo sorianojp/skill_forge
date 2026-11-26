@@ -30,7 +30,7 @@ self.addEventListener('fetch', (event) => {
   if (url.pathname.startsWith('/api/')) return;
 
   // Immutable hashed Astro assets: cache-first
-  if (url.pathname.startsWith('/_astro/') || url.pathname === '/favicon.svg' || url.pathname === '/og-card.svg') {
+  if (url.pathname.startsWith('/_astro/') || url.pathname === '/favicon.svg' || url.pathname === '/og-card.png') {
     event.respondWith(
       caches.match(req).then((cached) => {
         if (cached) return cached;
