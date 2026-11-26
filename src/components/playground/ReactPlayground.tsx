@@ -56,13 +56,16 @@ function buildReactSrcDoc(jsxCode: string): string {
         rootEl.innerHTML = '<div class="err">' + String(err && err.message ? err.message : err) + '</div>';
       }
       try {
-        const userCode = ${safeCode};
+        const rawCode = ${safeCode};
+        const userCode = rawCode.replace(/^\\s*import\\s+[^;\\n]+from\\s+['"]react(?:-dom)?['"];?\\s*$/gm, '');
         const wrapped = [
           'const { useState, useEffect, useRef, useMemo, useCallback, useReducer, createContext, useContext } = React;',
           userCode,
           'if (typeof App !== "undefined") { ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App)); }'
         ].join('\\n');
-        const compiled = Babel.transform(wrapped, { presets: ['react'] }).code;
+        const compiled = Babel.transform(wrapped, {
+          presets: [['react', { runtime: 'classic' }]],
+        }).code;
         new Function('React', 'ReactDOM', compiled)(React, ReactDOM);
       } catch (err) {
         showError(err);
