@@ -688,6 +688,41 @@ class SkillForgeHandler(BaseHTTPRequestHandler):
 
     def do_PUT(self) -> None:
         path = self.path.split("?")[0]
+        if path == "/api/auth/password":
+            token = self._bearer_token()
+            if not token:
+                self._send_json(401, {"error": "Unauthorized"})
+                return
+            body = self._read_json(8_000)
+            if not body:
+                self._send_json(400, {"error": "Invalid JSON payload"})
+                return
+            current_pw = str(body.get("currentPassword", ""))
+            new_pw = str(body.get("newPassword", ""))
+            if len(new_pw) < 6:
+                self._send_json(400, {"error": "New password must be at least 6 characters."})
+                return
+            with DB_LOCK, sqlite3.connect(DB_PATH) as conn:
+                row = conn.execute(
+                    "SELECT id, password_hash, salt FROM users WHERE token = ?",
+                    (token,),
+                ).fetchone()
+                if not row:
+                    self._send_json(401, {"error": "Invalid session token"})
+                    return
+                if hash_password(current_pw, row[2]) != row[1]:
+                    self._send_json(401, {"error": "Current password is incorrect."})
+                    return
+                new_salt = secrets.token_hex(16)
+                new_hash = hash_password(new_pw, new_salt)
+                conn.execute(
+                    "UPDATE users SET password_hash = ?, salt = ?, updated_at = ? WHERE id = ?",
+                    (new_hash, new_salt, int(time.time()), row[0]),
+                )
+                conn.commit()
+            self._send_json(200, {"ok": True})
+            return
+
         if path == "/api/profile/me":
             token = self._bearer_token()
             if not token:

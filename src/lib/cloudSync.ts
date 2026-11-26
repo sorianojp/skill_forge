@@ -219,6 +219,35 @@ export async function updateMyProfile(payload: {
     });
     const data = await res.json();
     if (!res.ok) return { ok: false, error: data.error || 'Could not update profile.' };
+    if (payload.name && payload.name.trim()) {
+      setCloudSession({
+        ...session,
+        user: { ...session.user, name: payload.name.trim() },
+      });
+    }
+    return { ok: true };
+  } catch {
+    return { ok: false, error: 'Could not reach DevPath API.' };
+  }
+}
+
+export async function changeAccountPassword(
+  currentPassword: string,
+  newPassword: string
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const session = getCloudSession();
+  if (!session) return { ok: false, error: 'Sign in first.' };
+  try {
+    const res = await fetch(`${getApiBase()}/api/auth/password`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.token}`,
+      },
+      body: JSON.stringify({ currentPassword, newPassword }),
+    });
+    const data = await res.json();
+    if (!res.ok) return { ok: false, error: data.error || 'Could not update password.' };
     return { ok: true };
   } catch {
     return { ok: false, error: 'Could not reach DevPath API.' };

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Check, CheckCircle2, Cloud, Copy, ExternalLink, Globe, LogIn, LogOut, RefreshCw, Save, UserPlus } from 'lucide-react';
+import { Check, CheckCircle2, Cloud, Copy, ExternalLink, Globe, KeyRound, LogIn, LogOut, RefreshCw, Save, UserPlus } from 'lucide-react';
 import {
+  changeAccountPassword,
   fetchMyProfile,
   getCloudSession,
   loginCloudAccount,
@@ -22,19 +23,28 @@ export default function CloudSyncPanel() {
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Public profile settings
+  // Public profile & account settings
+  const [displayName, setDisplayName] = useState('');
   const [handle, setHandle] = useState('');
   const [bio, setBio] = useState('');
   const [isPublic, setIsPublic] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
   const [copiedProfile, setCopiedProfile] = useState(false);
 
+  // Change password state
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [savingPassword, setSavingPassword] = useState(false);
+
   useEffect(() => {
     const s = getCloudSession();
     setSession(s);
     if (s) {
+      setDisplayName(s.user.name);
       void fetchMyProfile().then((p) => {
         if (p) {
+          setDisplayName(p.name || s.user.name);
           setHandle(p.handle);
           setBio(p.bio);
           setIsPublic(p.isPublic);
@@ -53,6 +63,7 @@ export default function CloudSyncPanel() {
       const res = await registerCloudAccount(email, password, name, getProgress());
       if (res.ok) {
         setSession(res.session);
+        setDisplayName(res.session.user.name);
         setMessage('Account created and your current progress is now synced to the cloud.');
         setPassword('');
       } else {
@@ -64,6 +75,15 @@ export default function CloudSyncPanel() {
         const merged = mergeProgressState(res.progress);
         await pushProgressToCloud(merged);
         setSession(res.session);
+        setDisplayName(res.session.user.name);
+        void fetchMyProfile().then((p) => {
+          if (p) {
+            setDisplayName(p.name || res.session.user.name);
+            setHandle(p.handle);
+            setBio(p.bio);
+            setIsPublic(p.isPublic);
+          }
+        });
         setMessage('Signed in and merged your cloud + browser progress.');
         setPassword('');
       } else {
@@ -106,22 +126,28 @@ export default function CloudSyncPanel() {
     nextHandle: string,
     nextBio: string,
     nextPublic: boolean,
-    revertToggleOnError = false
+    revertToggleOnError = false,
+    nextName?: string
   ) => {
     setSavingProfile(true);
     setError(null);
     setMessage(null);
     const cleanHandle = nextHandle.trim().toLowerCase();
+    const cleanName = (nextName ?? displayName).trim();
     const res = await updateMyProfile({
+      name: cleanName || undefined,
       handle: cleanHandle,
       bio: nextBio.trim(),
       isPublic: nextPublic,
     });
     if (res.ok) {
+      if (cleanName && session) {
+        setSession({ ...session, user: { ...session.user, name: cleanName } });
+      }
       setMessage(
         nextPublic
-          ? `Public portfolio is now live at /profile?u=${cleanHandle}`
-          : 'Profile is now private.'
+          ? `Profile saved! Public portfolio is live at /profile?u=${cleanHandle}`
+          : 'Profile settings saved (currently private).'
       );
     } else {
       setError(res.error);
@@ -144,7 +170,24 @@ export default function CloudSyncPanel() {
 
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-    await persistProfile(handle, bio, isPublic);
+    await persistProfile(handle, bio, isPublic, false, displayName);
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingPassword(true);
+    setError(null);
+    setMessage(null);
+    const res = await changeAccountPassword(currentPassword, newPassword);
+    if (res.ok) {
+      setMessage('Password updated successfully.');
+      setCurrentPassword('');
+      setNewPassword('');
+      setShowPasswordForm(false);
+    } else {
+      setError(res.error);
+    }
+    setSavingPassword(false);
   };
 
   const handleCopyProfileUrl = async () => {
@@ -215,7 +258,16 @@ export default function CloudSyncPanel() {
               </label>
             </div>
 
-            <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <input
+                type="text"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                placeholder="Full name"
+                maxLength={80}
+                required
+                className="min-h-11 rounded-2xl bg-[var(--bg-muted)] px-4 py-2.5 text-sm text-[var(--text)] outline-none focus:ring-2 focus:ring-[var(--accent)]"
+              />
               <input
                 type="text"
                 value={handle}
@@ -227,7 +279,7 @@ export default function CloudSyncPanel() {
                 type="text"
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
-                placeholder="Short bio (e.g. Full-stack learner & CS student)"
+                placeholder="Short bio (e.g. Full-stack learner)"
                 maxLength={200}
                 className="min-h-11 rounded-2xl bg-[var(--bg-muted)] px-4 py-2.5 text-sm text-[var(--text)] outline-none focus:ring-2 focus:ring-[var(--accent)]"
               />
@@ -241,6 +293,18 @@ export default function CloudSyncPanel() {
               >
                 <Save className="h-3.5 w-3.5" />
                 <span>{savingProfile ? 'Saving...' : 'Save Profile'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setShowPasswordForm((v) => !v);
+                  setError(null);
+                }}
+                className="inline-flex min-h-10 items-center gap-1.5 rounded-2xl bg-[var(--bg-muted)] px-4 py-2 text-xs font-semibold text-[var(--text-muted)] transition hover:text-[var(--text)]"
+              >
+                <KeyRound className="h-3.5 w-3.5" />
+                <span>{showPasswordForm ? 'Cancel Password Change' : 'Change Password'}</span>
               </button>
 
               {isPublic && handle.trim().length >= 3 && (
@@ -264,6 +328,36 @@ export default function CloudSyncPanel() {
               )}
             </div>
           </form>
+
+          {showPasswordForm && (
+            <form onSubmit={handleChangePassword} className="mt-4 grid grid-cols-1 gap-3 border-t border-[var(--border)] pt-4 sm:grid-cols-3">
+              <input
+                type="password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                placeholder="Current password"
+                required
+                className="min-h-11 rounded-2xl bg-[var(--bg-muted)] px-4 py-2.5 text-sm text-[var(--text)] outline-none focus:ring-2 focus:ring-[var(--accent)]"
+              />
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="New password (6+ chars)"
+                minLength={6}
+                required
+                className="min-h-11 rounded-2xl bg-[var(--bg-muted)] px-4 py-2.5 text-sm text-[var(--text)] outline-none focus:ring-2 focus:ring-[var(--accent)]"
+              />
+              <button
+                type="submit"
+                disabled={savingPassword}
+                className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-2xl bg-[var(--accent)] px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-[var(--accent-strong)] disabled:opacity-60"
+              >
+                <KeyRound className="h-3.5 w-3.5" />
+                <span>{savingPassword ? 'Updating...' : 'Update Password'}</span>
+              </button>
+            </form>
+          )}
 
           {message && <p className="mt-3 text-xs font-medium text-[var(--success)]">{message}</p>}
           {error && <p className="mt-3 text-xs font-medium text-rose-600">{error}</p>}
