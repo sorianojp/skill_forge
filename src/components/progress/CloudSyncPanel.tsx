@@ -92,26 +92,59 @@ export default function CloudSyncPanel() {
     setMessage('Signed out. Your local browser progress remains intact.');
   };
 
-  const handleSaveProfile = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const suggestDefaultHandle = (): string => {
+    const raw = (session?.user.name || session?.user.email.split('@')[0] || 'learner')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 18);
+    if (raw.length >= 3) return raw;
+    return `dev-${Math.random().toString(36).slice(2, 7)}`;
+  };
+
+  const persistProfile = async (
+    nextHandle: string,
+    nextBio: string,
+    nextPublic: boolean,
+    revertToggleOnError = false
+  ) => {
     setSavingProfile(true);
     setError(null);
     setMessage(null);
+    const cleanHandle = nextHandle.trim().toLowerCase();
     const res = await updateMyProfile({
-      handle: handle.trim().toLowerCase(),
-      bio: bio.trim(),
-      isPublic,
+      handle: cleanHandle,
+      bio: nextBio.trim(),
+      isPublic: nextPublic,
     });
     if (res.ok) {
       setMessage(
-        isPublic
-          ? `Public portfolio saved! Shareable at /profile?u=${handle.trim().toLowerCase()}`
-          : 'Profile settings saved (currently private).'
+        nextPublic
+          ? `Public portfolio is now live at /profile?u=${cleanHandle}`
+          : 'Profile is now private.'
       );
     } else {
       setError(res.error);
+      if (revertToggleOnError) {
+        setIsPublic(!nextPublic);
+      }
     }
     setSavingProfile(false);
+  };
+
+  const handleTogglePublic = async (checked: boolean) => {
+    let targetHandle = handle.trim().toLowerCase();
+    if (checked && !targetHandle) {
+      targetHandle = suggestDefaultHandle();
+      setHandle(targetHandle);
+    }
+    setIsPublic(checked);
+    await persistProfile(targetHandle, bio, checked, true);
+  };
+
+  const handleSaveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await persistProfile(handle, bio, isPublic);
   };
 
   const handleCopyProfileUrl = async () => {
@@ -174,7 +207,8 @@ export default function CloudSyncPanel() {
                 <input
                   type="checkbox"
                   checked={isPublic}
-                  onChange={(e) => setIsPublic(e.target.checked)}
+                  disabled={savingProfile}
+                  onChange={(e) => void handleTogglePublic(e.target.checked)}
                   className="h-4 w-4 accent-[var(--accent)]"
                 />
                 <span>Make profile public</span>
