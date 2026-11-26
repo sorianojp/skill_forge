@@ -1,5 +1,6 @@
 ---
 import '@/styles/global.css';
+import AccountStatusPill from '@/components/layout/AccountStatusPill';
 import FeedbackModal from '@/components/layout/FeedbackModal';
 import SearchModal from '@/components/layout/SearchModal.astro';
 
@@ -194,6 +195,8 @@ const currentPath = Astro.url.pathname;
         </div>
 
         <div class="flex items-center gap-2">
+          <AccountStatusPill client:load />
+
           <button
             type="button"
             data-open-search

@@ -1,6 +1,7 @@
 import type { ProgressState } from './progress';
 
 const SESSION_KEY = 'skillforge_session_v1';
+const SESSION_EVENT = 'devpath:session-change';
 
 export interface CloudSession {
   token: string;
@@ -51,6 +52,24 @@ export function setCloudSession(session: CloudSession | null): void {
   } catch {
     // ignore storage errors
   }
+  window.dispatchEvent(new CustomEvent(SESSION_EVENT, { detail: session }));
+}
+
+export function subscribeCloudSession(callback: (session: CloudSession | null) => void): () => void {
+  if (typeof window === 'undefined') return () => {};
+  const onCustom = (e: Event) => {
+    const custom = e as CustomEvent<CloudSession | null>;
+    callback(custom.detail ?? getCloudSession());
+  };
+  const onStorage = (e: StorageEvent) => {
+    if (e.key === SESSION_KEY) callback(getCloudSession());
+  };
+  window.addEventListener(SESSION_EVENT, onCustom);
+  window.addEventListener('storage', onStorage);
+  return () => {
+    window.removeEventListener(SESSION_EVENT, onCustom);
+    window.removeEventListener('storage', onStorage);
+  };
 }
 
 export async function registerCloudAccount(
