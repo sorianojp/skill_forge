@@ -4,6 +4,7 @@ import ContinueBanner from '@/components/progress/ContinueBanner';
 import CourseCardFooter from '@/components/progress/CourseCardFooter';
 import DailyChallengeCard from '@/components/practice/DailyChallengeCard';
 import Playground from '@/components/playground/Playground';
+import SampleCertificateHook from '@/components/ui/SampleCertificateHook';
 import TrackIcon from '@/components/ui/TrackIcon.astro';
 import { CAREER_PATHS } from '@/data/paths';
 import { getAllCoursesSorted, getCourseLessons, getLessonKey, getLessonSlug } from '@/lib/courses';
@@ -122,6 +123,8 @@ const siteJsonLd = {
   </section>
 
   <DailyChallengeCard client:load />
+
+  <SampleCertificateHook client:visible />
 
   <!-- Main Content -->
   <div class="mx-auto max-w-[82rem] px-5 py-10 sm:px-6 lg:px-8">
