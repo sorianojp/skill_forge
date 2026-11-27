@@ -1,0 +1,47 @@
+---
+title: "Ownership, Move Semantics & Drop"
+description: "Master Rust's signature feature: every value has one owner, moves prevent double-frees, and memory drops deterministically."
+course: "rust-fundamentals"
+module: "Ownership & Borrowing"
+order: 2
+durationMinutes: 10
+objectives:
+  - "Explain the three rules of Rust ownership"
+  - "Distinguish Copy stack types (i32, bool) from Move heap types (String, Vec)"
+  - "Know when .clone() is appropriate vs borrowing"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Master Rust's signature feature: every value has one owner, moves prevent double-frees, and memory drops deterministically.
+
+## Code Example
+
+```rust
+fn main() {
+    let s1 = String::from("devpath");
+    let s2 = s1; // ownership moved to s2
+    println!("{s2}"); // s1 can no longer be used here
+}
+```
+
+<Callout type="tip" title="Rustaceans' Habit">
+Read compiler error messages carefully and run `cargo clippy` often. Rust's compiler is designed to teach you safer, faster patterns before your code ever runs.
+</Callout>
+
+## Key Takeaways
+
+- **Explain the three rules of Rust ownership**
+- **Distinguish Copy stack types (i32, bool) from Move heap types (String, Vec)**
+- **Know when .clone() is appropriate vs borrowing**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Why does Rust invalidate `s1` after `let s2 = s1;` for a heap-allocated `String`?", "options": ["To guarantee a single owner so the heap buffer is freed exactly once (preventing double-free bugs)", "Because Rust only allows one String per program", "Because String cannot be printed twice"], "answer": 0, "explanation": "Move semantics give deterministic RAII memory cleanup with zero garbage-collector pauses."}]}
+/>

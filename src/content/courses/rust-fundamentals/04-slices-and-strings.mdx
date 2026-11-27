@@ -1,0 +1,49 @@
+---
+title: "Slices (&str, &[T]) & String vs &str"
+description: "Write flexible zero-copy APIs using string slices (&str) and array/vector slices (&[T])."
+course: "rust-fundamentals"
+module: "Ownership & Borrowing"
+order: 4
+durationMinutes: 9
+objectives:
+  - "Choose &str for function parameters instead of &String"
+  - "Borrow contiguous sub-ranges with &[T] slices"
+  - "Understand why Rust strings are valid UTF-8 and cannot be indexed by byte directly"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Write flexible zero-copy APIs using string slices (&str) and array/vector slices (&[T]).
+
+## Code Example
+
+```rust
+fn first_word(s: &str) -> &str {
+    s.split_whitespace().next().unwrap_or("")
+}
+
+fn main() {
+    println!("{}", first_word("fearless concurrency"));
+}
+```
+
+<Callout type="tip" title="Rustaceans' Habit">
+Read compiler error messages carefully and run `cargo clippy` often. Rust's compiler is designed to teach you safer, faster patterns before your code ever runs.
+</Callout>
+
+## Key Takeaways
+
+- **Choose &str for function parameters instead of &String**
+- **Borrow contiguous sub-ranges with &[T] slices**
+- **Understand why Rust strings are valid UTF-8 and cannot be indexed by byte directly**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Why should Rust functions usually accept `s: &str` instead of `s: &String`?", "options": ["&str accepts both String references (via deref coercion) and string literals without forcing heap allocation", "&String cannot be compiled in Rust 2024", "&str is mutable while &String is not"], "answer": 0, "explanation": "Accepting &str makes your API work seamlessly with both owned Strings and static string slices."}]}
+/>

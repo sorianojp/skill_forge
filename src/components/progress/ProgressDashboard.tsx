@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, Award, Bookmark, BookOpen, CheckCircle2, Download, Flame, ShieldCheck, StickyNote, Trash2 } from 'lucide-react';
+import { ArrowRight, Award, Bookmark, BookOpen, CheckCircle2, Download, Flame, Printer, ShieldCheck, StickyNote, Trash2 } from 'lucide-react';
 import CloudSyncPanel from '@/components/progress/CloudSyncPanel';
+import { getCloudSession } from '@/lib/cloudSync';
 import {
   clearAllProgress,
   getDailyStreak,
@@ -8,6 +9,7 @@ import {
   subscribeProgress,
   type ProgressState,
 } from '@/lib/progress';
+import { printOfficialTranscript } from '@/lib/transcript';
 
 interface CourseSummary {
   slug: string;
@@ -105,7 +107,43 @@ export default function ProgressDashboard({ courses }: Props) {
 
       {/* Earned Certificates */}
       <section>
-        <h2 className="text-xl font-extrabold text-[var(--text)]">Earned Certificates</h2>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-xl font-extrabold text-[var(--text)]">Earned Certificates</h2>
+          <button
+            type="button"
+            onClick={() => {
+              const session = getCloudSession();
+              const certList = earnedCertificates.map(({ course, exam }) => ({
+                certId: exam?.certificateId ?? 'VERIFIED',
+                courseTitle: course.title,
+                score: exam?.bestScore ?? 100,
+                issuedAt: exam?.passedAt?.slice(0, 10),
+              }));
+              const trackRows = courses
+                .map((c) => ({
+                  title: c.title,
+                  completedLessons: c.lessons.filter((l) => Boolean(state.completed[l.key])).length,
+                  totalLessons: c.lessons.length,
+                }))
+                .filter((t) => t.completedLessons > 0);
+              printOfficialTranscript({
+                learnerName:
+                  session?.user.name ||
+                  earnedCertificates[0]?.exam?.learnerName ||
+                  'DevPath Learner',
+                completedLessons: Object.keys(state.completed).length,
+                solvedChallenges: Object.keys(state.solvedChallenges ?? {}).length,
+                activeDays: (state.activityDays ?? []).length,
+                certificates: certList,
+                tracks: trackRows,
+              });
+            }}
+            className="inline-flex min-h-10 items-center gap-1.5 rounded-2xl bg-[var(--bg-elevated)] px-4 py-2 text-xs font-semibold text-[var(--text)] transition hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]"
+          >
+            <Printer className="h-3.5 w-3.5" />
+            <span>Print Official Transcript (PDF)</span>
+          </button>
+        </div>
         {earnedCertificates.length === 0 ? (
           <div className="mt-4 rounded-3xl bg-[var(--bg-elevated)] p-6 text-sm text-[var(--text-muted)]">
             No certificates earned yet. Pass any course&apos;s Final Exam with <strong>80% or higher</strong> to unlock your free downloadable PNG/SVG/PDF certificate!

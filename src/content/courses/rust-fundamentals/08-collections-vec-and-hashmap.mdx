@@ -1,0 +1,51 @@
+---
+title: "Collections: Vec, HashMap & Entry API"
+description: "Work with heap-allocated Vec<T> and HashMap<K, V> using idiomatic .entry().or_insert() patterns."
+course: "rust-fundamentals"
+module: "Collections & Iterators"
+order: 8
+durationMinutes: 9
+objectives:
+  - "Grow and iterate over Vec<T> safely without out-of-bounds UB"
+  - "Count frequencies cleanly with HashMap::entry().or_insert(0)"
+  - "Use .get() to return Option instead of panicking on missing indexes"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Work with heap-allocated `Vec<T>` and `HashMap<K, V>` using idiomatic .entry().or_insert() patterns.
+
+## Code Example
+
+```rust
+use std::collections::HashMap;
+
+fn main() {
+    let mut counts: HashMap<&str, u32> = HashMap::new();
+    for word in ["rust", "go", "rust"] {
+        *counts.entry(word).or_insert(0) += 1;
+    }
+    println!("{counts:?}");
+}
+```
+
+<Callout type="tip" title="Rustaceans' Habit">
+Read compiler error messages carefully and run `cargo clippy` often. Rust's compiler is designed to teach you safer, faster patterns before your code ever runs.
+</Callout>
+
+## Key Takeaways
+
+- **Grow and iterate over `Vec<T>` safely without out-of-bounds UB**
+- **Count frequencies cleanly with HashMap::entry().or_insert(0)**
+- **Use .get() to return Option instead of panicking on missing indexes**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "What is the advantage of `vec.get(index)` over `vec[index]` when an index comes from user input?", "options": ["vec.get(index) returns Option<&T> (None if out of bounds) instead of panicking", "vec.get(index) automatically resizes the vector", "vec[index] only works on integers"], "answer": 0, "explanation": "Using .get() lets you handle invalid indexes gracefully without crashing the program."}]}
+/>

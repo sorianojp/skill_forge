@@ -1,0 +1,47 @@
+---
+title: "Material 3 Theming, ColorScheme & Dark Mode"
+description: "Create cohesive light and dark themes using ColorScheme.fromSeed and Theme.of(context)."
+course: "flutter-dart"
+module: "Flutter UI"
+order: 6
+durationMinutes: 8
+objectives:
+  - "Generate harmonious palettes with ColorScheme.fromSeed"
+  - "Support light, dark, and system ThemeMode effortlessly"
+  - "Read theme colors via Theme.of(context).colorScheme instead of hardcoded hex codes"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Create cohesive light and dark themes using ColorScheme.fromSeed and Theme.of(context).
+
+## Code Example
+
+```dart
+MaterialApp(
+  theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.blue),
+  darkTheme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.blue, brightness: Brightness.dark),
+  themeMode: ThemeMode.system,
+)
+```
+
+<Callout type="tip" title="Flutter Production Habit">
+Run `flutter analyze` and `flutter test` regularly, use `const` widgets wherever possible, and keep network calls out of `build()` methods.
+</Callout>
+
+## Key Takeaways
+
+- **Generate harmonious palettes with ColorScheme.fromSeed**
+- **Support light, dark, and system ThemeMode effortlessly**
+- **Read theme colors via Theme.of(context).colorScheme instead of hardcoded hex codes**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Why should Flutter widgets read `Theme.of(context).colorScheme.surface` instead of hardcoding `Colors.white`?", "options": ["So screens automatically adapt cleanly to dark mode and brand theme updates", "Because Colors.white is deprecated in Dart 3", "Because hardcoding colors breaks Android APK signing"], "answer": 0, "explanation": "Semantic theme tokens ensure both light and dark modes maintain accessible contrast automatically."}]}
+/>

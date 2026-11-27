@@ -1,0 +1,45 @@
+---
+title: "Local Persistence: SharedPreferences & SQLite"
+description: "Persist user preferences with shared_preferences and structured offline records with sqflite or Drift."
+course: "flutter-dart"
+module: "Architecture & Data"
+order: 11
+durationMinutes: 9
+objectives:
+  - "Store simple key-value settings (theme, onboarding) in SharedPreferences"
+  - "Store relational offline records in SQLite (sqflite/Drift)"
+  - "Store auth tokens securely in flutter_secure_storage instead of plain prefs"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Persist user preferences with shared_preferences and structured offline records with sqflite or Drift.
+
+## Code Example
+
+```dart
+final prefs = await SharedPreferences.getInstance();
+await prefs.setBool('darkMode', true);
+final isDark = prefs.getBool('darkMode') ?? false;
+```
+
+<Callout type="tip" title="Flutter Production Habit">
+Run `flutter analyze` and `flutter test` regularly, use `const` widgets wherever possible, and keep network calls out of `build()` methods.
+</Callout>
+
+## Key Takeaways
+
+- **Store simple key-value settings (theme, onboarding) in SharedPreferences**
+- **Store relational offline records in SQLite (sqflite/Drift)**
+- **Store auth tokens securely in flutter_secure_storage instead of plain prefs**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Where should sensitive JWT or session tokens be stored on a Flutter mobile device?", "options": ["In platform encrypted storage via flutter_secure_storage (Keychain on iOS / Keystore on Android)", "In a public text file on the SD card", "Hardcoded inside main.dart"], "answer": 0, "explanation": "flutter_secure_storage uses OS hardware-backed encryption rather than plaintext preferences."}]}
+/>

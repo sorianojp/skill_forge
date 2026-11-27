@@ -6,11 +6,13 @@ import {
   Code2,
   ExternalLink,
   Flame,
+  Printer,
   Search,
   ShieldCheck,
   UserX,
 } from 'lucide-react';
 import { fetchPublicProfile, type PublicProfileData } from '@/lib/cloudSync';
+import { printOfficialTranscript } from '@/lib/transcript';
 
 export default function PublicProfileView() {
   const [handleInput, setHandleInput] = useState('');
@@ -100,6 +102,35 @@ export default function PublicProfileView() {
                   <p className="mt-2 max-w-2xl text-sm text-[var(--text-muted)]">{profile.bio}</p>
                 )}
               </div>
+              <button
+                type="button"
+                onClick={() =>
+                  printOfficialTranscript({
+                    learnerName: profile.name,
+                    handle: profile.handle,
+                    bio: profile.bio,
+                    completedLessons: profile.stats.completedLessons,
+                    solvedChallenges: profile.stats.solvedChallenges,
+                    activeDays: profile.stats.activeDays,
+                    certificates: profile.certificates.map((c) => ({
+                      certId: c.certId,
+                      courseTitle: c.courseTitle,
+                      score: c.score,
+                      issuedAt: c.issuedAt,
+                    })),
+                    tracks: Object.entries(profile.coursesProgress)
+                      .sort((a, b) => b[1] - a[1])
+                      .map(([slug, count]) => ({
+                        title: slug.replace(/-/g, ' ').replace(/\b\w/g, (ch) => ch.toUpperCase()),
+                        completedLessons: count,
+                      })),
+                  })
+                }
+                className="inline-flex min-h-11 items-center gap-2 rounded-2xl bg-[var(--bg-muted)] px-4 py-2.5 text-xs font-semibold text-[var(--text)] transition hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]"
+              >
+                <Printer className="h-4 w-4" />
+                <span>Print / PDF Transcript</span>
+              </button>
             </div>
 
             <div className="mt-7 grid grid-cols-2 gap-4 sm:grid-cols-4">

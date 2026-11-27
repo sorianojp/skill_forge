@@ -1,0 +1,48 @@
+---
+title: "Declarative Navigation with GoRouter"
+description: "Navigate cleanly between screens, pass route parameters, and support deep links using go_router."
+course: "flutter-dart"
+module: "Interaction & Nav"
+order: 8
+durationMinutes: 9
+objectives:
+  - "Define typed routes and nested shells with GoRouter"
+  - "Navigate with context.go() vs context.push()"
+  - "Handle auth redirects cleanly in one place"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Navigate cleanly between screens, pass route parameters, and support deep links using go_router.
+
+## Code Example
+
+```dart
+final router = GoRouter(
+  routes: [
+    GoRoute(path: '/', builder: (_, __) => const HomeScreen()),
+    GoRoute(path: '/course/:slug', builder: (_, s) => CourseScreen(slug: s.pathParameters['slug']!)),
+  ],
+);
+```
+
+<Callout type="tip" title="Flutter Production Habit">
+Run `flutter analyze` and `flutter test` regularly, use `const` widgets wherever possible, and keep network calls out of `build()` methods.
+</Callout>
+
+## Key Takeaways
+
+- **Define typed routes and nested shells with GoRouter**
+- **Navigate with context.go() vs context.push()**
+- **Handle auth redirects cleanly in one place**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "What is the difference between `context.go('/details')` and `context.push('/details')` in `go_router`?", "options": ["go() replaces the current navigation stack to match the URL path; push() stacks the new route on top so Back returns cleanly", "push() closes the app", "They are identical in all cases"], "answer": 0, "explanation": "Understanding go vs push ensures predictable back-button behavior on Android and iOS."}]}
+/>

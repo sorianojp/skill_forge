@@ -1,0 +1,21 @@
+{
+  "slug": "ai-engineering",
+  "title": "AI Engineering & LLM Apps",
+  "shortTitle": "AI Engineering",
+  "description": "Build reliable, production AI applications: LLM APIs, structured JSON outputs, tool calling, vector embeddings, RAG retrieval, streaming UX, evals, and safety guardrails.",
+  "track": "AI Engineering",
+  "difficulty": "Intermediate",
+  "estimatedHours": 6,
+  "accentColor": "#db2777",
+  "prerequisites": [
+    "Python 3 or TypeScript basics"
+  ],
+  "outcomes": [
+    "Integrate LLM APIs cleanly with system prompts, temperature control, and token budgets",
+    "Enforce type-safe JSON schemas and reliable function/tool calling",
+    "Architect Retrieval-Augmented Generation (RAG) with chunking, embeddings, and citations",
+    "Measure quality systematically using automated eval suites, latency tracking, and prompt-injection defenses"
+  ],
+  "featured": true,
+  "order": 23
+}

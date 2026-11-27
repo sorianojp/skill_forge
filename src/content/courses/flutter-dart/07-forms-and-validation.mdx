@@ -1,0 +1,46 @@
+---
+title: "Forms, TextEditingController & Validation"
+description: "Build responsive login and data-entry forms using Form, GlobalKey<FormState>, validators, and proper controller disposal."
+course: "flutter-dart"
+module: "Interaction & Nav"
+order: 7
+durationMinutes: 9
+objectives:
+  - "Validate multiple fields at once with Form and TextFormField"
+  - "Dispose TextEditingControllers inside dispose() to prevent memory leaks"
+  - "Set keyboardType and textInputAction for smooth mobile typing"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Build responsive login and data-entry forms using Form, `GlobalKey<FormState>`, validators, and proper controller disposal.
+
+## Code Example
+
+```dart
+TextFormField(
+  keyboardType: TextInputType.emailAddress,
+  validator: (v) => (v == null || !v.contains('@')) ? 'Enter a valid email' : null,
+)
+```
+
+<Callout type="tip" title="Flutter Production Habit">
+Run `flutter analyze` and `flutter test` regularly, use `const` widgets wherever possible, and keep network calls out of `build()` methods.
+</Callout>
+
+## Key Takeaways
+
+- **Validate multiple fields at once with Form and TextFormField**
+- **Dispose TextEditingControllers inside dispose() to prevent memory leaks**
+- **Set keyboardType and textInputAction for smooth mobile typing**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Where should you call `controller.dispose()` for a `TextEditingController` created inside a `StatefulWidget`?", "options": ["Inside the State's dispose() lifecycle method", "Inside build()", "Inside main() before runApp()"], "answer": 0, "explanation": "Disposing controllers in dispose() frees listeners and native resources when the widget leaves the tree."}]}
+/>

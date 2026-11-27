@@ -1,0 +1,58 @@
+---
+title: "The Widget Tree: Stateless vs StatefulWidget"
+description: "Understand Flutter's declarative UI model ('UI = f(state)'), StatelessWidget, and StatefulWidget with setState."
+course: "flutter-dart"
+module: "Flutter UI"
+order: 3
+durationMinutes: 9
+objectives:
+  - "Build reusable StatelessWidgets for pure presentation"
+  - "Manage local interactive state with StatefulWidget and setState()"
+  - "Keep build() methods pure and fast (never call APIs inside build)"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Understand Flutter's declarative UI model ('UI = f(state)'), StatelessWidget, and StatefulWidget with setState.
+
+## Code Example
+
+```dart
+class CounterCard extends StatefulWidget {
+  const CounterCard({super.key});
+  @override
+  State<CounterCard> createState() => _CounterCardState();
+}
+
+class _CounterCardState extends State<CounterCard> {
+  int count = 0;
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () => setState(() => count++),
+      child: Text('Clicked $count times'),
+    );
+  }
+}
+```
+
+<Callout type="tip" title="Flutter Production Habit">
+Run `flutter analyze` and `flutter test` regularly, use `const` widgets wherever possible, and keep network calls out of `build()` methods.
+</Callout>
+
+## Key Takeaways
+
+- **Build reusable StatelessWidgets for pure presentation**
+- **Manage local interactive state with StatefulWidget and setState()**
+- **Keep build() methods pure and fast (never call APIs inside build)**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "What happens when you mutate a state variable inside a `StatefulWidget` WITHOUT calling `setState()`?", "options": ["The variable changes in memory, but Flutter does not schedule a UI rebuild so the screen stays stale", "Flutter crashes immediately", "The app restarts from main()"], "answer": 0, "explanation": "setState() marks the element dirty so Flutter re-runs build() on the next frame."}]}
+/>

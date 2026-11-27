@@ -1,0 +1,53 @@
+---
+title: "Algebraic Enums & Exhaustive match"
+description: "Encode rich domain states using enums with attached data and let exhaustive match catch missing cases at compile time."
+course: "rust-fundamentals"
+module: "Types & Patterns"
+order: 6
+durationMinutes: 10
+objectives:
+  - "Attach different payload types to each enum variant"
+  - "Use exhaustive match expressions that refuse to compile if a variant is forgotten"
+  - "Use if let for concise single-variant matching"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Encode rich domain states using enums with attached data and let exhaustive match catch missing cases at compile time.
+
+## Code Example
+
+```rust
+enum Status {
+    Draft,
+    Published { views: u64 },
+}
+
+fn describe(s: Status) -> String {
+    match s {
+        Status::Draft => "Draft".into(),
+        Status::Published { views } => format!("Live ({views} views)"),
+    }
+}
+```
+
+<Callout type="tip" title="Rustaceans' Habit">
+Read compiler error messages carefully and run `cargo clippy` often. Rust's compiler is designed to teach you safer, faster patterns before your code ever runs.
+</Callout>
+
+## Key Takeaways
+
+- **Attach different payload types to each enum variant**
+- **Use exhaustive match expressions that refuse to compile if a variant is forgotten**
+- **Use if let for concise single-variant matching**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "What happens if you add a new variant to a Rust `enum` and forget to handle it in an existing `match` expression?", "options": ["The compiler refuses to build until every variant is explicitly handled", "Rust silently returns null", "It panics only on Sundays"], "answer": 0, "explanation": "Exhaustive pattern matching prevents entire classes of forgotten-state bugs during refactoring."}]}
+/>

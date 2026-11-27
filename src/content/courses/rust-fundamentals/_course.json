@@ -1,0 +1,21 @@
+{
+  "slug": "rust-fundamentals",
+  "title": "Rust Fundamentals",
+  "shortTitle": "Rust",
+  "description": "Master memory-safe systems programming without garbage collection: ownership, borrowing, slices, structs, enums, pattern matching, Option/Result, traits, generics, and concurrency.",
+  "track": "Rust",
+  "difficulty": "Intermediate",
+  "estimatedHours": 7,
+  "accentColor": "#c2410c",
+  "prerequisites": [
+    "Basic programming experience"
+  ],
+  "outcomes": [
+    "Understand Rust ownership, move semantics, and borrow checker rules with confidence",
+    "Eliminate null and unhandled exceptions using Option, Result, and the ? operator",
+    "Write reusable zero-cost abstractions with traits, generics, and iterators",
+    "Build fast, fearless concurrent CLI tools using Cargo, crates, and threads"
+  ],
+  "featured": true,
+  "order": 25
+}

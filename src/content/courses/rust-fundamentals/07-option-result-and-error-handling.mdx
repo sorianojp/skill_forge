@@ -1,0 +1,46 @@
+---
+title: "Option, Result & The ? Propagation Operator"
+description: "Replace null pointers and hidden exceptions with explicit Option<T>, Result<T, E>, and clean ? propagation."
+course: "rust-fundamentals"
+module: "Error Handling"
+order: 7
+durationMinutes: 10
+objectives:
+  - "Handle absence safely with Option<T> instead of null"
+  - "Propagate recoverable errors cleanly using the ? operator"
+  - "Reserve panic!/unwrap() for truly unrecoverable invariants or tests"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Replace null pointers and hidden exceptions with explicit `Option<T>`, `Result<T, E>`, and clean ? propagation.
+
+## Code Example
+
+```rust
+fn parse_port(raw: &str) -> Result<u16, std::num::ParseIntError> {
+    let port: u16 = raw.trim().parse()?;
+    Ok(port)
+}
+```
+
+<Callout type="tip" title="Rustaceans' Habit">
+Read compiler error messages carefully and run `cargo clippy` often. Rust's compiler is designed to teach you safer, faster patterns before your code ever runs.
+</Callout>
+
+## Key Takeaways
+
+- **Handle absence safely with `Option<T>` instead of null**
+- **Propagate recoverable errors cleanly using the ? operator**
+- **Reserve panic!/unwrap() for truly unrecoverable invariants or tests**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "What does the `?` operator do when applied to a `Result<T, E>` inside a function returning `Result`?", "options": ["Unwraps the Ok(val) value, or returns early from the function with Err(e) if it failed", "Ignores errors silently", "Retries the operation 3 times"], "answer": 0, "explanation": "The ? operator makes explicit error propagation concise and readable without hidden exceptions."}]}
+/>

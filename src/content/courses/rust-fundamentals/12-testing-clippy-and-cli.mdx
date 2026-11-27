@@ -1,0 +1,49 @@
+---
+title: "Unit Tests, Clippy & Shipping Fast Rust CLIs"
+description: "Write inline #[cfg(test)] tests, lint idioms with cargo clippy, and compile optimized release binaries."
+course: "rust-fundamentals"
+module: "Production Rust"
+order: 12
+durationMinutes: 9
+objectives:
+  - "Write fast unit tests right alongside functions with #[test]"
+  - "Catch non-idiomatic code automatically with cargo clippy"
+  - "Build optimized binaries with cargo build --release"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Write inline #[cfg(test)] tests, lint idioms with cargo clippy, and compile optimized release binaries.
+
+## Code Example
+
+```rust
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn adds_correctly() {
+        assert_eq!(2 + 2, 4);
+    }
+}
+```
+
+<Callout type="tip" title="Rustaceans' Habit">
+Read compiler error messages carefully and run `cargo clippy` often. Rust's compiler is designed to teach you safer, faster patterns before your code ever runs.
+</Callout>
+
+## Key Takeaways
+
+- **Write fast unit tests right alongside functions with #[test]**
+- **Catch non-idiomatic code automatically with cargo clippy**
+- **Build optimized binaries with cargo build --release**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Which Cargo command compiles a Rust project with full LLVM optimizations enabled for production benchmarking or deployment?", "options": ["cargo build --release", "cargo check --fast", "cargo fmt --opt"], "answer": 0, "explanation": "Debug builds prioritize fast compilation; --release enables LLVM optimizations for full native speed."}]}
+/>

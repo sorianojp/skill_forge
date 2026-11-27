@@ -1,0 +1,50 @@
+---
+title: "Dart Classes, Records & Async/Await"
+description: "Model app data with immutable Dart classes, fromJson factories, and non-blocking Future async/await."
+course: "flutter-dart"
+module: "Dart Core"
+order: 2
+durationMinutes: 9
+objectives:
+  - "Write clean constructors with required named parameters"
+  - "Implement fromJson factory constructors for API responses"
+  - "Use Future and async/await without blocking the UI thread"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Model app data with immutable Dart classes, fromJson factories, and non-blocking Future async/await.
+
+## Code Example
+
+```dart
+class Course {
+  final String title;
+  final int hours;
+  const Course({required this.title, required this.hours});
+
+  factory Course.fromJson(Map<String, dynamic> json) =>
+      Course(title: json['title'] as String, hours: json['hours'] as int);
+}
+```
+
+<Callout type="tip" title="Flutter Production Habit">
+Run `flutter analyze` and `flutter test` regularly, use `const` widgets wherever possible, and keep network calls out of `build()` methods.
+</Callout>
+
+## Key Takeaways
+
+- **Write clean constructors with required named parameters**
+- **Implement fromJson factory constructors for API responses**
+- **Use Future and async/await without blocking the UI thread**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Why is `const` used on Dart constructors and Flutter widgets whenever possible?", "options": ["Compile-time constant objects are canonicalized and skipped during widget rebuilds, improving performance", "const disables null safety", "const makes fields mutable at runtime"], "answer": 0, "explanation": "Const widgets let Flutter short-circuit rebuild work and keep scrolling at a smooth 60/120 fps."}]}
+/>

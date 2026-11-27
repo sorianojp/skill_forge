@@ -1,0 +1,49 @@
+---
+title: "Traits, Generics & Trait Bounds"
+description: "Write reusable zero-cost generic functions constrained by traits (Rust's equivalent of interfaces)."
+course: "rust-fundamentals"
+module: "Abstractions"
+order: 9
+durationMinutes: 10
+objectives:
+  - "Define shared behavior with trait declarations and impl Trait for Type"
+  - "Constrain generic type parameters with where clauses"
+  - "Understand static dispatch (monomorphization) vs dynamic dispatch (dyn Trait)"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Write reusable zero-cost generic functions constrained by traits (Rust's equivalent of interfaces).
+
+## Code Example
+
+```rust
+trait Summarize {
+    fn summary(&self) -> String;
+}
+
+fn print_card<T: Summarize>(item: &T) {
+    println!("{}", item.summary());
+}
+```
+
+<Callout type="tip" title="Rustaceans' Habit">
+Read compiler error messages carefully and run `cargo clippy` often. Rust's compiler is designed to teach you safer, faster patterns before your code ever runs.
+</Callout>
+
+## Key Takeaways
+
+- **Define shared behavior with trait declarations and impl Trait for Type**
+- **Constrain generic type parameters with where clauses**
+- **Understand static dispatch (monomorphization) vs dynamic dispatch (dyn Trait)**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Why are Rust generics with trait bounds (`fn f<T: Trait>(x: &T)`) called 'zero-cost abstractions'?", "options": ["The compiler monomorphizes specialized machine code for each concrete type at compile time with zero virtual-dispatch overhead", "They require zero compile time", "They skip type checking"], "answer": 0, "explanation": "Static dispatch inlines cleanly just like hand-written concrete functions."}]}
+/>

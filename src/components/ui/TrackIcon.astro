@@ -47,6 +47,9 @@ const palette: Record<string, string> = {
   PostgreSQL: 'from-[#336791] to-[#1e3a5f]',
   'System Design': 'from-[#7c3aed] to-[#5b21b6]',
   'Next.js': 'from-[#27272a] to-[#09090b]',
+  'AI Engineering': 'from-[#ec4899] to-[#be185d]',
+  Flutter: 'from-[#0284c7] to-[#0369a1]',
+  Rust: 'from-[#c2410c] to-[#7c2d12]',
 };
 
 const gradient = palette[track] ?? 'from-[#3b82f6] to-[#2563eb]';
@@ -106,6 +109,12 @@ const gradient = palette[track] ?? 'from-[#3b82f6] to-[#2563eb]';
     <span class={`font-mono font-black tracking-tighter ${textDims}`}>PG</span>
   ) : track === 'Next.js' ? (
     <span class={`font-mono font-black tracking-tighter ${textDims}`}>NX</span>
+  ) : track === 'AI Engineering' ? (
+    <span class={`font-mono font-black tracking-tighter ${textDims}`}>AI</span>
+  ) : track === 'Flutter' ? (
+    <span class={`font-mono font-black tracking-tighter ${textDims}`}>FL</span>
+  ) : track === 'Rust' ? (
+    <span class={`font-mono font-black tracking-tighter ${textDims}`}>RS</span>
   ) : track === 'System Design' ? (
     <svg class={iconDims} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
       <rect x="2" y="3" width="6" height="6" rx="1.5" />

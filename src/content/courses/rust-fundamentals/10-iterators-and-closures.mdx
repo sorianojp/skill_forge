@@ -1,0 +1,47 @@
+---
+title: "Zero-Cost Iterators, Closures & Adapters"
+description: "Chain lazy .iter(), .filter(), .map(), and .collect() pipelines that compile down to tight loops."
+course: "rust-fundamentals"
+module: "Collections & Iterators"
+order: 10
+durationMinutes: 9
+objectives:
+  - "Transform collections lazily with map, filter, and fold"
+  - "Capture environment variables with closures (|x| ...)"
+  - "Collect iterator outputs into Vec, HashMap, or Result"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Chain lazy .iter(), .filter(), .map(), and .collect() pipelines that compile down to tight loops.
+
+## Code Example
+
+```rust
+fn main() {
+    let nums = [1, 2, 3, 4, 5, 6];
+    let sum_even: i32 = nums.iter().copied().filter(|n| n % 2 == 0).sum();
+    println!("Even sum: {sum_even}");
+}
+```
+
+<Callout type="tip" title="Rustaceans' Habit">
+Read compiler error messages carefully and run `cargo clippy` often. Rust's compiler is designed to teach you safer, faster patterns before your code ever runs.
+</Callout>
+
+## Key Takeaways
+
+- **Transform collections lazily with map, filter, and fold**
+- **Capture environment variables with closures (|x| ...)**
+- **Collect iterator outputs into Vec, HashMap, or Result**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "When do Rust iterator adapters like `.map()` and `.filter()` actually execute?", "options": ["Lazily, only when consumed by a terminal method like .collect(), .sum(), or a for loop", "Immediately on creation in a background thread", "Only inside unsafe blocks"], "answer": 0, "explanation": "Lazy iterators avoid intermediate heap allocations between transformation steps."}]}
+/>

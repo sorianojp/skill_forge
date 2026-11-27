@@ -1,0 +1,48 @@
+---
+title: "Rust Basics, Cargo & Immutability by Default"
+description: "Start with Cargo projects, immutable-by-default bindings, explicit mut, and strong static types."
+course: "rust-fundamentals"
+module: "Core Rust"
+order: 1
+durationMinutes: 9
+objectives:
+  - "Create and run projects with cargo new and cargo run"
+  - "Understand why variables are immutable by default unless marked mut"
+  - "Use shadowing and explicit integer/float types cleanly"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Start with Cargo projects, immutable-by-default bindings, explicit mut, and strong static types.
+
+## Code Example
+
+```rust
+fn main() {
+    let track = "Rust";
+    let mut lessons = 11;
+    lessons += 1;
+    println!("Learning {track}: {lessons} lessons");
+}
+```
+
+<Callout type="tip" title="Rustaceans' Habit">
+Read compiler error messages carefully and run `cargo clippy` often. Rust's compiler is designed to teach you safer, faster patterns before your code ever runs.
+</Callout>
+
+## Key Takeaways
+
+- **Create and run projects with cargo new and cargo run**
+- **Understand why variables are immutable by default unless marked mut**
+- **Use shadowing and explicit integer/float types cleanly**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "What happens if you try to reassign `let x = 5; x = 6;` in Rust without `mut`?", "options": ["The Rust compiler rejects it with a compile-time error because bindings are immutable by default", "It silently ignores x = 6 at runtime", "It crashes with a segmentation fault"], "answer": 0, "explanation": "Immutability by default prevents accidental state mutation and makes concurrent code easier to reason about."}]}
+/>

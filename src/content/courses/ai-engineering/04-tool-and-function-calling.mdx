@@ -1,0 +1,47 @@
+---
+title: "Function & Tool Calling Loops"
+description: "Let LLMs invoke real backend tools (search, SQL lookups, calculators) safely via typed tool declarations."
+course: "ai-engineering"
+module: "Agents & Tools"
+order: 4
+durationMinutes: 10
+objectives:
+  - "Declare tool names, descriptions, and JSON parameter schemas"
+  - "Execute requested tools on your server and return structured tool results"
+  - "Cap maximum tool-call iterations to prevent infinite loops"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Let LLMs invoke real backend tools (search, SQL lookups, calculators) safely via typed tool declarations.
+
+## Code Example
+
+```ts
+const tools = [{
+  name: "get_order_status",
+  description: "Look up an order status by orderId",
+  parameters: { type: "object", properties: { orderId: { type: "string" } }, required: ["orderId"] }
+}];
+```
+
+<Callout type="tip" title="AI Engineering Habit">
+Treat prompts, tool schemas, and retrieval pipelines like production code: version them, validate every output with a schema, and run automated evals before shipping changes.
+</Callout>
+
+## Key Takeaways
+
+- **Declare tool names, descriptions, and JSON parameter schemas**
+- **Execute requested tools on your server and return structured tool results**
+- **Cap maximum tool-call iterations to prevent infinite loops**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Who actually executes a function/tool when an LLM returns a tool call?", "options": ["Your application backend executes the function and sends the result back to the model", "The LLM directly opens a TCP socket to your database", "The user's browser executes SQL locally"], "answer": 0, "explanation": "The model only emits structured JSON requesting a tool call; your server stays in full control of execution and permissions."}]}
+/>

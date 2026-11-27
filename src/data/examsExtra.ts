@@ -1417,4 +1417,428 @@ export const EXTRA_EXAM_QUESTIONS: Record<string, ExamQuestion[]> = {
       explanation: 'Standalone builds drastically reduce container size and startup overhead on self-hosted servers.',
     },
   ],
+  'ai-engineering': [
+    {
+      question: 'Why should extraction and classification LLM calls use a low temperature (0.0 to 0.2)?',
+      options: [
+        'Produces more deterministic, repeatable outputs with less random drift',
+        'Doubles the maximum context window',
+        'Removes the need for API authentication',
+      ],
+      answer: 0,
+      explanation: 'Low temperature focuses sampling on the highest-probability tokens.',
+    },
+    {
+      question: 'What is the best way to reduce LLM hallucinations when extracting fields that may be absent from input text?',
+      options: [
+        'Explicitly allow null/unknown values in the schema and instruct the model not to guess',
+        'Raise temperature to 2.0',
+        'Ask the model to output longer paragraphs',
+      ],
+      answer: 0,
+      explanation: 'Providing an explicit null/unknown escape hatch prevents forced fabrication.',
+    },
+    {
+      question: 'Why should you still validate structured LLM JSON responses with Zod or Pydantic on your backend?',
+      options: [
+        'Runtime validation enforces exact types and constraints before writing to databases or calling downstream APIs',
+        'TypeScript types execute automatically at runtime',
+        'JSON.parse enforces enum schemas automatically',
+      ],
+      answer: 0,
+      explanation: 'Runtime validators catch malformed or out-of-range outputs safely.',
+    },
+    {
+      question: 'During LLM function/tool calling, who actually executes the database query or external API request?',
+      options: [
+        'Your application server executes the tool and passes the structured result back to the model',
+        'The LLM connects directly to your private database',
+        'The browser executes server SQL locally',
+      ],
+      answer: 0,
+      explanation: 'The model only requests a tool call; your server retains full control over execution and permissions.',
+    },
+    {
+      question: 'Why do production RAG systems frequently combine vector similarity search with keyword (BM25) search?',
+      options: [
+        'Vector search captures semantic meaning while keyword search catches exact error codes, IDs, and proper nouns',
+        'Vector search cannot embed English text',
+        'BM25 requires dedicated GPUs',
+      ],
+      answer: 0,
+      explanation: 'Hybrid search combines semantic recall with exact lexical precision.',
+    },
+    {
+      question: 'When a RAG assistant answers incorrectly, what should you inspect first?',
+      options: [
+        'Whether the retriever actually placed the relevant source chunks in the top-K context',
+        'The CSS font family of the chat window',
+        'The favicon format',
+      ],
+      answer: 0,
+      explanation: 'Most RAG errors originate in retrieval rather than generation.',
+    },
+    {
+      question: 'What metric does streaming LLM output via Server-Sent Events (SSE) dramatically improve?',
+      options: ['Time to First Token (TTFT) and perceived speed', 'Database storage size', 'DNS lookup time'],
+      answer: 0,
+      explanation: 'Users begin reading in milliseconds rather than waiting for the full completion.',
+    },
+    {
+      question: 'Why must multi-turn chat apps bound or compact conversation history?',
+      options: [
+        'Unbounded history increases token cost and latency every turn until exceeding the context window',
+        'Longer histories make API calls free',
+        'Browsers delete JSON arrays over 5 items',
+      ],
+      answer: 0,
+      explanation: 'Windowing or summarizing older turns keeps cost and latency predictable.',
+    },
+    {
+      question: 'Why is a system-prompt rule like "Never show other users\' records" insufficient for multi-tenant security?',
+      options: [
+        'Prompt injection can override prompt instructions; authorization must be enforced in server code and SQL',
+        'System prompts expire after 60 seconds',
+        'LLMs cannot read English rules',
+      ],
+      answer: 0,
+      explanation: 'Deterministic backend access checks are mandatory for tenant isolation.',
+    },
+    {
+      question: 'Why should you cap the maximum number of tool-call iterations in an agent loop?',
+      options: [
+        'Prevents infinite loops and runaway API token spend when a tool keeps failing',
+        'Increases model temperature automatically',
+        'Disables JSON parsing',
+      ],
+      answer: 0,
+      explanation: 'Bounded loops protect latency budgets and API billing.',
+    },
+    {
+      question: 'Why are golden eval datasets important before modifying prompts or switching models?',
+      options: [
+        'They catch silent regressions across real edge cases instead of relying on manual spot-checks',
+        'Models refuse to run without an eval CSV',
+        'Evals eliminate the need for unit tests',
+      ],
+      answer: 0,
+      explanation: 'Automated evals provide objective pass/fail signal before deployment.',
+    },
+    {
+      question: 'Why should static system prompts and shared reference docs be placed BEFORE dynamic user input?',
+      options: [
+        'Prefix prompt caching reuses cached computation on unchanged leading tokens, cutting cost and latency',
+        'Models read tokens strictly from right to left',
+        'Dynamic input cannot appear at the end of a request',
+      ],
+      answer: 0,
+      explanation: 'Stable prefixes maximize provider prompt-cache hit rates.',
+    },
+    {
+      question: 'What is model routing (model tiering) in production AI systems?',
+      options: [
+        'Sending simple tasks to fast, inexpensive models and reserving larger reasoning models for complex queries',
+        'Calling every available model for every request',
+        'Routing HTTP traffic without TLS',
+      ],
+      answer: 0,
+      explanation: 'Tiering optimizes both unit economics and latency without sacrificing quality.',
+    },
+    {
+      question: 'What should happen before an AI agent executes a destructive action like deleting records or charging a card?',
+      options: [
+        'Require explicit human-in-the-loop confirmation and server-side permission checks',
+        'Execute silently with temperature 1.5',
+        'Skip authentication to save latency',
+      ],
+      answer: 0,
+      explanation: 'Human confirmation gates prevent irreversible damage from misinterpretation or prompt injection.',
+    },
+    {
+      question: 'What is the highest-leverage way to use thumbs-down user feedback from a live AI assistant?',
+      options: [
+        'Convert real failure cases into permanent test cases in your automated eval suite',
+        'Delete all logs nightly',
+        'Disable streaming permanently',
+      ],
+      answer: 0,
+      explanation: 'Turning production failures into evals creates a compounding quality flywheel.',
+    },
+  ],
+  'flutter-dart': [
+    {
+      question: 'What does `nickname ?? "Guest"` evaluate to in Dart when `nickname` is `null`?',
+      options: ['"Guest"', 'null', 'A compile-time syntax error'],
+      answer: 0,
+      explanation: 'The ?? null-coalescing operator returns the right-hand fallback when the left expression is null.',
+    },
+    {
+      question: 'Why should Flutter widgets use `const` constructors whenever their inputs are compile-time constants?',
+      options: [
+        'Flutter reuses canonicalized constant instances and skips unnecessary rebuild work',
+        'const disables Dart null safety',
+        'const allows mutating widget fields later',
+      ],
+      answer: 0,
+      explanation: 'Const widgets reduce garbage collection and keep frame rendering smooth.',
+    },
+    {
+      question: 'What happens if you increment a counter variable in a `StatefulWidget` without calling `setState()`?',
+      options: [
+        'The value changes in memory, but Flutter does not rebuild the widget so the UI stays outdated',
+        'The app crashes immediately',
+        'Flutter restarts from main()',
+      ],
+      answer: 0,
+      explanation: 'setState() schedules a rebuild so the updated state is reflected on screen.',
+    },
+    {
+      question: 'How do you fix a `RenderFlex overflowed` error caused by a long `Text` widget inside a `Row`?',
+      options: [
+        'Wrap the Text widget in Expanded or Flexible so it receives bounded width constraints',
+        'Remove MaterialApp from main.dart',
+        'Replace Text with a double',
+      ],
+      answer: 0,
+      explanation: 'Expanded constrains the child to the remaining width so text wraps or ellipsizes cleanly.',
+    },
+    {
+      question: 'Why is `ListView.builder` preferred over `SingleChildScrollView` + `Column` for long lists?',
+      options: [
+        'ListView.builder lazily builds only visible on-screen items, keeping memory and scroll performance smooth',
+        'Column cannot hold more than 3 widgets',
+        'ListView.builder disables touch events',
+      ],
+      answer: 0,
+      explanation: 'Lazy virtualization prevents building hundreds of offscreen widgets up front.',
+    },
+    {
+      question: 'Why should widgets use `Theme.of(context).colorScheme` instead of hardcoding `Colors.white`?',
+      options: [
+        'So the UI adapts automatically to light mode, dark mode, and brand theme changes',
+        'Colors.white is invalid in Flutter 3',
+        'Hardcoded colors break Android builds',
+      ],
+      answer: 0,
+      explanation: 'Semantic theme tokens preserve contrast across light and dark modes.',
+    },
+    {
+      question: 'Where should you dispose a `TextEditingController` created inside a `StatefulWidget`?',
+      options: ['Inside the State class dispose() method', 'Inside build()', 'Inside main()'],
+      answer: 0,
+      explanation: 'Calling dispose() frees listeners and prevents memory leaks when the widget is unmounted.',
+    },
+    {
+      question: 'In `go_router`, how does `context.push("/item/1")` differ from `context.go("/item/1")`?',
+      options: [
+        'push() adds the route on top of the current stack for back navigation; go() replaces the stack to match the path',
+        'go() closes the mobile app',
+        'They behave identically in all cases',
+      ],
+      answer: 0,
+      explanation: 'Using push vs go appropriately gives users expected Back button behavior.',
+    },
+    {
+      question: 'Why should you avoid kicking off an HTTP request directly inside a widget `build()` method?',
+      options: [
+        'build() can run many times per second on state or layout changes, causing duplicate network calls',
+        'Dart forbids async functions in Flutter',
+        'HTTP requests only work inside StatelessWidget',
+      ],
+      answer: 0,
+      explanation: 'Trigger data loads in initState(), event handlers, or a dedicated state controller instead.',
+    },
+    {
+      question: 'Where should sensitive authentication tokens be persisted on a Flutter mobile app?',
+      options: [
+        'In encrypted OS storage using flutter_secure_storage (Keychain / Keystore)',
+        'In an unencrypted public text file',
+        'Hardcoded inside pubspec.yaml',
+      ],
+      answer: 0,
+      explanation: 'flutter_secure_storage protects credentials using OS-level encryption.',
+    },
+    {
+      question: 'What is the purpose of `await tester.pump()` in a Flutter widget test after simulating a button tap?',
+      options: [
+        'Triggers a frame rebuild so widget state changes render before assertions run',
+        'Deploys the APK to the Play Store',
+        'Clears all test expectations',
+      ],
+      answer: 0,
+      explanation: 'Widget tests control frame rendering explicitly for fast, deterministic assertions.',
+    },
+    {
+      question: 'Which command checks a Flutter project for static type errors and lint warnings?',
+      options: ['flutter analyze', 'flutter paint', 'flutter format --run'],
+      answer: 0,
+      explanation: 'flutter analyze runs the Dart static analyzer across the entire project.',
+    },
+    {
+      question: 'Which command builds a release Android App Bundle (AAB) for Google Play?',
+      options: ['flutter build appbundle --release', 'flutter run --debug', 'dart compile exe'],
+      answer: 0,
+      explanation: 'Google Play requires signed AAB bundles produced by flutter build appbundle.',
+    },
+    {
+      question: 'What is Flutter\'s core layout rule?',
+      options: [
+        'Constraints go down, sizes go up, and the parent sets the position',
+        'Sizes go down and constraints are ignored',
+        'Every widget must have a fixed pixel width',
+      ],
+      answer: 0,
+      explanation: 'Understanding Flutter\'s single-pass constraint protocol makes layout debugging straightforward.',
+    },
+    {
+      question: 'Why should business logic and API calls be separated from UI widgets into controllers/notifiers?',
+      options: [
+        'Keeps widgets focused on presentation, enables sharing state across screens, and makes logic unit-testable',
+        'Flutter crashes if a file exceeds 50 lines',
+        'Controllers run on a remote server automatically',
+      ],
+      answer: 0,
+      explanation: 'Layered UI, Logic, and Data separation scales cleanly as apps grow.',
+    },
+  ],
+  'rust-fundamentals': [
+    {
+      question: 'What happens in Rust if you try to reassign a variable declared with `let x = 5;` without `mut`?',
+      options: [
+        'The compiler rejects it with a compile-time error because bindings are immutable by default',
+        'It silently ignores the reassignment at runtime',
+        'It causes a segmentation fault',
+      ],
+      answer: 0,
+      explanation: 'Immutability by default prevents accidental state mutation.',
+    },
+    {
+      question: 'Why does Rust move ownership of a `String` on `let s2 = s1;` instead of shallow-copying both pointers?',
+      options: [
+        'To guarantee exactly one owner frees the heap buffer once, preventing double-free memory corruption',
+        'Because Rust cannot copy integers either',
+        'Because String is stored in the CPU cache only',
+      ],
+      answer: 0,
+      explanation: 'Single ownership provides deterministic memory cleanup without a garbage collector.',
+    },
+    {
+      question: 'Which reference combination does Rust\'s borrow checker reject in the same active scope?',
+      options: [
+        'Holding a mutable reference (&mut T) at the same time as any other reference (&T or &mut T) to the same data',
+        'Holding multiple shared immutable references (&T)',
+        'Borrowing a String as &str',
+      ],
+      answer: 0,
+      explanation: 'Aliasing XOR Mutability prevents data races and dangling pointers at compile time.',
+    },
+    {
+      question: 'Why should Rust functions generally take `s: &str` instead of `s: &String`?',
+      options: [
+        '&str accepts both String references (via deref coercion) and string literals without forcing heap allocation',
+        '&String is invalid Rust syntax',
+        '&str automatically mutates the caller string',
+      ],
+      answer: 0,
+      explanation: 'Accepting string slices makes APIs more flexible and idiomatic.',
+    },
+    {
+      question: 'What does `#[derive(Debug)]` on a struct enable?',
+      options: [
+        'Formatting the struct with {:?} for debugging, logging, and test failure output',
+        'Automatic SQL table creation',
+        'Disabling the borrow checker',
+      ],
+      answer: 0,
+      explanation: 'Derive macros generate standard trait implementations automatically.',
+    },
+    {
+      question: 'What happens if you add a new variant to a Rust `enum` and forget to update an existing `match`?',
+      options: [
+        'Compilation fails because Rust match expressions must be exhaustive',
+        'Rust returns null at runtime',
+        'The new variant is silently ignored',
+      ],
+      answer: 0,
+      explanation: 'Exhaustive matching catches unhandled states at compile time.',
+    },
+    {
+      question: 'What does the `?` operator do on a `Result<T, E>` inside a function returning `Result`?',
+      options: [
+        'Extracts the Ok value or returns early with Err(e) if the operation failed',
+        'Swallows the error and returns 0',
+        'Panics immediately on every call',
+      ],
+      answer: 0,
+      explanation: 'The ? operator makes explicit error propagation concise and safe.',
+    },
+    {
+      question: 'How does Rust represent a value that may be absent without null pointers?',
+      options: ['Option<T> (Some(value) or None)', 'null / undefined', 'void*'],
+      answer: 0,
+      explanation: 'Option<T> forces callers to handle the None case explicitly at compile time.',
+    },
+    {
+      question: 'Why is `vec.get(idx)` safer than `vec[idx]` for untrusted indexes?',
+      options: [
+        'vec.get(idx) returns Option<&T> (None if out of bounds) instead of panicking',
+        'vec.get(idx) automatically appends zeros',
+        'vec[idx] only works on strings',
+      ],
+      answer: 0,
+      explanation: 'Returning Option avoids crashing on out-of-bounds input.',
+    },
+    {
+      question: 'Why are Rust generics with trait bounds considered zero-cost abstractions?',
+      options: [
+        'The compiler monomorphizes specialized code per concrete type at compile time with zero virtual-dispatch overhead',
+        'They skip type checking completely',
+        'They run inside a JVM',
+      ],
+      answer: 0,
+      explanation: 'Static dispatch produces the same optimized machine code as hand-written concrete functions.',
+    },
+    {
+      question: 'When do Rust iterator adapters like `.filter()` and `.map()` actually execute?',
+      options: [
+        'Lazily, only when driven by a consumer like .collect(), .sum(), or a for loop',
+        'Eagerly into a new Vec at every step',
+        'Only inside unsafe blocks',
+      ],
+      answer: 0,
+      explanation: 'Lazy iteration avoids unnecessary intermediate allocations.',
+    },
+    {
+      question: 'Why must you use `Arc<T>` instead of `Rc<T>` when sharing ownership across OS threads?',
+      options: [
+        'Arc uses thread-safe atomic reference counting (Send + Sync), whereas Rc is strictly single-threaded',
+        'Rc cannot store structs',
+        'Arc skips reference counting altogether',
+      ],
+      answer: 0,
+      explanation: 'Rust\'s Send and Sync traits prevent sharing non-atomic Rc across threads at compile time.',
+    },
+    {
+      question: 'Which tool lints Rust code for common pitfalls and non-idiomatic patterns?',
+      options: ['cargo clippy', 'cargo sleep', 'rustc --ignore'],
+      answer: 0,
+      explanation: 'Clippy provides hundreds of actionable lints for idiomatic, performant Rust.',
+    },
+    {
+      question: 'Which command builds an optimized Rust binary for production use?',
+      options: ['cargo build --release', 'cargo check', 'cargo new --opt'],
+      answer: 0,
+      explanation: 'The --release profile enables full LLVM optimizations.',
+    },
+    {
+      question: 'What does `HashMap::entry(key).or_insert(0)` allow you to do concisely?',
+      options: [
+        'Look up a key once and insert a default value only if the key is missing, returning a mutable reference to it',
+        'Delete all keys equal to 0',
+        'Sort the HashMap alphabetically',
+      ],
+      answer: 0,
+      explanation: 'The Entry API avoids double hash lookups when updating counters or grouped values.',
+    },
+  ],
 };

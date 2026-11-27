@@ -1,0 +1,47 @@
+---
+title: "Dart Essentials & Sound Null Safety"
+description: "Learn Dart's clean syntax, final vs const, sound null safety (?, ??, !), and strong type inference."
+course: "flutter-dart"
+module: "Dart Core"
+order: 1
+durationMinutes: 9
+objectives:
+  - "Declare immutable variables with final and compile-time const"
+  - "Handle nullable values safely using ? and ?? instead of null crashes"
+  - "Write concise arrow functions and named parameters"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Learn Dart's clean syntax, final vs const, sound null safety (?, ??, !), and strong type inference.
+
+## Code Example
+
+```dart
+void main() {
+  final String name = 'DevPath';
+  String? nickname;
+  print('Welcome, ${nickname ?? name}!');
+}
+```
+
+<Callout type="tip" title="Flutter Production Habit">
+Run `flutter analyze` and `flutter test` regularly, use `const` widgets wherever possible, and keep network calls out of `build()` methods.
+</Callout>
+
+## Key Takeaways
+
+- **Declare immutable variables with final and compile-time const**
+- **Handle nullable values safely using ? and ?? instead of null crashes**
+- **Write concise arrow functions and named parameters**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "What does the `??` operator do in Dart (`nickname ?? 'Guest'`)?", "options": ["Returns nickname if it is non-null, otherwise falls back to 'Guest'", "Throws a NullPointerException immediately", "Concatenates two strings with a space"], "answer": 0, "explanation": "The null-coalescing operator ?? provides a safe default value when the left expression is null."}]}
+/>

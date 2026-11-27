@@ -1,0 +1,49 @@
+---
+title: "State Management: ChangeNotifier, Riverpod & Layering"
+description: "Separate UI from business logic using ChangeNotifier / ValueNotifier or Riverpod so apps stay testable."
+course: "flutter-dart"
+module: "Architecture & Data"
+order: 9
+durationMinutes: 10
+objectives:
+  - "Distinguish ephemeral local UI state from shared app state"
+  - "Notify listeners cleanly with ChangeNotifier or Riverpod providers"
+  - "Avoid prop-drilling state through 6 layers of widgets"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Separate UI from business logic using ChangeNotifier / ValueNotifier or Riverpod so apps stay testable.
+
+## Code Example
+
+```dart
+class ProgressNotifier extends ChangeNotifier {
+  final Set<String> completed = {};
+  void toggle(String id) {
+    completed.contains(id) ? completed.remove(id) : completed.add(id);
+    notifyListeners();
+  }
+}
+```
+
+<Callout type="tip" title="Flutter Production Habit">
+Run `flutter analyze` and `flutter test` regularly, use `const` widgets wherever possible, and keep network calls out of `build()` methods.
+</Callout>
+
+## Key Takeaways
+
+- **Distinguish ephemeral local UI state from shared app state**
+- **Notify listeners cleanly with ChangeNotifier or Riverpod providers**
+- **Avoid prop-drilling state through 6 layers of widgets**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "What is the primary benefit of moving API calls and business logic out of `StatefulWidget` into a dedicated notifier/controller?", "options": ["Logic becomes unit-testable without rendering widgets, and multiple screens can share state cleanly", "Dart forbids HTTP calls inside widgets", "It reduces APK size to 10 KB"], "answer": 0, "explanation": "Layered UI/Logic/Data separation keeps growing Flutter apps maintainable and easy to test."}]}
+/>

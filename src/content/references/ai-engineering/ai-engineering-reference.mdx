@@ -1,0 +1,19 @@
+---
+title: "AI Engineering & LLM Reference"
+category: "AI Engineering"
+syntax: "System Prompt + JSON Schema + Tools + RAG + Evals"
+summary: "Quick reference for temperature tuning, structured outputs, tool calling, hybrid vector/BM25 RAG, SSE streaming, and prompt-injection defenses."
+browserSupport: "LLM APIs"
+---
+
+## Production AI Checklist
+
+| Area | Best Practice |
+| :--- | :--- |
+| Determinism | Use temperature `0.0` to `0.2` for extraction and classification |
+| Structured Output | Attach JSON Schema + validate on server with Zod or Pydantic |
+| Tool Calling | Enforce auth & tenant isolation in server tool code, never in prompts |
+| RAG Quality | Combine vector search + BM25 keyword search + inline source citations |
+| Streaming UX | Use Server-Sent Events (`text/event-stream`) + `AbortController` |
+| Cost Control | Prefix-cache static system prompts and route easy tasks to fast models |
+| Reliability | Maintain a golden eval dataset of 30+ real edge cases in CI |

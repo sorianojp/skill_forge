@@ -1,0 +1,52 @@
+---
+title: "Fearless Concurrency: Threads, Channels & Arc<Mutex<T>>"
+description: "Use Send/Sync traits, std::thread, mpsc channels, and Arc<Mutex<T>> so data races are impossible in safe Rust."
+course: "rust-fundamentals"
+module: "Concurrency"
+order: 11
+durationMinutes: 10
+objectives:
+  - "Spawn threads safely and join handles cleanly"
+  - "Share state across threads with Arc<Mutex<T>>"
+  - "Pass messages between threads with std::sync::mpsc channels"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Use Send/Sync traits, std::thread, mpsc channels, and `Arc<Mutex<T>`> so data races are impossible in safe Rust.
+
+## Code Example
+
+```rust
+use std::sync::{Arc, Mutex};
+use std::thread;
+
+fn main() {
+    let counter = Arc::new(Mutex::new(0));
+    let c = Arc::clone(&counter);
+    let handle = thread::spawn(move || { *c.lock().unwrap() += 1; });
+    handle.join().unwrap();
+    println!("{}", *counter.lock().unwrap());
+}
+```
+
+<Callout type="tip" title="Rustaceans' Habit">
+Read compiler error messages carefully and run `cargo clippy` often. Rust's compiler is designed to teach you safer, faster patterns before your code ever runs.
+</Callout>
+
+## Key Takeaways
+
+- **Spawn threads safely and join handles cleanly**
+- **Share state across threads with `Arc<Mutex<T>`>**
+- **Pass messages between threads with std::sync::mpsc channels**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Why does Rust require `Arc<T>` instead of `Rc<T>` when sharing ownership across multiple OS threads?", "options": ["Arc uses atomic reference counting (thread-safe, implements Send + Sync), whereas Rc is single-threaded only", "Rc cannot hold integers", "Arc is only for async JavaScript"], "answer": 0, "explanation": "The compiler enforces Send/Sync bounds so accidentally sharing a non-thread-safe Rc across threads fails at compile time."}]}
+/>

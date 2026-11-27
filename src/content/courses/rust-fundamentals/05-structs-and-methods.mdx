@@ -1,0 +1,53 @@
+---
+title: "Structs, impl Blocks & Associated Functions"
+description: "Model domain data with structs, attach methods with impl, and write constructors like Self::new()."
+course: "rust-fundamentals"
+module: "Types & Patterns"
+order: 5
+durationMinutes: 9
+objectives:
+  - "Define named structs and derive Debug / Clone"
+  - "Choose between &self, &mut self, and self receivers"
+  - "Write clean constructors with associated functions"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Model domain data with structs, attach methods with impl, and write constructors like Self::new().
+
+## Code Example
+
+```rust
+#[derive(Debug)]
+struct Course {
+    slug: String,
+    hours: u32,
+}
+
+impl Course {
+    fn summary(&self) -> String {
+        format!("{} ({}h)", self.slug, self.hours)
+    }
+}
+```
+
+<Callout type="tip" title="Rustaceans' Habit">
+Read compiler error messages carefully and run `cargo clippy` often. Rust's compiler is designed to teach you safer, faster patterns before your code ever runs.
+</Callout>
+
+## Key Takeaways
+
+- **Define named structs and derive Debug / Clone**
+- **Choose between &self, &mut self, and self receivers**
+- **Write clean constructors with associated functions**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "What does `#[derive(Debug)]` on a Rust struct automatically generate?", "options": ["An implementation of the Debug trait so the struct can be formatted with {:?} for logging and tests", "A REST API endpoint", "A database migration file"], "answer": 0, "explanation": "Derive macros auto-generate boilerplate trait implementations like Debug, Clone, PartialEq, and Eq."}]}
+/>

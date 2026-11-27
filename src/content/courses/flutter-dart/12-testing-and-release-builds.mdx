@@ -1,0 +1,48 @@
+---
+title: "Widget Testing & Play Store / App Store Release"
+description: "Write fast unit and WidgetTester tests and build signed Android App Bundles (AAB) and iOS archives."
+course: "flutter-dart"
+module: "Shipping"
+order: 12
+durationMinutes: 9
+objectives:
+  - "Verify UI rendering and tap interactions with testWidgets()"
+  - "Run flutter analyze to catch lint and null-safety issues before release"
+  - "Build signed release bundles with flutter build appbundle --release"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Write fast unit and WidgetTester tests and build signed Android App Bundles (AAB) and iOS archives.
+
+## Code Example
+
+```dart
+testWidgets('Counter increments on tap', (tester) async {
+  await tester.pumpWidget(const MaterialApp(home: CounterCard()));
+  await tester.tap(find.byType(ElevatedButton));
+  await tester.pump();
+  expect(find.text('Clicked 1 times'), findsOneWidget);
+});
+```
+
+<Callout type="tip" title="Flutter Production Habit">
+Run `flutter analyze` and `flutter test` regularly, use `const` widgets wherever possible, and keep network calls out of `build()` methods.
+</Callout>
+
+## Key Takeaways
+
+- **Verify UI rendering and tap interactions with testWidgets()**
+- **Run flutter analyze to catch lint and null-safety issues before release**
+- **Build signed release bundles with flutter build appbundle --release**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "What does `await tester.pump()` do inside a Flutter `testWidgets` test after tapping a button?", "options": ["Triggers a frame rebuild so the widget tree reflects the state update before running expect()", "Uploads the app to Google Play", "Deletes all test mocks"], "answer": 0, "explanation": "Widget tests advance frames explicitly with pump() or pumpAndSettle() for fast, deterministic assertions."}]}
+/>

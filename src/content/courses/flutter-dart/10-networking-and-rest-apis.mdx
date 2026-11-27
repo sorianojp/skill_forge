@@ -1,0 +1,45 @@
+---
+title: "REST APIs, JSON Parsing & FutureBuilder"
+description: "Fetch remote JSON safely with package:http, check HTTP status codes, and render loading/error/data states cleanly."
+course: "flutter-dart"
+module: "Architecture & Data"
+order: 10
+durationMinutes: 9
+objectives:
+  - "Execute GET/POST requests with timeouts using package:http"
+  - "Decode JSON into typed Dart model classes"
+  - "Handle loading, empty, and offline error states gracefully"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Fetch remote JSON safely with package:http, check HTTP status codes, and render loading/error/data states cleanly.
+
+## Code Example
+
+```dart
+final res = await http.get(Uri.parse('https://devpath.mycampus.ph/api/health'));
+if (res.statusCode != 200) throw Exception('HTTP ${res.statusCode}');
+final data = jsonDecode(res.body) as Map<String, dynamic>;
+```
+
+<Callout type="tip" title="Flutter Production Habit">
+Run `flutter analyze` and `flutter test` regularly, use `const` widgets wherever possible, and keep network calls out of `build()` methods.
+</Callout>
+
+## Key Takeaways
+
+- **Execute GET/POST requests with timeouts using package:http**
+- **Decode JSON into typed Dart model classes**
+- **Handle loading, empty, and offline error states gracefully**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Why should you initiate a `Future` inside `initState()` (not directly inside `build()`) when using `FutureBuilder`?", "options": ["Calling the API inside build() re-triggers a brand-new network request on every single widget rebuild", "initState() is the only place async functions exist", "FutureBuilder cannot read variables from State"], "answer": 0, "explanation": "Caching the Future in initState() prevents accidental infinite API loops on rebuilds."}]}
+/>

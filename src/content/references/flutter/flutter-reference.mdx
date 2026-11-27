@@ -1,0 +1,19 @@
+---
+title: "Flutter & Dart Quick Reference"
+category: "Flutter"
+syntax: "StatelessWidget / StatefulWidget / ListView.builder / GoRouter"
+summary: "Essential Dart null-safety operators, Flutter layout widgets, state management, networking, secure storage, and release commands."
+browserSupport: "Flutter 3 / Dart 3"
+---
+
+## Essential Dart & Flutter Patterns
+
+| Concept | Example |
+| :--- | :--- |
+| Null fallback | `final label = nickname ?? 'Guest';` |
+| Responsive row text | `Expanded(child: Text(longTitle))` |
+| Lazy list | `ListView.builder(itemCount: n, itemBuilder: ...)` |
+| Update state | `setState(() => count++);` |
+| Static analysis | `flutter analyze` |
+| Widget tests | `flutter test` |
+| Android release | `flutter build appbundle --release` |

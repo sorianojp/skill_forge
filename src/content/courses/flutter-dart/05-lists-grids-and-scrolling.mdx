@@ -1,0 +1,49 @@
+---
+title: "Efficient Lists with ListView.builder & Slivers"
+description: "Render thousands of items smoothly using lazy ListView.builder instead of eager Column children."
+course: "flutter-dart"
+module: "Flutter UI"
+order: 5
+durationMinutes: 9
+objectives:
+  - "Build lazy scrollable lists with ListView.builder and itemCount"
+  - "Add clean spacing with ListView.separated"
+  - "Use RefreshIndicator for pull-to-refresh feeds"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Render thousands of items smoothly using lazy ListView.builder instead of eager Column children.
+
+## Code Example
+
+```dart
+ListView.builder(
+  itemCount: tracks.length,
+  itemBuilder: (context, index) => ListTile(
+    title: Text(tracks[index]),
+    trailing: const Icon(Icons.chevron_right),
+  ),
+)
+```
+
+<Callout type="tip" title="Flutter Production Habit">
+Run `flutter analyze` and `flutter test` regularly, use `const` widgets wherever possible, and keep network calls out of `build()` methods.
+</Callout>
+
+## Key Takeaways
+
+- **Build lazy scrollable lists with ListView.builder and itemCount**
+- **Add clean spacing with ListView.separated**
+- **Use RefreshIndicator for pull-to-refresh feeds**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Why is `ListView.builder` preferred over `SingleChildScrollView` + `Column` for long datasets?", "options": ["ListView.builder lazily builds only the widgets currently visible on screen, keeping memory and frame times low", "Column cannot hold more than 5 widgets", "ListView.builder disables scrolling"], "answer": 0, "explanation": "Lazy virtualization avoids instantiating hundreds of offscreen widgets at once."}]}
+/>

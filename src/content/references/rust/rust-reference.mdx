@@ -1,0 +1,20 @@
+---
+title: "Rust Quick Reference"
+category: "Rust"
+syntax: "let mut x; &T / &mut T; Option<T> / Result<T, E> ?"
+summary: "Core Rust ownership & borrowing rules, slices, enums, pattern matching, error propagation, iterators, concurrency, and Cargo commands."
+browserSupport: "Rust 2024 / Cargo"
+---
+
+## Core Rust & Cargo Cheat Sheet
+
+| Concept | Syntax / Command |
+| :--- | :--- |
+| Mutable binding | `let mut count = 0;` |
+| Shared / exclusive borrow | `&value` (many) vs `&mut value` (one) |
+| Error propagation | `let n: i32 = s.parse()?;` |
+| Safe indexing | `items.get(i)` returns `Option<&T>` |
+| Thread-safe shared state | `Arc<Mutex<T>>` |
+| Lint idioms | `cargo clippy` |
+| Run unit tests | `cargo test` |
+| Release binary | `cargo build --release` |

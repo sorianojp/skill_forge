@@ -1,0 +1,49 @@
+---
+title: "Layouts: Row, Column, Expanded & Constraints"
+description: "Master Flutter's golden layout rule ('Constraints go down, sizes go up') and prevent RenderFlex overflow errors."
+course: "flutter-dart"
+module: "Flutter UI"
+order: 4
+durationMinutes: 10
+objectives:
+  - "Arrange elements with Row, Column, Padding, and SizedBox"
+  - "Prevent horizontal/vertical overflow with Expanded and Flexible"
+  - "Use MediaQuery or LayoutBuilder for responsive phone/tablet layouts"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Master Flutter's golden layout rule ('Constraints go down, sizes go up') and prevent RenderFlex overflow errors.
+
+## Code Example
+
+```dart
+Row(
+  children: const [
+    Icon(Icons.code),
+    SizedBox(width: 12),
+    Expanded(child: Text('Long course title that wraps cleanly without overflow')),
+  ],
+)
+```
+
+<Callout type="tip" title="Flutter Production Habit">
+Run `flutter analyze` and `flutter test` regularly, use `const` widgets wherever possible, and keep network calls out of `build()` methods.
+</Callout>
+
+## Key Takeaways
+
+- **Arrange elements with Row, Column, Padding, and SizedBox**
+- **Prevent horizontal/vertical overflow with Expanded and Flexible**
+- **Use MediaQuery or LayoutBuilder for responsive phone/tablet layouts**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "How do you fix a `RenderFlex overflowed by X pixels` error when a long `Text` widget sits inside a `Row`?", "options": ["Wrap the Text widget in Expanded (or Flexible) so it receives bounded width constraints and wraps cleanly", "Remove the MaterialApp widget", "Convert the Text into a double"], "answer": 0, "explanation": "Row gives unconstrained width to children by default; Expanded constrains the child to the remaining horizontal space."}]}
+/>

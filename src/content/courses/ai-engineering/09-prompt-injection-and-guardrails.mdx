@@ -1,0 +1,46 @@
+---
+title: "Prompt Injection Defense & Safety Guardrails"
+description: "Protect AI apps against prompt injection, data exfiltration, and unauthorized tool actions using least privilege."
+course: "ai-engineering"
+module: "Safety & Evals"
+order: 9
+durationMinutes: 10
+objectives:
+  - "Treat all user text and retrieved web/PDF chunks as untrusted data"
+  - "Enforce row-level authorization in tool handlers (never trust the LLM to filter tenant IDs)"
+  - "Require human confirmation before destructive tool calls (delete, payment, email)"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Protect AI apps against prompt injection, data exfiltration, and unauthorized tool actions using least privilege.
+
+## Code Example
+
+```ts
+// Always enforce auth on the server, never via prompt text alone
+async function deleteRecord(userId: string, recordId: string) {
+  return db.query('DELETE FROM items WHERE id = $1 AND owner_id = $2', [recordId, userId]);
+}
+```
+
+<Callout type="tip" title="AI Engineering Habit">
+Treat prompts, tool schemas, and retrieval pipelines like production code: version them, validate every output with a schema, and run automated evals before shipping changes.
+</Callout>
+
+## Key Takeaways
+
+- **Treat all user text and retrieved web/PDF chunks as untrusted data**
+- **Enforce row-level authorization in tool handlers (never trust the LLM to filter tenant IDs)**
+- **Require human confirmation before destructive tool calls (delete, payment, email)**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Why is telling an LLM 'Never show other users' data' in the system prompt NOT sufficient security?", "options": ["Prompt instructions can be bypassed by prompt injection; authorization must be enforced in deterministic server code", "LLMs cannot read English sentences", "System prompts are deleted after 1 minute"], "answer": 0, "explanation": "Always enforce tenant isolation and permissions in backend code and SQL queries, never in prompts alone."}]}
+/>

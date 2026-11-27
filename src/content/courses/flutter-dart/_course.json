@@ -1,0 +1,21 @@
+{
+  "slug": "flutter-dart",
+  "title": "Flutter & Dart Mobile Development",
+  "shortTitle": "Flutter",
+  "description": "Build cross-platform iOS and Android apps from one codebase: sound null-safe Dart, widget trees, responsive layouts, state management, navigation, REST APIs, and local storage.",
+  "track": "Flutter",
+  "difficulty": "Beginner",
+  "estimatedHours": 7,
+  "accentColor": "#0284c7",
+  "prerequisites": [
+    "Basic programming or OOP concepts"
+  ],
+  "outcomes": [
+    "Write clean, null-safe Dart with async/await, Futures, and immutable models",
+    "Compose responsive Material 3 interfaces with StatelessWidget and StatefulWidget",
+    "Fetch JSON from REST APIs, handle loading/error states, and persist data locally",
+    "Structure multi-screen navigation and ship release builds for Android and iOS"
+  ],
+  "featured": true,
+  "order": 24
+}

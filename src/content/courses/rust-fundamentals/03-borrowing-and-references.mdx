@@ -1,0 +1,51 @@
+---
+title: "Borrowing, References & The Borrow Checker"
+description: "Pass data without transferring ownership using shared (&T) and exclusive mutable (&mut T) references."
+course: "rust-fundamentals"
+module: "Ownership & Borrowing"
+order: 3
+durationMinutes: 10
+objectives:
+  - "Share read-only access with multiple &T references"
+  - "Mutate safely with a single exclusive &mut T reference"
+  - "Understand how the borrow checker prevents data races at compile time"
+hasPlayground: false
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+import Quiz from '@/components/quiz/Quiz';
+
+## Overview
+
+Pass data without transferring ownership using shared (&T) and exclusive mutable (&mut T) references.
+
+## Code Example
+
+```rust
+fn append_tag(s: &mut String) {
+    s.push_str(" [verified]");
+}
+
+fn main() {
+    let mut title = String::from("Rust");
+    append_tag(&mut title);
+    println!("{title}");
+}
+```
+
+<Callout type="tip" title="Rustaceans' Habit">
+Read compiler error messages carefully and run `cargo clippy` often. Rust's compiler is designed to teach you safer, faster patterns before your code ever runs.
+</Callout>
+
+## Key Takeaways
+
+- **Share read-only access with multiple &T references**
+- **Mutate safely with a single exclusive &mut T reference**
+- **Understand how the borrow checker prevents data races at compile time**
+
+## Quick Check
+
+<Quiz
+  client:visible
+  questions={[{"question": "Which borrowing combination is FORBIDDEN by Rust's borrow checker in the same active scope?", "options": ["Holding a mutable reference (&mut T) at the same time as any other reference (&T or &mut T) to the same value", "Holding two immutable references (&T) to the same value", "Passing &str to a helper function"], "answer": 0, "explanation": "Aliasing XOR Mutability guarantees memory safety and eliminates data races at compile time."}]}
+/>

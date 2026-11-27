@@ -99,4 +99,22 @@ export const CAREER_PATHS: CareerPath[] = [
     accentColor: '#7c3aed',
     courseSlugs: ['go-fundamentals', 'postgresql-design', 'docker-essentials', 'system-design-fundamentals'],
   },
+  {
+    slug: 'ai-application-engineer',
+    title: 'AI Application & LLM Engineer',
+    tagline: 'Python → TypeScript → PostgreSQL → AI Engineering',
+    description:
+      'Ship production AI apps with structured LLM outputs, tool calling, vector RAG retrieval, automated evals, and safe guardrails.',
+    accentColor: '#db2777',
+    courseSlugs: ['python-fundamentals', 'typescript-essentials', 'postgresql-design', 'ai-engineering'],
+  },
+  {
+    slug: 'mobile-app-developer',
+    title: 'Cross-Platform Mobile Developer (Flutter)',
+    tagline: 'Git → OOP → Flutter & Dart → SQL',
+    description:
+      'Build fast, responsive iOS and Android apps from a single Dart codebase with clean state management, REST APIs, and local persistence.',
+    accentColor: '#0284c7',
+    courseSlugs: ['git-essentials', 'oop-fundamentals', 'flutter-dart', 'sql-essentials'],
+  },
 ];
